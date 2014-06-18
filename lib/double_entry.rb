@@ -212,7 +212,6 @@ module DoubleEntry
     #
     # This is used by the concurrency test script.
     def reconciled?(account)
-      conditions =  ["account = ? AND scope = ?", account.identifier.to_s, account.scope.to_s]
       scoped_lines = Line.where(:account => account.identifier, :scope => account.scope)
       sum_of_amounts = scoped_lines.sum(:amount)
       final_balance  = scoped_lines.order(:id).last[:balance]
