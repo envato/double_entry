@@ -64,17 +64,22 @@ module DoubleEntry
       previous_line = DoubleEntry::Line.find_by_sql(["SELECT * FROM #{Line.quoted_table_name} #{force_index} WHERE account = ? AND scope = ? AND id < ? ORDER BY id DESC LIMIT 1", line.account.identifier.to_s, line.scope, line.id])
       previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.empty
 
-      if line.balance != (line.amount + previous_balance) then
-        log << "*********************************\n"
-        log << "Error on line ##{line.id}: balance:#{line.balance} != #{previous_balance} + #{line.amount}\n"
-        log << "*********************************\n"
-        log << previous_line.inspect
-        log << "\n"
-        log << line.inspect
-        log << "\n"
+      if line.balance != (line.amount + previous_balance)
+        log << line_error_message(line, previous_line, previous_balance)
       end
 
       line.balance == previous_balance + line.amount
+    end
+
+    def line_error_message(line, previous_line, previous_balance)
+      <<-END_OF_MESSAGE
+        *********************************
+        Error on line ##{line.id}: balance:#{line.balance} != #{previous_balance} + #{line.amount}
+        *********************************
+        #{previous_line.inspect}
+        #{line.inspect}
+
+      END_OF_MESSAGE
     end
 
     def cached_balance_correct?(account)
@@ -102,7 +107,6 @@ module DoubleEntry
         :scope   => account.scope_identity.to_s
       ).order(:id)
     end
-
 
     def update_balance_for_account(account, balance)
       account_balance = DoubleEntry::Locking.balance_for_locked_account(account)
