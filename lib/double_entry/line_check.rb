@@ -44,7 +44,8 @@ module DoubleEntry
   private
 
     def last_run_line_id
-      DoubleEntry::LineCheck.last.try(:last_line_id) || 0
+      latest = DoubleEntry::LineCheck.last
+      latest ? latest.last_line_id : 0
     end
 
     def running_balance_correct?(line, log)
