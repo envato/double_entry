@@ -7,7 +7,7 @@ env:
   - DB=mysql
   - DB=postgres
 before_script:
-  - cp config/database.travis.yml config/database.yml
+  - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'
   - psql -c 'create database double_entry_test;' -U postgres
 script:
