@@ -17,13 +17,13 @@ module DoubleEntry
       active_accounts    = Set.new
       incorrect_accounts = Set.new
 
-      line_id = nil
+      current_line_id = nil
       DoubleEntry::Line.where('id > ?', last_run_line_id).find_each do |line|
         if !running_balance_correct?(line, log)
           incorrect_accounts << line.account
         end
         active_accounts << line.account
-        line_id = line.id
+        current_line_id = line.id
       end
 
       active_accounts.each do |account|
@@ -37,7 +37,7 @@ module DoubleEntry
       unless active_accounts.empty?
         errors_found = !incorrect_accounts.empty?
 
-        DoubleEntry::LineCheck.create! :errors_found => errors_found, :log => log, :last_line_id => line_id
+        DoubleEntry::LineCheck.create! :errors_found => errors_found, :log => log, :last_line_id => current_line_id
       end
     end
 
