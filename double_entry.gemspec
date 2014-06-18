@@ -30,4 +30,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "machinist"
   gem.add_development_dependency "rake"
   gem.add_development_dependency "jazz_hands"
+  gem.add_development_dependency "generator_spec"
 end
