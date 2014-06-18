@@ -74,7 +74,7 @@ module DoubleEntry
     end
 
     def line_error_message(line, previous_line, previous_balance)
-      <<-END_OF_MESSAGE
+      <<-END_OF_MESSAGE.strip_heredoc
         *********************************
         Error on line ##{line.id}: balance:#{line.balance} != #{previous_balance} + #{line.amount}
         *********************************
