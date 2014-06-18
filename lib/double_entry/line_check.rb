@@ -85,17 +85,25 @@ module DoubleEntry
 
     def recalculate_account(account)
       DoubleEntry.lock_accounts(account) do
-        lines = DoubleEntry::Line.where(:account => account.identifier.to_s, :scope => account.scope_identity.to_s).order(:id)
         current_balance = Money.empty
-        lines.each do |line|
+
+        lines_for_account(account).each do |line|
           current_balance = current_balance + line.amount
           line.update_attribute(:balance, current_balance) if line.balance != current_balance
         end
 
-        account_balance = DoubleEntry::Locking.balance_for_locked_account(account)
-        account_balance.update_attribute(:balance, current_balance)
+        update_balance_for_account(account, current_balance)
       end
     end
 
+    def lines_for_account(account)
+      DoubleEntry::Line.where(:account => account.identifier.to_s, :scope => account.scope_identity.to_s).order(:id)
+    end
+
+
+    def update_balance_for_account(account, balance)
+      account_balance = DoubleEntry::Locking.balance_for_locked_account(account)
+      account_balance.update_attribute(:balance, balance)
+    end
   end
 end
