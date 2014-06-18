@@ -8,7 +8,10 @@ module DoubleEntry
     default_scope -> { order('created_at') }
 
     def self.perform!
-      last_run_line_id = self.last.try(:last_line_id) || 0
+      new.perform
+    end
+
+    def perform
       log = ''
 
       active_accounts    = Set.new
@@ -29,16 +32,22 @@ module DoubleEntry
         end
       end
 
-      incorrect_accounts.each {|account| recalculate_account(account) }
+      incorrect_accounts.each { |account| recalculate_account(account) }
 
       unless active_accounts.empty?
         errors_found = !incorrect_accounts.empty?
 
-        create! :errors_found => errors_found, :log => log, :last_line_id => line_id
+        DoubleEntry::LineCheck.create! :errors_found => errors_found, :log => log, :last_line_id => line_id
       end
     end
 
-    def self.running_balance_correct?(line, log)
+  private
+
+    def last_run_line_id
+      DoubleEntry::LineCheck.last.try(:last_line_id) || 0
+    end
+
+    def running_balance_correct?(line, log)
       # Another work around for the MySQL 5.1 query optimiser bug that causes the ORDER BY
       # on the query to fail in some circumstances, resulting in an old balance being
       # returned. This was biting us intermittently in spec runs.
@@ -67,7 +76,7 @@ module DoubleEntry
       line.balance == previous_balance + line.amount
     end
 
-    def self.cached_balance_correct?(account)
+    def cached_balance_correct?(account)
       result = nil
       DoubleEntry.lock_accounts(account) do
         result = (DoubleEntry::AccountBalance.find_by_account(account).balance == account.balance)
@@ -75,7 +84,7 @@ module DoubleEntry
       result
     end
 
-    def self.recalculate_account(account)
+    def recalculate_account(account)
       DoubleEntry.lock_accounts(account) do
         lines = DoubleEntry::Line.where(:account => account.identifier.to_s, :scope => account.scope_identity.to_s).order(:id)
         current_balance = Money.empty
