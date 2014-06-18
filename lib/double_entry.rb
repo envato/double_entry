@@ -49,10 +49,6 @@ module DoubleEntry
   class UserAccountNotLocked < RuntimeError; end
   class AccountWouldBeSentNegative < RuntimeError; end
 
-  def self.table_name_prefix
-    'double_entry_'
-  end
-
   class << self
     attr_accessor :accounts, :transfers
 
@@ -221,6 +217,10 @@ module DoubleEntry
       final_balance  = Line.last(:conditions => conditions, :order => "id")[:balance]
       cached_balance = AccountBalance.find_by_account(account)[:balance]
       final_balance == sum_of_amounts && final_balance == cached_balance
+    end
+
+    def table_name_prefix
+      'double_entry_'
     end
 
   private
