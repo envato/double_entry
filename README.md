@@ -16,9 +16,9 @@ DoubleEntry uses the Money gem to avoid floating point rounding errors.
 
 DoubleEntry has been tested with:
 
-Ruby Versions: 1.9.3
+Ruby Versions: 1.9.3, 2.0.0, 2.1.2
 
-Rails Versions: Rails 4
+Rails Versions: Rails 3.2.x, 4.0.x, 4.1.x
 
 --
 
