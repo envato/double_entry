@@ -1,27 +1,18 @@
-mysql: &mysql
+mysql:
   adapter: mysql2
   username: root
   password:
-  database: double_entry_<%= Rails.env %>
+  database: double_entry_test
+  pool: 100
+  timeout: 5000
+  host: 127.0.0.1
 
-postgres: &postgresql
+postgres:
   adapter: postgresql
   username: postgres
   password:
-  database: double_entry_<%= Rails.env %>
+  database: double_entry_test
   min_messages: ERROR
-
-defaults: &defaults
-  pool: 5
+  pool: 100
   timeout: 5000
   host: localhost
-  <<: *<%= ENV['DB'] || "postgres" %>
-
-development:
-  <<: *defaults
-
-test:
-  <<: *defaults
-
-production:
-  <<: *defaults
