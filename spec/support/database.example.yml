@@ -1,0 +1,16 @@
+postgres:
+  host: localhost
+  adapter: postgresql
+  encoding: unicode
+  database: double_entry_test
+  pool: 100
+  username: postgres
+  password:
+  min_messages: warning
+mysql:
+  adapter: mysql2
+  encoding: utf8
+  database: double_entry_test
+  pool: 100
+  username: root
+  password:

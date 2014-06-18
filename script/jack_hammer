@@ -1,0 +1,201 @@
+#!/usr/bin/env ruby
+
+# Run a concurrency test on the double_entry code.
+#
+# This spawns a bunch of processes, and does random transactions between a set
+# of accounts, then validates that all the numbers add up at the end.
+#
+# You can also tell out it to flush our the account balances table at regular
+# intervals, to validate that new account balances records get created with the
+# correct balances from the lines table.
+#
+# Run it without arguments to get the usage.
+
+require 'optparse'
+require 'bundler/setup'
+require 'active_record'
+require 'database_cleaner'
+
+support = File.expand_path("../../spec/support/", __FILE__)
+
+ENV['DB'] ||= 'mysql'
+ActiveRecord::Base.establish_connection YAML.load_file(File.join(support, "database.yml"))[ENV['DB']]
+require "#{support}/schema"
+
+lib = File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'double_entry'
+
+def parse_options
+  $account_count       = 5
+  $process_count       = 20
+  $transfer_count      = 20000
+  $balance_flush_count = 1
+  $use_threads         = false
+
+  options = OptionParser.new
+
+  options.on("-a", "--accounts=COUNT", Integer, "Number of accounts (default: #{$account_count})") do |value|
+    $account_count = value
+  end
+
+  options.on("-p", "--processes=COUNT", Integer, "Number of processes (default: #{$process_count})") do |value|
+    $process_count = value
+  end
+
+  options.on("-t", "--transfers=COUNT", Integer, "Number of transfers (default: #{$transfer_count})") do |value|
+    $transfer_count = value
+  end
+
+  options.on("-f", "--flush-balances=COUNT", Integer, "Flush account balances table COUNT times") do |value|
+    $balance_flush_count = value
+  end
+
+  options.on("-z", "--threads", "Use threads instead of processes") do |value|
+    $use_threads = !!value
+  end
+
+  options.parse(*ARGV)
+end
+
+
+def clean_out_database
+  puts "Cleaning out the database..."
+
+  DatabaseCleaner.clean_with(:deletion)
+end
+
+def create_accounts_and_transfers
+  puts "Setting up #{$account_count} accounts..."
+
+  # Create the accounts.
+  scope = lambda {|x| x }
+  DoubleEntry.accounts = DoubleEntry::Account::Set.new
+  $account_count.times do |i|
+    DoubleEntry.accounts << DoubleEntry::Account.new(:identifier => :"account-#{i}", :scope_identifier => scope)
+  end
+
+  # Create all the possible transfers.
+  DoubleEntry.transfers = DoubleEntry::Transfer::Set.new
+  DoubleEntry.accounts.each do |from|
+    DoubleEntry.accounts.each do |to|
+      DoubleEntry.transfers << DoubleEntry::Transfer.new(:from => from.identifier, :to => to.identifier, :code => :test)
+    end
+  end
+
+  # Find account instances so we have something to work with.
+  $accounts = DoubleEntry.accounts.map do |account|
+    DoubleEntry.account(account.identifier, :scope => 1)
+  end
+end
+
+
+def run_tests
+  puts "Spawning #{$process_count} processes..."
+
+  iterations_per_process = $transfer_count / $process_count / $balance_flush_count
+
+  $balance_flush_count.times do
+    puts "Flushing balances"
+    DoubleEntry::AccountBalance.delete_all
+
+    if $use_threads
+      puts "Using threads as workers"
+      threads = []
+      $process_count.times do |process_num|
+        threads << Thread.new { run_process(iterations_per_process, process_num) }
+      end
+
+      threads.each(&:join)
+    else
+      puts "Using processes as workers"
+      pids = []
+      $process_count.times do |process_num|
+        pids << fork { run_process(iterations_per_process, process_num) }
+      end
+
+      pids.each {|pid| Process.wait2(pid) }
+    end
+
+    ActiveRecord::Base.connection_pool.disconnect!
+  end
+end
+
+
+def run_process(iterations, process_num)
+  ActiveRecord::Base.connection_pool.disconnect!  # Get a unique DB connection for this process.
+  srand  # Seed the random number generator separately for each process.
+
+  puts "Process #{process_num} running #{iterations} transfers..."
+
+  iterations.times do |i|
+    account_a = $accounts.sample
+    account_b = ($accounts - [account_a]).sample
+    amount = rand(1000) + 1
+
+    DoubleEntry.transfer(Money.new(amount), :from => account_a, :to => account_b, :code => :test)
+
+    puts "Process #{process_num} completed #{i+1} transfers" if (i+1) % 100 == 0
+  end
+end
+
+
+def reconcile
+  error_count = 0
+  puts "Reconciling..."
+
+  if DoubleEntry::Line.count == $transfer_count * 2
+    puts "All the Line records were written, FTW!"
+  else
+    puts "Not enough Line records written. :("
+    error_count += 1
+  end
+
+  if $accounts.all? {|account| DoubleEntry.reconciled?(account) }
+    puts "All accounts reconciled, FTW!"
+  else
+    $accounts.each do |account|
+      if !DoubleEntry.reconciled?(account)
+        puts "Account #{account.identifier} failed to reconcile. :("
+
+        # See http://bugs.mysql.com/bug.php?id=51431
+        use_index = if DoubleEntry::Line.connection.adapter_name.match /mysql/i
+                      "USE INDEX (lines_scope_account_id_idx)"
+                    else
+                      ""
+                    end
+
+        rows = ActiveRecord::Base.connection.select_all(<<-SQL)
+             SELECT id, amount, balance
+               FROM #{DoubleEntry::Line.quoted_table_name} #{use_index}
+              WHERE scope   = '#{account.scope_identity}'
+                AND account = '#{account.identifier}'
+           ORDER BY id
+        SQL
+
+        rows.each_cons(2) do |a, b|
+          if a["balance"].to_i + b["amount"].to_i != b["balance"].to_i
+            puts "Bad lines entry id = #{b['id']}"
+            error_count += 1
+          end
+        end
+      end
+    end
+  end
+
+  error_count == 0
+end
+
+
+parse_options
+clean_out_database
+create_accounts_and_transfers
+run_tests
+
+if reconcile
+  puts "Done successfully :)"
+  exit 0
+else
+  puts "Done with errors :("
+  exit 1
+end
