@@ -60,7 +60,7 @@ module DoubleEntry
                     end
 
       # yes, it needs to be find_by_sql, because any other find will be affected
-      # by the find_in_batches call in perform!
+      # by the find_each call in perform!
       previous_line = DoubleEntry::Line.find_by_sql(["SELECT * FROM #{Line.quoted_table_name} #{force_index} WHERE account = ? AND scope = ? AND id < ? ORDER BY id DESC LIMIT 1", line.account.identifier.to_s, line.scope, line.id])
       previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.empty
 
