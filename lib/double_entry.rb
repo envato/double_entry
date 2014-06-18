@@ -170,7 +170,7 @@ module DoubleEntry
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
         SELECT scope
-          FROM account_balances
+          FROM #{AccountBalance.quoted_table_name}
          WHERE account = ?
            AND balance >= ?
       SQL
@@ -223,6 +223,10 @@ module DoubleEntry
 
     delegate :connection, :to => ActiveRecord::Base
     delegate :select_values, :to => :connection
+
+    def self.table_name_prefix
+      'double_entry_'
+    end
 
     def sanitize_sql_array(sql_array)
       ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
