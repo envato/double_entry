@@ -20,10 +20,10 @@ describe DoubleEntry::Generators::InstallGenerator do
         directory "migrate" do
           migration "create_double_entry_tables" do
             contains 'class CreateDoubleEntryTable'
-            contains 'create_table "account_balances"'
-            contains 'create_table "lines"'
-            contains 'create_table "line_aggregates"'
-            contains 'create_table "line_checks"'
+            contains 'create_table "double_entry_account_balances"'
+            contains 'create_table "double_entry_lines"'
+            contains 'create_table "double_entry_line_aggregates"'
+            contains 'create_table "double_entry_line_checks"'
           end
         end
       end

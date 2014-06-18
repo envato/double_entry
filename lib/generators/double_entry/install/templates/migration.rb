@@ -8,8 +8,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index "account_balances", ["account"], :name => "index_account_balances_on_account"
-    add_index "account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
+    add_index "double_entry_account_balances", ["account"], :name => "index_account_balances_on_account"
+    add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
     create_table "double_entry_lines", :force => true do |t|
       t.string   "account"
@@ -49,7 +49,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
 
     add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
 
-    create_table "line_checks", :force => true do |t|
+    create_table "double_entry_line_checks", :force => true do |t|
       t.integer  "last_line_id"
       t.boolean  "errors_found"
       t.text     "log"
