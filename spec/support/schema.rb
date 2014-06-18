@@ -1,7 +1,7 @@
 ActiveRecord::Schema.define do
   self.verbose = false
 
-  create_table "account_balances", :force => true do |t|
+  create_table "double_entry_account_balances", :force => true do |t|
     t.string   "account",    :null => false
     t.string   "scope"
     t.integer  "balance"
@@ -9,10 +9,10 @@ ActiveRecord::Schema.define do
     t.datetime "updated_at"
   end
 
-  add_index "account_balances", ["account"], :name => "index_account_balances_on_account"
-  add_index "account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
+  add_index "double_entry_account_balances", ["account"], :name => "index_account_balances_on_account"
+  add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
-  create_table "lines", :force => true do |t|
+  create_table "double_entry_lines", :force => true do |t|
     t.string   "account"
     t.string   "scope"
     t.string   "code"
@@ -28,12 +28,12 @@ ActiveRecord::Schema.define do
     t.datetime "updated_at"
   end
 
-  add_index "lines", ["account", "code", "created_at"], :name => "lines_account_code_created_at_idx"
-  add_index "lines", ["account", "created_at"], :name => "lines_account_created_at_idx"
-  add_index "lines", ["scope", "account", "created_at"], :name => "lines_scope_account_created_at_idx"
-  add_index "lines", ["scope", "account", "id"], :name => "lines_scope_account_id_idx"
+  add_index "double_entry_lines", ["account", "code", "created_at"], :name => "lines_account_code_created_at_idx"
+  add_index "double_entry_lines", ["account", "created_at"], :name => "lines_account_created_at_idx"
+  add_index "double_entry_lines", ["scope", "account", "created_at"], :name => "lines_scope_account_created_at_idx"
+  add_index "double_entry_lines", ["scope", "account", "id"], :name => "lines_scope_account_id_idx"
 
-  create_table "line_aggregates", :force => true do |t|
+  create_table "double_entry_line_aggregates", :force => true do |t|
     t.string   "function"
     t.string   "account"
     t.string   "code"
@@ -50,9 +50,9 @@ ActiveRecord::Schema.define do
     t.string   "range_type"
   end
 
-  add_index "line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
+  add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
 
-  create_table "line_checks", :force => true do |t|
+  create_table "double_entry_line_checks", :force => true do |t|
     t.integer  "last_line_id"
     t.boolean  "errors_found"
     t.text     "log"
@@ -61,11 +61,11 @@ ActiveRecord::Schema.define do
   end
 
   # test table only
-  create_table "users", :force => true do |t|
+  create_table "double_entry_users", :force => true do |t|
     t.string   "username"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "users", ["username"], :name => "index_users_on_username", :unique => true
+  add_index "double_entry_users", ["username"], :name => "index_users_on_username", :unique => true
 end
