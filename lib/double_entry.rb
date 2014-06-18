@@ -52,21 +52,29 @@ module DoubleEntry
   class << self
     attr_accessor :accounts, :transfers
 
-    # Get an Account::Instance for a particular account.
+    # Get the particular account instance with the provided identifier and
+    # scope.
     #
-    # For example, the following will return the cash account for a user:
+    # @example Obtain the 'cash' account for a user
+    #   DoubleEntry.account(:cash, scope: user)
+    # @param identifier [Symbol] The code identifying the desired account. As
+    #   the account definition.
+    # @option options :scope Limit the account to the given scope. As the
+    #   account definition.
+    # @return [DoubleEntry::Account::Instance]
+    # @raise [DoubleEntry::UnknownAccount] The described account has not been
+    #   configured. It is unknown.
     #
-    #     DoubleEntry.account(:cash, :scope => user)
-    #
-    def account(identifier, args = {})
-      match = @accounts.detect do |a|
-        a.identifier == identifier and (args[:scope] ? a.scoped? : !a.scoped?)
+    def account(identifier, options = {})
+      account = @accounts.detect do |current_account|
+        current_account.identifier == identifier &&
+          (options[:scope] ? current_account.scoped? : !current_account.scoped?)
       end
 
-      if match
-        DoubleEntry::Account::Instance.new(:account => match, :scope => args[:scope])
+      if account
+        DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
       else
-        raise UnknownAccount.new("account: #{identifier} scope: #{args[:scope]}")
+        raise UnknownAccount.new("account: #{identifier} scope: #{options[:scope]}")
       end
     end
 
