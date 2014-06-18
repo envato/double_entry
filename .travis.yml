@@ -7,8 +7,11 @@ env:
   - DB=mysql
   - DB=postgres
 before_script:
+  - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'
   - psql -c 'create database double_entry_test;' -U postgres
 script:
   - rake spec
   - ruby script/jack_hammer -t 2000
+gemfile:
+  - gemfiles/Gemfile.rails-3.2.18
