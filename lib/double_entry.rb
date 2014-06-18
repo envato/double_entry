@@ -80,38 +80,39 @@ module DoubleEntry
 
     # Transfer money from one account to another.
     #
-    # For example, the following will transfer $20 from a user's checking
-    # account to their savings account:
-    #
-    #     checking_account = DoubleEntry.account(:checking, :scope => user)
-    #     savings_account  = DoubleEntry.account(:savings,  :scope => user)
-    #     DoubleEntry.transfer(
-    #       Money.new(20_00),
-    #       :from => checking_account,
-    #       :to   => savings_account,
-    #       :code => :save,
-    #     )
-    #
-    # Only certain transfers are allowed. Define which are allowed in your
+    # Only certain transfers are allowed. Define legal transfers in your
     # configuration file.
-    #
-    # The :detail option lets you pass in an arbitrary ActiveRecord object that
-    # will be stored (via a polymorphic association) with the lines table
-    # entries for the transfer.
-    #
-    # The :meta option lets you pass in metadata (as a string) that you want
-    # stored with the transaction.
     #
     # If you're doing more than one transfer in one hit, or you're doing other
     # database operations along with your transfer, you'll need to use the
     # lock_accounts method.
-    def transfer(amount, args = {})
+    #
+    # @example Transfer $20 from a user's checking to savings account
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
+    #   savings_account  = DoubleEntry.account(:savings,  scope: user)
+    #   DoubleEntry.transfer(
+    #     Money.new(20_00),
+    #     from: checking_account,
+    #     to:   savings_account,
+    #     code: :save,
+    #   )
+    #
+    # @param amount [Money] The quantity of money to transfer from one account
+    #   to the other.
+    # @option options :from [DoubleEntry::Account::Instance] Transfer money out of this account
+    # @option options :to [DoubleEntry::Account::Instance] Transfer money into this account
+    # @option options :code [Symbol] Your application specific code for this type of transfer.
+    # @option options :meta [String] Record metadata against this transfer.
+    # @option options :detail [ActiveRecord::Base] Record an ActiveRecord
+    #   object (via a polymorphic association) against the transfer.
+    # @raise [DoubleEntry::TransferIsNegative] The amount is less than zero.
+    # @raise [DoubleEntry::TransferNotAllowed] A transfer between these
+    #   accounts with the provided code is not allowed. Check configuration.
+    #
+    def transfer(amount, options = {})
       raise TransferIsNegative if amount < Money.new(0)
-
-      from, to, code, meta, detail = args[:from], args[:to], args[:code], args[:meta], args[:detail]
-
+      from, to, code, meta, detail = options[:from], options[:to], options[:code], options[:meta], options[:detail]
       transfer = @transfers.find(from, to, code)
-
       if transfer
         transfer.process!(amount, from, to, code, meta, detail)
       else
