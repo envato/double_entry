@@ -226,7 +226,7 @@ No immediate to-do's.
 
 6. Specify how the tests should connect to the database
 
-        cp spec/support/{database.example.yml, database.yml}
+        cp spec/support/database.example.yml spec/support/database.yml
         vim spec/support/database.yml
 
 7. Run the tests
