@@ -14,4 +14,6 @@ script:
   - rake spec
   - ruby script/jack_hammer -t 2000
 gemfile:
-  - gemfiles/Gemfile.rails-3.2.18
+  - gemfiles/Gemfile.rails-3.2.0
+  - gemfiles/Gemfile.rails-4.0.0
+  - gemfiles/Gemfile.rails-4.1.0
