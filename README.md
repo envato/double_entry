@@ -1,5 +1,8 @@
 # DoubleEntry
 
+[![Gem Version](https://badge.fury.io/rb/double_entry.svg)](http://badge.fury.io/rb/double_entry)
+[![Build Status](https://travis-ci.org/envato/double_entry.svg?branch=add_spec_for_generator)](https://travis-ci.org/envato/double_entry)
+
 ![Show me the Money](http://24.media.tumblr.com/tumblr_m3bwbqNJIG1rrgbmqo1_500.gif)
 
 Keep track of all the monies!
