@@ -13,31 +13,29 @@ module DoubleEntry
 
     def perform
       log = ''
+      current_line_id = nil
 
       active_accounts    = Set.new
       incorrect_accounts = Set.new
 
-      current_line_id = nil
-      DoubleEntry::Line.where('id > ?', last_run_line_id).find_each do |line|
-        if !running_balance_correct?(line, log)
-          incorrect_accounts << line.account
-        end
-        active_accounts << line.account
+      new_lines_since_last_run.find_each do |line|
+        incorrect_accounts << line.account unless running_balance_correct?(line, log)
+        active_accounts    << line.account
         current_line_id = line.id
       end
 
       active_accounts.each do |account|
-        if !cached_balance_correct?(account)
-          incorrect_accounts << account
-        end
+        incorrect_accounts << account      unless cached_balance_correct?(account)
       end
 
       incorrect_accounts.each { |account| recalculate_account(account) }
 
       unless active_accounts.empty?
-        errors_found = !incorrect_accounts.empty?
-
-        DoubleEntry::LineCheck.create! :errors_found => errors_found, :log => log, :last_line_id => current_line_id
+        DoubleEntry::LineCheck.create!(
+          :errors_found => !incorrect_accounts.empty?,
+          :log => log,
+          :last_line_id => current_line_id
+        )
       end
     end
 
@@ -46,6 +44,10 @@ module DoubleEntry
     def last_run_line_id
       latest = DoubleEntry::LineCheck.last
       latest ? latest.last_line_id : 0
+    end
+
+    def new_lines_since_last_run
+      DoubleEntry::Line.where('id > ?', last_run_line_id)
     end
 
     def running_balance_correct?(line, log)
