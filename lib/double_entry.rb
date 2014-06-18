@@ -49,6 +49,10 @@ module DoubleEntry
   class UserAccountNotLocked < RuntimeError; end
   class AccountWouldBeSentNegative < RuntimeError; end
 
+  def self.table_name_prefix
+    'double_entry_'
+  end
+
   class << self
     attr_accessor :accounts, :transfers
 
@@ -223,10 +227,6 @@ module DoubleEntry
 
     delegate :connection, :to => ActiveRecord::Base
     delegate :select_values, :to => :connection
-
-    def self.table_name_prefix
-      'double_entry_'
-    end
 
     def sanitize_sql_array(sql_array)
       ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
