@@ -78,11 +78,9 @@ module DoubleEntry
     end
 
     def cached_balance_correct?(account)
-      result = nil
       DoubleEntry.lock_accounts(account) do
-        result = (DoubleEntry::AccountBalance.find_by_account(account).balance == account.balance)
+        return DoubleEntry::AccountBalance.find_by_account(account).balance == account.balance
       end
-      result
     end
 
     def recalculate_account(account)
