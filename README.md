@@ -11,6 +11,9 @@ two entries in the database for each transfer, it does *not* enforce accounting 
 
 DoubleEntry uses the Money gem to avoid floating point rounding errors.
 
+[![Gem Version](https://badge.fury.io/rb/double_entry.svg)](http://badge.fury.io/rb/double_entry)
+[![Build Status](https://travis-ci.org/envato/double_entry.svg)](https://travis-ci.org/envato/double_entry)
+[![Code Climate](https://codeclimate.com/github/envato/double_entry.png)](https://codeclimate.com/github/envato/double_entry)
 
 ## Compatibility
 
