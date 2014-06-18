@@ -31,7 +31,7 @@ module DoubleEntry
       incorrect_accounts.each { |account| recalculate_account(account) }
 
       unless active_accounts.empty?
-        DoubleEntry::LineCheck.create!(
+        LineCheck.create!(
           :errors_found => !incorrect_accounts.empty?,
           :log => log,
           :last_line_id => current_line_id
@@ -42,12 +42,12 @@ module DoubleEntry
   private
 
     def last_run_line_id
-      latest = DoubleEntry::LineCheck.last
+      latest = LineCheck.last
       latest ? latest.last_line_id : 0
     end
 
     def new_lines_since_last_run
-      DoubleEntry::Line.where('id > ?', last_run_line_id)
+      Line.where('id > ?', last_run_line_id)
     end
 
     def running_balance_correct?(line, log)
@@ -55,7 +55,7 @@ module DoubleEntry
       # on the query to fail in some circumstances, resulting in an old balance being
       # returned. This was biting us intermittently in spec runs.
       # See http://bugs.mysql.com/bug.php?id=51431
-      force_index = if DoubleEntry::Line.connection.adapter_name.match /mysql/i
+      force_index = if Line.connection.adapter_name.match /mysql/i
                       "FORCE INDEX (lines_scope_account_id_idx)"
                     else
                       ""
@@ -63,7 +63,7 @@ module DoubleEntry
 
       # yes, it needs to be find_by_sql, because any other find will be affected
       # by the find_each call in perform!
-      previous_line = DoubleEntry::Line.find_by_sql(["SELECT * FROM #{Line.quoted_table_name} #{force_index} WHERE account = ? AND scope = ? AND id < ? ORDER BY id DESC LIMIT 1", line.account.identifier.to_s, line.scope, line.id])
+      previous_line = Line.find_by_sql(["SELECT * FROM #{Line.quoted_table_name} #{force_index} WHERE account = ? AND scope = ? AND id < ? ORDER BY id DESC LIMIT 1", line.account.identifier.to_s, line.scope, line.id])
       previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.empty
 
       if line.balance != (line.amount + previous_balance)
@@ -86,7 +86,7 @@ module DoubleEntry
 
     def cached_balance_correct?(account)
       DoubleEntry.lock_accounts(account) do
-        return DoubleEntry::AccountBalance.find_by_account(account).balance == account.balance
+        return AccountBalance.find_by_account(account).balance == account.balance
       end
     end
 
@@ -104,14 +104,14 @@ module DoubleEntry
     end
 
     def lines_for_account(account)
-      DoubleEntry::Line.where(
+      Line.where(
         :account => account.identifier.to_s,
         :scope   => account.scope_identity.to_s
       ).order(:id)
     end
 
     def update_balance_for_account(account, balance)
-      account_balance = DoubleEntry::Locking.balance_for_locked_account(account)
+      account_balance = Locking.balance_for_locked_account(account)
       account_balance.update_attribute(:balance, balance)
     end
   end
