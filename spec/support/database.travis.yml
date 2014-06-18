@@ -1,0 +1,18 @@
+mysql:
+  adapter: mysql2
+  username: root
+  password:
+  database: double_entry_test
+  pool: 100
+  timeout: 5000
+  host: 127.0.0.1
+
+postgres:
+  adapter: postgresql
+  username: postgres
+  password:
+  database: double_entry_test
+  min_messages: ERROR
+  pool: 100
+  timeout: 5000
+  host: localhost

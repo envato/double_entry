@@ -8,7 +8,15 @@ ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path("../supp
 
 FileUtils.mkdir_p 'log'
 FileUtils.rm 'log/test.log', :force => true
-ActiveRecord::Base.logger = ActiveSupport::Logger.new('log/test.log')
+
+# Buffered Logger was deprecated in ActiveSupport 4.0.0 and was removed in 4.1.0
+# Logger was added in ActiveSupport 4.0.0
+if defined? ActiveSupport::Logger
+  ActiveRecord::Base.logger = ActiveSupport::Logger.new('log/test.log')
+else
+  ActiveRecord::Base.logger = ActiveSupport::BufferedLogger.new('log/test.log')
+end
+
 I18n.config.enforce_available_locales = false
 
 require 'double_entry'
