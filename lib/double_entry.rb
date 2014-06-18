@@ -67,7 +67,7 @@ module DoubleEntry
     #
     def account(identifier, options = {})
       account = @accounts.detect do |current_account|
-        current_account.identifier == identifier &&
+        current_account.identifier == identifier and
           (options[:scope] ? current_account.scoped? : !current_account.scoped?)
       end
 
@@ -121,12 +121,21 @@ module DoubleEntry
     end
 
     # Get the current balance of an account, as a Money object.
-    def balance(account, args = {})
-      scope_arg = args[:scope] ? args[:scope].id.to_s : nil
+    #
+    # @param account [DoubleEntry::Account:Instance, Symbol]
+    # @option options :scope [Symbol]
+    # @option options :from [Time]
+    # @option options :to [Time]
+    # @option options :at [Time]
+    # @option options :code [Symbol]
+    # @option options :codes [Array<Symbol>]
+    # @return [Money]
+    def balance(account, options = {})
+      scope_arg = options[:scope] ? options[:scope].id.to_s : nil
       scope = (account.is_a?(Symbol) ? scope_arg : account.scope_identity)
       account = (account.is_a?(Symbol) ? account : account.identifier).to_s
-      from, to, at = args[:from], args[:to], args[:at]
-      code, codes = args[:code], args[:codes]
+      from, to, at = options[:from], options[:to], options[:at]
+      code, codes = options[:code], options[:codes]
 
       # time based scoping
       conditions = if at
