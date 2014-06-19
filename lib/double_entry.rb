@@ -14,6 +14,8 @@ require 'double_entry/configurable'
 require 'double_entry/account'
 require 'double_entry/account_balance'
 
+require 'double_entry/reporting'
+
 require 'double_entry/aggregate'
 require 'double_entry/aggregate_array'
 
