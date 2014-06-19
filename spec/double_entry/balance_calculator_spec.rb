@@ -35,7 +35,6 @@ describe DoubleEntry::BalanceCalculator do
 
     before do
       allow(DoubleEntry::Line).to receive(:where).and_return(relation)
-      allow(relation).to receive(:where).and_return(relation)
       calculator.calculate
     end
 
@@ -98,6 +97,7 @@ describe DoubleEntry::BalanceCalculator do
             expect(relation).to_not have_received(:where).with(
               :created_at, Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
             )
+            expect(relation).to_not have_received(:sum)
           end
         end
       end
@@ -110,6 +110,7 @@ describe DoubleEntry::BalanceCalculator do
           expect(relation).to have_received(:where).with(
             :created_at => Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
           )
+          expect(relation).to have_received(:sum).with(:amount)
         end
       end
     end
@@ -119,12 +120,14 @@ describe DoubleEntry::BalanceCalculator do
 
       it 'scopes the lines summed by the given codes' do
         expect(relation).to have_received(:where).with(:code => ['code1', 'code2'])
+        expect(relation).to have_received(:sum).with(:amount)
       end
     end
 
     context 'when no codes are provided' do
       it 'does not scope the lines summed by any code' do
         expect(relation).to_not have_received(:where).with(:code => anything)
+        expect(relation).to_not have_received(:sum).with(:amount)
       end
     end
   end

@@ -25,10 +25,10 @@ module DoubleEntry
 
     def calculate
       lines = Line.where(:account => account)
-      lines = lines.where('created_at <= ?', at) if scope_by_created_at_before?
-      lines = lines.where(:created_at => from..to) if scope_by_created_at_between?
-      lines = lines.where(:code => codes) if scope_by_code?
-      lines = lines.where(:scope => scope) if scope_by_scope?
+      lines = lines.where('created_at <= ?', at) if find_by_created_at_before?
+      lines = lines.where(:created_at => from..to) if find_by_created_at_between?
+      lines = lines.where(:code => codes) if find_by_code?
+      lines = lines.where(:scope => scope) if find_by_scope?
 
       if lookup_via_created_at_range_or_code?
         # from and to or code lookups have to be done via sum
@@ -44,24 +44,24 @@ module DoubleEntry
 
     attr_reader :account, :scope, :from, :to, :at, :codes
 
-    def scope_by_created_at_before?
+    def find_by_created_at_before?
       !!at
     end
 
-    def scope_by_created_at_between?
-      !!(from && to) && !scope_by_created_at_before?
+    def find_by_created_at_between?
+      !!(from && to) && !find_by_created_at_before?
     end
 
-    def scope_by_code?
+    def find_by_code?
       codes.present?
     end
 
-    def scope_by_scope?
+    def find_by_scope?
       !!scope
     end
 
     def lookup_via_created_at_range_or_code?
-      (from && to) || codes
+      find_by_created_at_between? || find_by_code?
     end
 
     def use_index?
