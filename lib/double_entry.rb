@@ -222,6 +222,7 @@ module DoubleEntry
       DoubleEntry::Locking.lock_accounts(*accounts, &block)
     end
 
+    # @api private
     def describe(line)
       # make sure we have a test for this refactoring, the test
       # conditions are: i forget... but it's important!
@@ -240,10 +241,11 @@ module DoubleEntry
       DoubleEntry::AggregateArray.new(function, account, code, options)
     end
 
-    # @return [Boolean] true if all the amounts for an account add up to the final balance,
-    # which they always should.
-    #
     # This is used by the concurrency test script.
+    #
+    # @api private
+    # @return [Boolean] true if all the amounts for an account add up to the final balance,
+    #   which they always should.
     def reconciled?(account)
       scoped_lines = Line.where(:account => "#{account.identifier}", :scope => "#{account.scope}")
       sum_of_amounts = scoped_lines.sum(:amount)
