@@ -73,7 +73,7 @@ module DoubleEntry
     end
 
     def lines_table_name
-      "#{Line.quoted_table_name} #{'USE INDEX (lines_scope_account_id_idx)' if use_index?}"
+      "#{Line.quoted_table_name}#{' USE INDEX (lines_scope_account_id_idx)' if use_index?}"
     end
 
   end

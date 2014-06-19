@@ -52,11 +52,27 @@ describe DoubleEntry::BalanceCalculator do
           it 'scopes the lines summed by the scope of the scopeable entity...scope' do
             expect(relation).to have_received(:where).with(:scope => 'scope')
           end
+
+          context 'using mysql' do
+            before { allow(DoubleEntry::Line).to receive(:connection).and_return(double(:adapter_name => 'mysql')) }
+
+            it 'doesnt use the scope/account index on lines' do
+              expect(relation).to have_received(:from).with("#{DoubleEntry::Line.quoted_table_name} USE INDEX (lines_scope_account_id_idx)")
+            end
+          end
         end
 
         context 'with no scope provided' do
           it 'does not scope the lines summed by the given scope' do
             expect(relation).to_not have_received(:where).with(:scope => 'scope')
+          end
+
+          context 'using mysql' do
+            before { allow(DoubleEntry::Line).to receive(:connection).and_return(double(:adapter_name => 'mysql')) }
+
+            it 'uses the scope/account index on lines' do
+              expect(relation).to have_received(:from).with("#{DoubleEntry::Line.quoted_table_name}")
+            end
           end
         end
       end
@@ -75,6 +91,14 @@ describe DoubleEntry::BalanceCalculator do
         it 'scopes the lines summed by the accounts identifier and its scope identity' do
           expect(DoubleEntry::Line).to have_received(:where).with(:account => 'account_identity')
           expect(relation).to have_received(:where).with(:scope => 'account_scope_identity')
+        end
+
+        context 'using mysql' do
+          before { allow(DoubleEntry::Line).to receive(:connection).and_return(double(:adapter_name => 'mysql')) }
+
+          it 'uses the scope/account index on lines' do
+            expect(relation).to have_received(:from).with("#{DoubleEntry::Line.quoted_table_name} USE INDEX (lines_scope_account_id_idx)")
+          end
         end
       end
     end
