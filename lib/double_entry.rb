@@ -208,7 +208,7 @@ module DoubleEntry
     # that we're the only ones who can transfer to or from the given accounts
     # for the duration of the transaction.
     #
-    # @example Lock the savings and checking account for a user
+    # @example Lock the savings and checking accounts for a user
     #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   savings_account  = DoubleEntry.account(:savings,  scope: user)
     #   DoubleEntry.lock_accounts(checking_account, savings_account) do
