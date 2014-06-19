@@ -96,7 +96,6 @@ module DoubleEntry
     #     to:   savings_account,
     #     code: :save,
     #   )
-    #
     # @param amount [Money] The quantity of money to transfer from one account
     #   to the other.
     # @option options :from [DoubleEntry::Account::Instance] Transfer money out
@@ -189,6 +188,11 @@ module DoubleEntry
     # Identify the scopes with the given account identifier holding at least
     # the provided minimum balance.
     #
+    # @example Find users with at lease $1,000,000 in their savings accounts
+    #   DoubleEntry.scopes_with_minimum_balance_for_account(
+    #     Money.new(1_000_000_00),
+    #     :savings
+    #   ) # might return user ids: [ 1423, 12232, 34729 ]
     # @param minimum_balance [Money] Minimum account balance a scope must have
     #   to be included in the result set.
     # @param account_identifier [Symbol]
