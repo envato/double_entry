@@ -20,12 +20,12 @@ describe DoubleEntry::MonthRange do
     end
 
     context "Given a start date of 3rd Dec 1982" do
-      subject(:reportable_months) { DoubleEntry::MonthRange.reportable_months(Time.new(1982, 12, 3)) }
+      subject(:reportable_months) { DoubleEntry::MonthRange.reportable_months(from: Time.new(1982, 12, 3)) }
 
       context "The date is 2nd Feb 1983" do
         before { Timecop.freeze(Time.new(1983, 2, 2)) }
         it { should eq [
-          DoubleEntry::MonthRange.new(year: 1982, month: 1),
+          DoubleEntry::MonthRange.new(year: 1982, month: 12),
           DoubleEntry::MonthRange.new(year: 1983, month: 1),
           DoubleEntry::MonthRange.new(year: 1983, month: 2),
         ] }

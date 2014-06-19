@@ -12,21 +12,17 @@ module DoubleEntry
         from_time(Time.now)
       end
 
-      def reportable_months
-        first = earliest_month
-        current = MonthRange.current
-        loop = first
+      def reportable_months(options = {})
+        first = options[:from] ? from_time(options[:from]) : earliest_month
         months = [first]
-
-        while loop != current
+        last = self.current
+        loop = first
+        while loop != last
           loop = loop.next
           months << loop
         end
-
         months
       end
-
-    private
 
       def earliest_month
         MonthRange.new(:year => 1970, :month => 1)
@@ -43,7 +39,7 @@ module DoubleEntry
         @start = month_start
         @finish = month_start.end_of_month
 
-        @start = earliest_month.start if options[:range_type] == :all_time
+        @start = MonthRange.earliest_month.start if options[:range_type] == :all_time
       end
     end
 
