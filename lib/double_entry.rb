@@ -57,7 +57,7 @@ module DoubleEntry
     #
     # @example Obtain the 'cash' account for a user
     #   DoubleEntry.account(:cash, scope: user)
-    # @param identifier [Symbol] The code identifying the desired account. As
+    # @param identifier [Symbol] The symbol identifying the desired account. As
     #   specified in the account configuration.
     # @option options :scope Limit the account to the given scope. As specified
     #   in the account configuration.
@@ -189,8 +189,8 @@ module DoubleEntry
     # Identify the scopes with the given account identifier holding at least
     # the provided minimum balance.
     #
-    # @param minimum_balance [Money] Minimum account balance to be included in
-    #   the result set.
+    # @param minimum_balance [Money] Minimum account balance a scope must have
+    #   to be included in the result set.
     # @param account_identifier [Symbol]
     # @return [Array<Fixnum>] Scopes
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
