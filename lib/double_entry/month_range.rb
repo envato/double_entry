@@ -12,6 +12,9 @@ module DoubleEntry
         from_time(Time.now)
       end
 
+      # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
+      #   first in the sequence of MonthRanges.
+      # @return [Array<MonthRange>]
       def reportable_months(options = {})
         month = options[:from] ? from_time(options[:from]) : earliest_month
         last = self.current
@@ -76,6 +79,9 @@ module DoubleEntry
       (self.month == other.month) and (self.year == other.year)
     end
 
+    # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
+    #   first in the sequence of MonthRanges.
+    # @return [Array<MonthRange>]
     def reportable_months(options = {})
       MonthRange.reportable_months(options)
     end
