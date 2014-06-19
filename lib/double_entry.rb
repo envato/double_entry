@@ -52,58 +52,69 @@ module DoubleEntry
   class << self
     attr_accessor :accounts, :transfers
 
-    # Get an Account::Instance for a particular account.
+    # Get the particular account instance with the provided identifier and
+    # scope.
     #
-    # For example, the following will return the cash account for a user:
+    # @example Obtain the 'cash' account for a user
+    #   DoubleEntry.account(:cash, scope: user)
+    # @param identifier [Symbol] The symbol identifying the desired account. As
+    #   specified in the account configuration.
+    # @option options :scope Limit the account to the given scope. As specified
+    #   in the account configuration.
+    # @return [DoubleEntry::Account::Instance]
+    # @raise [DoubleEntry::UnknownAccount] The described account has not been
+    #   configured. It is unknown.
     #
-    #     DoubleEntry.account(:cash, :scope => user)
-    #
-    def account(identifier, args = {})
-      match = @accounts.detect do |a|
-        a.identifier == identifier and (args[:scope] ? a.scoped? : !a.scoped?)
+    def account(identifier, options = {})
+      account = @accounts.detect do |current_account|
+        current_account.identifier == identifier and
+          (options[:scope] ? current_account.scoped? : !current_account.scoped?)
       end
 
-      if match
-        DoubleEntry::Account::Instance.new(:account => match, :scope => args[:scope])
+      if account
+        DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
       else
-        raise UnknownAccount.new("account: #{identifier} scope: #{args[:scope]}")
+        raise UnknownAccount.new("account: #{identifier} scope: #{options[:scope]}")
       end
     end
 
     # Transfer money from one account to another.
     #
-    # For example, the following will transfer $20 from a user's checking
-    # account to their savings account:
-    #
-    #     checking_account = DoubleEntry.account(:checking, :scope => user)
-    #     savings_account  = DoubleEntry.account(:savings,  :scope => user)
-    #     DoubleEntry.transfer(
-    #       Money.new(20_00),
-    #       :from => checking_account,
-    #       :to   => savings_account,
-    #       :code => :save,
-    #     )
-    #
-    # Only certain transfers are allowed. Define which are allowed in your
+    # Only certain transfers are allowed. Define legal transfers in your
     # configuration file.
-    #
-    # The :detail option lets you pass in an arbitrary ActiveRecord object that
-    # will be stored (via a polymorphic association) with the lines table
-    # entries for the transfer.
-    #
-    # The :meta option lets you pass in metadata (as a string) that you want
-    # stored with the transaction.
     #
     # If you're doing more than one transfer in one hit, or you're doing other
     # database operations along with your transfer, you'll need to use the
     # lock_accounts method.
-    def transfer(amount, args = {})
+    #
+    # @example Transfer $20 from a user's checking to savings account
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
+    #   savings_account  = DoubleEntry.account(:savings,  scope: user)
+    #   DoubleEntry.transfer(
+    #     Money.new(20_00),
+    #     from: checking_account,
+    #     to:   savings_account,
+    #     code: :save,
+    #   )
+    # @param amount [Money] The quantity of money to transfer from one account
+    #   to the other.
+    # @option options :from [DoubleEntry::Account::Instance] Transfer money out
+    #   of this account.
+    # @option options :to [DoubleEntry::Account::Instance] Transfer money into
+    #   this account.
+    # @option options :code [Symbol] Your application specific code for this
+    #   type of transfer. As specified in the transfer configuration.
+    # @option options :meta [String] Metadata to associate with this transfer.
+    # @option options :detail [ActiveRecord::Base] ActiveRecord model
+    #   associated (via a polymorphic association) with the transfer.
+    # @raise [DoubleEntry::TransferIsNegative] The amount is less than zero.
+    # @raise [DoubleEntry::TransferNotAllowed] A transfer between these
+    #   accounts with the provided code is not allowed. Check configuration.
+    #
+    def transfer(amount, options = {})
       raise TransferIsNegative if amount < Money.new(0)
-
-      from, to, code, meta, detail = args[:from], args[:to], args[:code], args[:meta], args[:detail]
-
+      from, to, code, meta, detail = options[:from], options[:to], options[:code], options[:meta], options[:detail]
       transfer = @transfers.find(from, to, code)
-
       if transfer
         transfer.process!(amount, from, to, code, meta, detail)
       else
@@ -112,12 +123,21 @@ module DoubleEntry
     end
 
     # Get the current balance of an account, as a Money object.
-    def balance(account, args = {})
-      scope_arg = args[:scope] ? args[:scope].id.to_s : nil
+    #
+    # @param account [DoubleEntry::Account:Instance, Symbol]
+    # @option options :scope [Symbol]
+    # @option options :from [Time]
+    # @option options :to [Time]
+    # @option options :at [Time]
+    # @option options :code [Symbol]
+    # @option options :codes [Array<Symbol>]
+    # @return [Money]
+    def balance(account, options = {})
+      scope_arg = options[:scope] ? options[:scope].id.to_s : nil
       scope = (account.is_a?(Symbol) ? scope_arg : account.scope_identity)
       account = (account.is_a?(Symbol) ? account : account.identifier).to_s
-      from, to, at = args[:from], args[:to], args[:at]
-      code, codes = args[:code], args[:codes]
+      from, to, at = options[:from], options[:to], options[:at]
+      code, codes = options[:code], options[:codes]
 
       # time based scoping
       conditions = if at
@@ -167,6 +187,16 @@ module DoubleEntry
 
     # Identify the scopes with the given account identifier holding at least
     # the provided minimum balance.
+    #
+    # @example Find users with at lease $1,000,000 in their savings accounts
+    #   DoubleEntry.scopes_with_minimum_balance_for_account(
+    #     Money.new(1_000_000_00),
+    #     :savings
+    #   ) # might return user ids: [ 1423, 12232, 34729 ]
+    # @param minimum_balance [Money] Minimum account balance a scope must have
+    #   to be included in the result set.
+    # @param account_identifier [Symbol]
+    # @return [Array<Fixnum>] Scopes
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
         SELECT scope
@@ -176,19 +206,27 @@ module DoubleEntry
       SQL
     end
 
-
     # Lock accounts in preparation for transfers.
     #
     # This creates a transaction, and uses database-level locking to ensure
     # that we're the only ones who can transfer to or from the given accounts
     # for the duration of the transaction.
     #
-    # The transaction must be the outermost database transaction, or this will
-    # raise an DoubleEntry::Locking::LockMustBeOutermostTransaction exception.
+    # @example Lock the savings and checking accounts for a user
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
+    #   savings_account  = DoubleEntry.account(:savings,  scope: user)
+    #   DoubleEntry.lock_accounts(checking_account, savings_account) do
+    #     # ...
+    #   end
+    # @yield Hold the locks while the provided block is processed.
+    # @raise [DoubleEntry::Locking::LockMustBeOutermostTransaction]
+    #   The transaction must be the outermost database transaction
+    #
     def lock_accounts(*accounts, &block)
       DoubleEntry::Locking.lock_accounts(*accounts, &block)
     end
 
+    # @api private
     def describe(line)
       # make sure we have a test for this refactoring, the test
       # conditions are: i forget... but it's important!
@@ -207,10 +245,11 @@ module DoubleEntry
       DoubleEntry::AggregateArray.new(function, account, code, options)
     end
 
-    # Returns true if all the amounts for an account add up to the final balance,
-    # which they always should.
-    #
     # This is used by the concurrency test script.
+    #
+    # @api private
+    # @return [Boolean] true if all the amounts for an account add up to the final balance,
+    #   which they always should.
     def reconciled?(account)
       scoped_lines = Line.where(:account => "#{account.identifier}", :scope => "#{account.scope}")
       sum_of_amounts = scoped_lines.sum(:amount)
