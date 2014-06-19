@@ -103,7 +103,7 @@ module DoubleEntry
     # @option options :to [DoubleEntry::Account::Instance] Transfer money into
     #   this account.
     # @option options :code [Symbol] Your application specific code for this
-    #   type of transfer.
+    #   type of transfer. As specified in the transfer configuration.
     # @option options :meta [String] Metadata to associate with this transfer.
     # @option options :detail [ActiveRecord::Base] ActiveRecord model
     #   associated (via a polymorphic association) with the transfer.
