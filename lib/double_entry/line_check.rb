@@ -32,9 +32,9 @@ module DoubleEntry
 
       unless active_accounts.empty?
         LineCheck.create!(
-          :errors_found => !incorrect_accounts.empty?,
-          :log => log,
-          :last_line_id => current_line_id
+          :errors_found => incorrect_accounts.any?,
+          :last_line_id => current_line_id,
+          :log          => log,
         )
       end
     end
