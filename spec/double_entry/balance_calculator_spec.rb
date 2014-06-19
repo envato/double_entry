@@ -43,20 +43,20 @@ describe DoubleEntry::BalanceCalculator do
       context 'when the given account is a symbol' do
         let(:account) { :account }
 
-        it 'scopes lines fetched by the account symbol' do
+        it 'scopes the lines summed by the account symbol' do
           expect(DoubleEntry::Line).to have_received(:where).with(:account => 'account')
         end
 
         context 'with a scopeable entity provided' do
           let(:scope) { double(:id => 'scope') }
 
-          it 'scopes the lines fetched by the scope of the scopeable entity...scope' do
+          it 'scopes the lines summed by the scope of the scopeable entity...scope' do
             expect(relation).to have_received(:where).with(:scope => 'scope')
           end
         end
 
         context 'with no scope provided' do
-          it 'does not scope the lines fetched by the given scope' do
+          it 'does not scope the lines summed by the given scope' do
             expect(relation).to_not have_received(:where).with(:scope => 'scope')
           end
         end
@@ -73,7 +73,7 @@ describe DoubleEntry::BalanceCalculator do
           )
         end
 
-        it 'scopes the lines fetched by the accounts identifier and its scope identity' do
+        it 'scopes the lines summed by the accounts identifier and its scope identity' do
           expect(DoubleEntry::Line).to have_received(:where).with(:account => 'account_identity')
           expect(relation).to have_received(:where).with(:scope => 'account_scope_identity')
         end
@@ -84,7 +84,7 @@ describe DoubleEntry::BalanceCalculator do
       context 'when we want to sum the lines before a given created_at date' do
         let(:at) { Time.parse('2014-06-19 15:09:18 +1000') }
 
-        it 'scopes the lines fetched to times before (or at) the given time' do
+        it 'scopes the lines summed to times before (or at) the given time' do
           expect(relation).to have_received(:where).with(
             'created_at <= ?', Time.parse('2014-06-19 15:09:18 +1000')
           )
@@ -94,7 +94,7 @@ describe DoubleEntry::BalanceCalculator do
           let(:from) { Time.parse('2014-06-19 10:09:18 +1000') }
           let(:to) { Time.parse('2014-06-19 20:09:18 +1000') }
 
-          it 'ignores the time range' do
+          it 'ignores the time range when summing the lines' do
             expect(relation).to_not have_received(:where).with(
               :created_at, Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
             )
@@ -106,7 +106,7 @@ describe DoubleEntry::BalanceCalculator do
         let(:from) { Time.parse('2014-06-19 10:09:18 +1000') }
         let(:to) { Time.parse('2014-06-19 20:09:18 +1000') }
 
-        it 'scopes the lines fetched to times within the given range' do
+        it 'scopes the lines summed to times within the given range' do
           expect(relation).to have_received(:where).with(
             :created_at, Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
           )
