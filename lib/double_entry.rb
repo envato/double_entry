@@ -243,21 +243,22 @@ module DoubleEntry
     # The transfers the calculation is performed on can be limited by time range,
     # account scope and provided custom filters.
     #
-    # @example Find the sum of all :save transfers under $10 for all :checking
+    # @example Find the sum for all :save transfers under $10 in all :checking
     #   accounts in the current month.
-    #   range = DoubleEntry.range_from_time_for_period(Time.now, 'year')
+    #   range = DoubleEntry.range_from_time_for_period(Time.now, 'day')
     #   filter = where(:amount < Money.new(10_00))
     #   DoubleEntry.aggregate(:sum, :checking, :save, :range => range, :filter => filter)
     # @option function [Symbol] The function to perform on the set of transfers.
+    #   Valid functions are :sum, :count, and :average
     # @option account [Symbol] The symbol identifying the account to perform
     #   the aggregate calculation on. As specified in the account configuration.
     # @option code [Symbol] The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @option options :scope [Symbol] Limit the aggregation to accounts with
-    #   the given scope. As specified in the account configuration.
-    # @option options :range [DoubleEntry::TimeRange] Limit the calculation
-    #   to transfers in the given time range.
+    # @option options :scope [Symbol] Limit the calculation to only include accounts
+    #   with the given scope. As specified in the account configuration.
+    # @option options :range [DoubleEntry::TimeRange] Only include transfers
+    #   in the given time range in the calculation.
     # @option options :filter [block] A custom scope to apply before performing
     #   the aggregate calculation.
     # @return Returns a Money object for :sum and :average calculations, or an
@@ -265,7 +266,7 @@ module DoubleEntry
     # @raise [DoubleEntry::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate(function, account, transfer_code, options = {})
+    def aggregate(function, account, code, options = {})
       DoubleEntry::Aggregate.new(function, account, code, options).formatted_amount
     end
 
@@ -285,7 +286,6 @@ module DoubleEntry
       cached_balance = AccountBalance.find_by_account(account)[:balance]
       final_balance == sum_of_amounts && final_balance == cached_balance
     end
-
 
     # @api private
     def table_name_prefix
