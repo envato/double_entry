@@ -3,6 +3,36 @@ module DoubleEntry
   class MonthRange < TimeRange
     attr_reader :year, :month
 
+    class << self
+      def from_time(time)
+        MonthRange.new(:year => time.year, :month => time.month)
+      end
+
+      def current
+        from_time(Time.now)
+      end
+
+      def reportable_months
+        first = earliest_month
+        current = MonthRange.current
+        loop = first
+        months = [first]
+
+        while loop != current
+          loop = loop.next
+          months << loop
+        end
+
+        months
+      end
+
+    private
+
+      def earliest_month
+        MonthRange.new(:year => 1970, :month => 1)
+      end
+    end
+
     def initialize(options = {})
       super options
 
@@ -15,18 +45,6 @@ module DoubleEntry
 
         @start = earliest_month.start if options[:range_type] == :all_time
       end
-    end
-
-    def self.from_time(time)
-      MonthRange.new(:year => time.year, :month => time.month)
-    end
-
-    def self.current
-      from_time(Time.now)
-    end
-
-    def self.reportable_months
-      MonthRange.new.reportable_months
     end
 
     def previous
@@ -64,17 +82,7 @@ module DoubleEntry
     end
 
     def reportable_months
-      first = earliest_month
-      current = MonthRange.current
-      loop = first
-      months = [first]
-
-      while loop != current
-        loop = loop.next
-        months << loop
-      end
-
-      months
+      MonthRange.reportable_months
     end
 
     def all_time
@@ -84,12 +92,5 @@ module DoubleEntry
     def to_s
       start.strftime("%Y, %b")
     end
-
-  private
-
-    def earliest_month
-      MonthRange.new(:year => 1970, :month => 1)
-    end
-
   end
 end
