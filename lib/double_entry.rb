@@ -58,9 +58,9 @@ module DoubleEntry
     # @example Obtain the 'cash' account for a user
     #   DoubleEntry.account(:cash, scope: user)
     # @param identifier [Symbol] The code identifying the desired account. As
-    #   the account definition.
-    # @option options :scope Limit the account to the given scope. As the
-    #   account definition.
+    #   specified in the account configuration.
+    # @option options :scope Limit the account to the given scope. As specified
+    #   in the account configuration.
     # @return [DoubleEntry::Account::Instance]
     # @raise [DoubleEntry::UnknownAccount] The described account has not been
     #   configured. It is unknown.
@@ -99,12 +99,15 @@ module DoubleEntry
     #
     # @param amount [Money] The quantity of money to transfer from one account
     #   to the other.
-    # @option options :from [DoubleEntry::Account::Instance] Transfer money out of this account
-    # @option options :to [DoubleEntry::Account::Instance] Transfer money into this account
-    # @option options :code [Symbol] Your application specific code for this type of transfer.
-    # @option options :meta [String] Record metadata against this transfer.
-    # @option options :detail [ActiveRecord::Base] Record an ActiveRecord
-    #   object (via a polymorphic association) against the transfer.
+    # @option options :from [DoubleEntry::Account::Instance] Transfer money out
+    #   of this account.
+    # @option options :to [DoubleEntry::Account::Instance] Transfer money into
+    #   this account.
+    # @option options :code [Symbol] Your application specific code for this
+    #   type of transfer.
+    # @option options :meta [String] Metadata to associate with this transfer.
+    # @option options :detail [ActiveRecord::Base] ActiveRecord model
+    #   associated (via a polymorphic association) with the transfer.
     # @raise [DoubleEntry::TransferIsNegative] The amount is less than zero.
     # @raise [DoubleEntry::TransferNotAllowed] A transfer between these
     #   accounts with the provided code is not allowed. Check configuration.
