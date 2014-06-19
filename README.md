@@ -139,23 +139,27 @@ each user can have their own account of each type.
 
 This configuration also specifies that money can be transferred between the two accounts.
 
-    require 'double_entry'
+```ruby
+require 'double_entry'
 
-    DoubleEntry.accounts = DoubleEntry::Account::Set.new do
-      @user_scope = lambda do |user|
-        if user.is_a?(User)
-          user.id
-        end
-      end
-
-      double_entry/account(:identifier => :account_a, :scope_identifier => @user_scope, :positive_only => false)
-      double_entry/account(:identifier => :account_b, :scope_identifier => @user_scope)
+DoubleEntry.accounts = DoubleEntry::Account::Set.new.tap do |accounts|
+  user_scope = lambda do |user_identifier|
+    if user_identifier.is_a?(User)
+      user_identifier.id
+    else
+      user_identifier
     end
+  end
 
-    DoubleEntry.transfers = DoubleEntry::Transfer::Set.new do
-      double_entry/transfer(:from => :account_a, :to => :account_b, :code => :deposit)
-      double_entry/transfer(:from => :account_b, :to => :account_a, :code => :withdrawal)
-    end
+  accounts << DoubleEntry::Account.new(identifier: :savings,  scope_identifier: user_scope, positive_only: true)
+  accounts << DoubleEntry::Account.new(identifier: :checking, scope_identifier: user_scope)
+end
+
+DoubleEntry.transfers = DoubleEntry::Transfer::Set.new.tap do |transfers|
+  transfers << DoubleEntry::Transfer.new(from: :checking, to: :savings,  code: :deposit)
+  transfers << DoubleEntry::Transfer.new(from: :savings,  to: :checking, code: :withdraw)
+end
+```
 
 ## Jackhammer
 
