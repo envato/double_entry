@@ -48,6 +48,7 @@ module DoubleEntry
   class DuplicateTransfer < RuntimeError; end
   class UserAccountNotLocked < RuntimeError; end
   class AccountWouldBeSentNegative < RuntimeError; end
+  class AggregateFunctionNotSupported < RuntimeError; end
 
   class << self
     attr_accessor :accounts, :transfers
@@ -102,7 +103,7 @@ module DoubleEntry
     #   of this account.
     # @option options :to [DoubleEntry::Account::Instance] Transfer money into
     #   this account.
-    # @option options :code [Symbol] Your application specific code for this
+    # @option options :code [Symbol] The application specific code for this
     #   type of transfer. As specified in the transfer configuration.
     # @option options :meta [String] Metadata to associate with this transfer.
     # @option options :detail [ActiveRecord::Base] ActiveRecord model
@@ -237,7 +238,34 @@ module DoubleEntry
       end.description.call(line)
     end
 
-    def aggregate(function, account, code, options = {})
+    # Perform an aggregate calculation on the set of transfers for an account.
+    #
+    # The transfers the calculation is performed on can be limited by time range,
+    # account scope and provided custom filters.
+    #
+    # @example Find the sum of all :save transfers under $10 for all :checking
+    #   accounts in the current month.
+    #   range = DoubleEntry.range_from_time_for_period(Time.now, 'year')
+    #   filter = where(:amount < Money.new(10_00))
+    #   DoubleEntry.aggregate(:sum, :checking, :save, :range => range, :filter => filter)
+    # @option function [Symbol] The function to perform on the set of transfers.
+    # @option account [Symbol] The symbol identifying the account to perform
+    #   the aggregate calculation on. As specified in the account configuration.
+    # @option code [Symbol] The application specific code for the type of
+    #   transfer to perform an aggregate calculation on. As specified in the
+    #   transfer configuration.
+    # @option options :scope [Symbol] Limit the aggregation to accounts with
+    #   the given scope. As specified in the account configuration.
+    # @option options :range [DoubleEntry::TimeRange] Limit the calculation
+    #   to transfers in the given time range.
+    # @option options :filter [block] A custom scope to apply before performing
+    #   the aggregate calculation.
+    # @return Returns a Money object for :sum and :average calculations, or an
+    #   integer for :count calculations.
+    # @raise [DoubleEntry::AggregateFunctionNotSupported] The provided function
+    #   is not supported.
+    #
+    def aggregate(function, account, transfer_code, options = {})
       DoubleEntry::Aggregate.new(function, account, code, options).formatted_amount
     end
 
@@ -258,6 +286,8 @@ module DoubleEntry
       final_balance == sum_of_amounts && final_balance == cached_balance
     end
 
+
+    # @api private
     def table_name_prefix
       'double_entry_'
     end
