@@ -16,7 +16,6 @@ module DoubleEntry
       @codes = codes
     end
 
-
     def self.calculate(account, args = {})
       codes = (args[:codes].to_a << args[:code]).compact
       calculator = BalanceCalculator.new(account, args[:scope], args[:from], args[:to], args[:at], codes)
