@@ -108,7 +108,7 @@ describe DoubleEntry::BalanceCalculator do
 
         it 'scopes the lines summed to times within the given range' do
           expect(relation).to have_received(:where).with(
-            :created_at, Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
+            :created_at => Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
           )
         end
       end

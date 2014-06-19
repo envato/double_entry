@@ -26,7 +26,7 @@ module DoubleEntry
     def calculate
       lines = Line.where(:account => account)
       lines = lines.where('created_at <= ?', at) if scope_by_created_at_before?
-      lines = lines.where(:created_at, from..to) if scope_by_created_at_between?
+      lines = lines.where(:created_at => from..to) if scope_by_created_at_between?
       lines = lines.where(:code => codes) if scope_by_code?
       lines = lines.where(:scope => scope) if scope_by_scope?
 
