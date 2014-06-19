@@ -13,6 +13,7 @@ module DoubleEntry
 
       @from = from
       @to = to
+      @at = at
       @codes = codes
     end
 
