@@ -88,7 +88,7 @@ module DoubleEntry
   private
 
     def earliest_month
-      MonthRange.new(:year => 1970, :month => 1)
+      MonthRange.from_time(DoubleEntry::Reporting.configuration.start_of_business)
     end
 
   end

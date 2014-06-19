@@ -45,7 +45,7 @@ module DoubleEntry
     end
 
     def reportable_weeks
-      first   = self.earliest_week
+      first   = earliest_week
       current = WeekRange.current
       loop  = first
       weeks = [first]
@@ -75,7 +75,7 @@ module DoubleEntry
   private
 
     def earliest_week
-      WeekRange.new(:year => 1970, :week => 1)
+      WeekRange.from_time(DoubleEntry::Reporting.configuration.start_of_business)
     end
 
     def week_and_year_to_time(week, year)
