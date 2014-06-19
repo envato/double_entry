@@ -5,6 +5,43 @@ module DoubleEntry
   #
   # So, for example, week 1 of 2011 starts on 27 Dec 2010.
   class WeekRange < TimeRange
+
+    class << self
+
+      def from_time(time)
+        time = time.to_time if time.is_a? Date
+        year = time.end_of_week.year
+        week = ((time.beginning_of_week - start_of_year(year)) / 1.week).floor + 1
+        new(:year => year, :week => week)
+      end
+
+      def current
+        from_time(Time.now)
+      end
+
+      def reportable_weeks(options = {})
+        week = options[:from] ? from_time(options[:from]) : earliest_week
+        last_in_sequence = self.current
+        [week].tap do |weeks|
+          while week != last_in_sequence
+            week = week.next
+            weeks << week
+          end
+        end
+      end
+
+    private
+
+      def start_of_year(year)
+        Time.local(year, 1, 1).beginning_of_week
+      end
+
+      def earliest_week
+        new(:year => 1970, :week => 1)
+      end
+
+    end
+
     attr_reader :year, :week
 
     def initialize(options = {})
@@ -20,52 +57,20 @@ module DoubleEntry
       end
     end
 
-    def self.from_time(time)
-      WeekRange.new.from_time(time)
-    end
-
-    def self.current
-      from_time(Time.now)
-    end
-
-    def self.reportable_weeks
-      WeekRange.new.reportable_weeks
-    end
-
     def previous
-      WeekRange.from_time(@start - 1.week)
+      from_time(@start - 1.week)
     end
 
     def next
-      WeekRange.from_time(@start + 1.week)
+      from_time(@start + 1.week)
     end
 
     def ==(other)
-      (self.week == other.week) and (self.year == other.year)
-    end
-
-    def reportable_weeks
-      first   = self.earliest_week
-      current = WeekRange.current
-      loop  = first
-      weeks = [first]
-
-      while loop != current
-        loop = loop.next
-        weeks << loop
-      end
-
-      weeks
-    end
-
-    def from_time(time)
-      year = time.end_of_week.year
-      week = ((time.beginning_of_week - start_of_year(year)) / 1.week).floor + 1
-      WeekRange.new(:year => year, :week => week)
+      (self.week == other.week) && (self.year == other.year)
     end
 
     def all_time
-      WeekRange.new(:year => year, :week => week, :range_type => :all_time)
+      self.class.new(:year => year, :week => week, :range_type => :all_time)
     end
 
     def to_s
@@ -74,17 +79,16 @@ module DoubleEntry
 
   private
 
+    def from_time(time)
+      self.class.from_time(time)
+    end
+
     def earliest_week
-      WeekRange.new(:year => 1970, :week => 1)
+      self.class.send(:earliest_week)
     end
 
     def week_and_year_to_time(week, year)
-      start_of_year(year) + (week-1).weeks
+      self.class.send(:start_of_year, year) + (week - 1).weeks
     end
-
-    def start_of_year(year)
-      Time.local(year, 1, 1).beginning_of_week
-    end
-
   end
 end
