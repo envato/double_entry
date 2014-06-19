@@ -170,7 +170,7 @@ module DoubleEntry
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
         SELECT scope
-          FROM #{AccountBalance.quoted_table_name}
+          FROM #{AccountBalance.table_name}
          WHERE account = ?
            AND balance >= ?
       SQL

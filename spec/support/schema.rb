@@ -61,11 +61,11 @@ ActiveRecord::Schema.define do
   end
 
   # test table only
-  create_table "double_entry_users", :force => true do |t|
+  create_table "users", :force => true do |t|
     t.string   "username"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "double_entry_users", ["username"], :name => "index_users_on_username", :unique => true
+  add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 end

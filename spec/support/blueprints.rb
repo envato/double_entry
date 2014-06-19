@@ -24,7 +24,6 @@ class UserBlueprint < Machinist::ActiveRecord::Blueprint
 end
 
 class User < ActiveRecord::Base
-  self.table_name = "double_entry_users"
   def self.blueprint_class
     UserBlueprint
   end
