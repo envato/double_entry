@@ -170,7 +170,7 @@ module DoubleEntry
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
         SELECT scope
-          FROM account_balances
+          FROM #{AccountBalance.table_name}
          WHERE account = ?
            AND balance >= ?
       SQL
@@ -217,6 +217,10 @@ module DoubleEntry
       final_balance  = scoped_lines.order(:id).last[:balance]
       cached_balance = AccountBalance.find_by_account(account)[:balance]
       final_balance == sum_of_amounts && final_balance == cached_balance
+    end
+
+    def table_name_prefix
+      'double_entry_'
     end
 
   private
