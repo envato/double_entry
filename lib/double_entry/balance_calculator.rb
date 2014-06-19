@@ -49,7 +49,7 @@ module DoubleEntry
     end
 
     def find_by_created_at_between?
-      !!(from && to) && !find_by_created_at_before?
+      !!(from && to && !find_by_created_at_before?)
     end
 
     def find_by_code?
@@ -69,7 +69,7 @@ module DoubleEntry
       # on the query to fail in some circumstances, resulting in an old balance being
       # returned. This was biting us intermittently in spec runs.
       # See http://bugs.mysql.com/bug.php?id=51431
-      Line.connection.adapter_name.match /mysql/i
+      find_by_scope? && Line.connection.adapter_name.match(/mysql/i)
     end
 
     def lines_table_name
