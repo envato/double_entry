@@ -80,5 +80,9 @@ describe DoubleEntry::LineCheck do
       end
     end
 
+    it "has a table name prefixed with double_entry_" do
+      expect(DoubleEntry::LineCheck.table_name).to eq "double_entry_line_checks"
+    end
+
   end
 end

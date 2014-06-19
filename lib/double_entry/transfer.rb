@@ -57,7 +57,6 @@ module DoubleEntry
         credit.detail,  debit.detail  = detail, detail
         credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
 
-        # FIXME: I don't think we use this.
         credit.partner_account, debit.partner_account = to, from
 
         credit.save!

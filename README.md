@@ -23,12 +23,9 @@ Ruby Versions: 1.9.3, 2.0.0, 2.1.2
 
 Rails Versions: Rails 3.2.x, 4.0.x, 4.1.x
 
---
-
 **Databases Supported:**
  * MySQL
  * PostgreSQL
-
 
 ## Installation
 
@@ -171,7 +168,7 @@ You can also tell out it to flush out the account balances table at regular
 intervals, to validate that new account balances records get created with the
 correct balances from the lines table.
 
-    ./script/jack_hammer -t 20                                                                                                                                    finance3/git/master
+    ./script/jack_hammer -t 20
     Cleaning out the database...
     Setting up 5 accounts...
     Spawning 20 processes...
