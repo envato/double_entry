@@ -43,9 +43,8 @@ module DoubleEntry
       end
 
       def earliest_week
-        new(:year => 1970, :week => 1)
+        from_time(DoubleEntry::Reporting.configuration.start_of_business)
       end
-
     end
 
     attr_reader :year, :week

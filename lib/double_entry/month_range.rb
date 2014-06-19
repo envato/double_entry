@@ -29,7 +29,7 @@ module DoubleEntry
       end
 
       def earliest_month
-        new(:year => 1970, :month => 1)
+        from_time(DoubleEntry::Reporting.configuration.start_of_business)
       end
     end
 

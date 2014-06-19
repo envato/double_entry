@@ -36,6 +36,7 @@ describe DoubleEntry::WeekRange do
 
     context "The date is 1st Feb 1970" do
       before { Timecop.freeze(Time.new(1970, 2, 1)) }
+
       it { should eq [
         DoubleEntry::WeekRange.new(year: 1970, week: 1),
         DoubleEntry::WeekRange.new(year: 1970, week: 2),
@@ -43,10 +44,24 @@ describe DoubleEntry::WeekRange do
         DoubleEntry::WeekRange.new(year: 1970, week: 4),
         DoubleEntry::WeekRange.new(year: 1970, week: 5),
       ] }
+
+      context "My business started on 25th Jan 1970" do
+        before do
+          DoubleEntry::Reporting.configure do |config|
+            config.start_of_business = Time.new(1970, 1, 25)
+          end
+        end
+
+        it { should eq [
+          DoubleEntry::WeekRange.new(year: 1970, week: 4),
+          DoubleEntry::WeekRange.new(year: 1970, week: 5),
+        ] }
+      end
     end
 
     context "The date is 1st Jan 1970" do
       before { Timecop.freeze(Time.new(1970, 1, 1)) }
+
       it { should eq [ DoubleEntry::WeekRange.new(year: 1970, week: 1) ] }
     end
 
@@ -70,5 +85,4 @@ describe DoubleEntry::WeekRange do
       end
     end
   end
-
 end
