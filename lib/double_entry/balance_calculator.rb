@@ -24,42 +24,15 @@ module DoubleEntry
     end
 
     def calculate
-      # time based scoping
-      conditions = if at
-        # lookup method could use running balance, with a order by limit one clause
-        # (unless it's a reporting call, i.e. account == symbol and not an instance)
-        ['account = ? and created_at <= ?', account, at] # index this??
-      elsif from and to
-        ['account = ? and created_at >= ? and created_at <= ?', account, from, to] # index this??
-      else
-        # lookup method could use running balance, with a order by limit one clause
-        # (unless it's a reporting call, i.e. account == symbol and not an instance)
-        ['account = ?', account]
-      end
+      lines = Line.where(:account => account)
+      lines = lines.where('created_at <= ?', at) if scope_by_created_at_before?
+      lines = lines.where('created_at >= ? and created_at <= ?', from, to) if scope_by_created_at_between?
+      lines = lines.where(:code => codes) if scope_by_code?
+      lines = lines.where(:scope => scope) if scope_by_scope?
 
-      # code based scoping
-      if codes.present?
-        conditions[0] << ' and code in (?)' # index this??
-        conditions << codes.collect { |c| c.to_s }
-      end
-
-      # account based scoping
-      if scope
-        conditions[0] << ' and scope = ?'
-        conditions << scope
-
-        # This is to work around a MySQL 5.1 query optimiser bug that causes the ORDER BY
-        # on the query to fail in some circumstances, resulting in an old balance being
-        # returned. This was biting us intermittently in spec runs.
-        # See http://bugs.mysql.com/bug.php?id=51431
-        if Line.connection.adapter_name.match /mysql/i
-          use_index = "USE INDEX (lines_scope_account_id_idx)"
-        end
-      end
-
-      if (from and to) or (codes)
+      if lookup_via_created_at_range_or_code?
         # from and to or code lookups have to be done via sum
-        Money.new(Line.where(conditions).sum(:amount))
+        Money.new(lines.sum(:amount))
       else
         # all other lookups can be performed with running balances
         line = Line.select("id, balance").from("#{Line.quoted_table_name} #{use_index}").where(conditions).order('id desc').first
@@ -70,6 +43,36 @@ module DoubleEntry
   private
 
     attr_reader :account, :scope, :from, :to, :at, :codes
+
+    def scope_by_created_at_before?
+      !!at
+    end
+
+    def scope_by_created_at_between?
+      !!(from && to)
+    end
+
+    def scope_by_code?
+      codes.present?
+    end
+
+    def scope_by_scope?
+      !!scope
+    end
+
+    def lookup_via_created_at_range_or_code?
+      (from && to) || codes
+    end
+
+    def use_index?
+      # This is to work around a MySQL 5.1 query optimiser bug that causes the ORDER BY
+      # on the query to fail in some circumstances, resulting in an old balance being
+      # returned. This was biting us intermittently in spec runs.
+      # See http://bugs.mysql.com/bug.php?id=51431
+      Line.connection.adapter_name.match /mysql/i
+
+      #"USE INDEX (lines_scope_account_id_idx)"
+    end
 
   end
 end
