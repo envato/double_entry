@@ -201,8 +201,16 @@ module DoubleEntry
     # that we're the only ones who can transfer to or from the given accounts
     # for the duration of the transaction.
     #
-    # The transaction must be the outermost database transaction, or this will
-    # raise an DoubleEntry::Locking::LockMustBeOutermostTransaction exception.
+    # @example Lock the savings and checking account for a user
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
+    #   savings_account  = DoubleEntry.account(:savings,  scope: user)
+    #   DoubleEntry.lock_accounts(checking_account, savings_account) do
+    #     # ...
+    #   end
+    # @yield Hold the locks while the provided block is processed.
+    # @raise [DoubleEntry::Locking::LockMustBeOutermostTransaction]
+    #   The transaction must be the outermost database transaction
+    #
     def lock_accounts(*accounts, &block)
       DoubleEntry::Locking.lock_accounts(*accounts, &block)
     end
