@@ -185,6 +185,11 @@ module DoubleEntry
 
     # Identify the scopes with the given account identifier holding at least
     # the provided minimum balance.
+    #
+    # @param minimum_balance [Money] Minimum account balance to be included in
+    #   the result set.
+    # @param account_identifier [Symbol]
+    # @return [Array<Fixnum>] Scopes
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
         SELECT scope
@@ -193,7 +198,6 @@ module DoubleEntry
            AND balance >= ?
       SQL
     end
-
 
     # Lock accounts in preparation for transfers.
     #
@@ -233,7 +237,7 @@ module DoubleEntry
       DoubleEntry::AggregateArray.new(function, account, code, options)
     end
 
-    # Returns true if all the amounts for an account add up to the final balance,
+    # @return [Boolean] true if all the amounts for an account add up to the final balance,
     # which they always should.
     #
     # This is used by the concurrency test script.
