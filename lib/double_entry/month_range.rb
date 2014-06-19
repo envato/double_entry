@@ -5,7 +5,7 @@ module DoubleEntry
 
     class << self
       def from_time(time)
-        MonthRange.new(:year => time.year, :month => time.month)
+        new(:year => time.year, :month => time.month)
       end
 
       def current
@@ -30,7 +30,7 @@ module DoubleEntry
       end
 
       def earliest_month
-        MonthRange.new(:year => 1970, :month => 1)
+        new(:year => 1970, :month => 1)
       end
     end
 
