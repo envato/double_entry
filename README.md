@@ -156,8 +156,8 @@ DoubleEntry.accounts = DoubleEntry::Account::Set.new.tap do |accounts|
 end
 
 DoubleEntry.transfers = DoubleEntry::Transfer::Set.new.tap do |transfers|
-  transfers << DoubleEntry::Transfer.new(:from => :checking, :to => :savings, :code => :deposit)
-  transfers << DoubleEntry::Transfer.new(:from => :savings, :to => :checking, :code => :withdraw)
+  transfers << DoubleEntry::Transfer.new(from: :checking, to: :savings,  code: :deposit)
+  transfers << DoubleEntry::Transfer.new(from: :savings,  to: :checking, code: :withdraw)
 end
 ```
 
