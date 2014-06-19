@@ -3,8 +3,6 @@ require "spec_helper"
 describe DoubleEntry::Reporting do
 
   describe "::configure" do
-    after { DoubleEntry::Reporting.instance_variable_set(:@configuration, nil) }
-
     describe "start_of_business" do
       subject(:start_of_business) { DoubleEntry::Reporting.configuration.start_of_business }
 
