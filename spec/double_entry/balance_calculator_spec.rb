@@ -113,5 +113,19 @@ describe DoubleEntry::BalanceCalculator do
         end
       end
     end
+
+    context 'when a list of codes is provided' do
+      let(:codes) { ['code1', 'code2'] }
+
+      it 'scopes the lines summed by the given codes' do
+        expect(relation).to have_received(:where).with(:code => ['code1', 'code2'])
+      end
+    end
+
+    context 'when no codes are provided' do
+      it 'does not scope the lines summed by any code' do
+        expect(relation).to_not have_received(:where).with(:code => anything)
+      end
+    end
   end
 end
