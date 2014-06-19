@@ -7,7 +7,7 @@ require 'generators/double_entry/install/install_generator'
 describe DoubleEntry::Generators::InstallGenerator do
   include GeneratorSpec::TestCase
 
-  destination File.expand_path("/tmp", __FILE__)
+  destination File.expand_path("../../../../../tmp", __FILE__)
 
   before do
     prepare_destination
