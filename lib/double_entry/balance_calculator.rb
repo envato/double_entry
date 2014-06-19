@@ -2,10 +2,10 @@
 module DoubleEntry
   class BalanceCalculator
 
-    def initialize(accout, scope, from, to, at, codes)
+    def initialize(account, scope, from, to, at, codes)
       if account.is_a? Symbol
         @account = account.to_s
-        @scope = args[:scope] ? args[:scope].id.to_s : nil
+        @scope = scope ? scope.id.to_s : nil
       else
         @account = account.identifier.to_s
         @scope = account.scope_identity
@@ -18,7 +18,7 @@ module DoubleEntry
 
 
     def self.calculate(account, args = {})
-      codes = [ args[:code] ] << args[:codes]
+      codes = (args[:codes].to_a << args[:code]).compact
       calculator = BalanceCalculator.new(account, args[:scope], args[:from], args[:to], args[:at], codes)
       calculator.calculate
     end
@@ -38,10 +38,7 @@ module DoubleEntry
       end
 
       # code based scoping
-      if code
-        conditions[0] << ' and code = ?' # index this??
-        conditions << code.to_s
-      elsif codes
+      if codes.present?
         conditions[0] << ' and code in (?)' # index this??
         conditions << codes.collect { |c| c.to_s }
       end
@@ -60,7 +57,7 @@ module DoubleEntry
         end
       end
 
-      if (from and to) or (code or codes)
+      if (from and to) or (codes)
         # from and to or code lookups have to be done via sum
         Money.new(Line.where(conditions).sum(:amount))
       else
@@ -72,7 +69,7 @@ module DoubleEntry
 
   private
 
-    attr_reader :account, :scope, :from, :to, :at
+    attr_reader :account, :scope, :from, :to, :at, :codes
 
   end
 end
