@@ -6,8 +6,8 @@ require 'double_entry/version'
 Gem::Specification.new do |gem|
   gem.name          = "double_entry"
   gem.version       = DoubleEntry::VERSION
-  gem.authors       = ["Anthony Sellitti", "Orien Madgwick", "Keith Pitt", "Martin Jagusch", "Martin Spickermann", "Mark Turnley", "Pete Yandall", "Stephanie Staub"]
-  gem.email         = ["anthony.sellitti@envato.com", "_@orien.io", "me@keithpitt.com", "_@mj.io", "spickemann@gmail.com", "mark@envato.com", "pete@envato.com", "stephanie.staub@envato.com"]
+  gem.authors       = ["Anthony Sellitti", "Keith Pitt", "Martin Jagusch", "Martin Spickermann", "Mark Turnley", "Orien Madgwick", "Pete Yandall", "Stephanie Staub"]
+  gem.email         = ["anthony.sellitti@envato.com", "me@keithpitt.com", "_@mj.io", "spickemann@gmail.com", "mark@envato.com", "_@orien.io", "pete@envato.com", "stephanie.staub@envato.com"]
   # gem.description   = %q{}
   gem.summary       = "Tools to build your double entry financial ledger"
   gem.homepage      = "https://github.com/envato/double_entry"
