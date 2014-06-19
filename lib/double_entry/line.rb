@@ -16,32 +16,46 @@ module DoubleEntry
   #
   # * **lines_scope_account_id_idx**
   #
+  #     ```sql
   #     ADD INDEX `lines_scope_account_id_idx` (scope, account, id)
+  #     ```
   #
   #   This is the important one. It's used primarily for querying the current
   #   balance of an account. eg:
   #
+  #     ```sql
   #     SELECT * FROM `lines` WHERE scope = ? AND account = ? ORDER BY id DESC LIMIT 1
+  #     ```
   #
   # * **lines_scope_account_created_at_idx**
   # 
+  #      ```sql
   #     ADD INDEX `lines_scope_account_created_at_idx` (scope, account, created_at)
+  #     ```
   #
   #   Used for querying historic balances:
   #
+  #     ```sql
   #     SELECT * FROM `lines` WHERE scope = ? AND account = ? AND created_at < ? ORDER BY id DESC LIMIT 1
+  #     ```
   #
   #   And for reporting on account changes over a time period:
   #
+  #     ```sql
   #     SELECT SUM(amount) FROM `lines` WHERE scope = ? AND account = ? AND created_at BETWEEN ? AND ?
+  #     ```
   #
   # * **lines_account_created_at_idx**
   #
+  #     ```sql
   #     ADD INDEX `lines_account_created_at_idx` (account, created_at);
+  #     ```
   #
   # * **lines_account_code_created_at_idx**
   #
+  #     ```sql
   #     ADD INDEX `lines_account_code_created_at_idx` (account, code, created_at);
+  #     ```
   #
   #   These two are used for generating reports, which need to sum things
   #   by account, or account and code, over a particular period.
