@@ -10,19 +10,18 @@ module DoubleEntry
   #
   # This is a log table, and should (ideally) never be updated.
   #
-  # Indexes
-  # -------
+  # ## Indexes
   #
   # The indexes on this table are carefully chosen, as it's both big and heavily loaded.
   #
-  # 1. ADD INDEX `lines_scope_account_id_idx` (scope, account, id)
+  # * ADD INDEX `lines_scope_account_id_idx` (scope, account, id)
   #
   #   This is the important one. It's used primarily for querying the current
   #   balance of an account:
   #
   #     SELECT * FROM `lines` WHERE scope = ? AND account = ? ORDER BY id DESC LIMIT 1
   #
-  # 2. ADD INDEX `lines_scope_account_created_at_idx` (scope, account, created_at)
+  # * ADD INDEX `lines_scope_account_created_at_idx` (scope, account, created_at)
   #
   #   Used for querying historic balances:
   #
@@ -32,11 +31,21 @@ module DoubleEntry
   #
   #     SELECT SUM(amount) FROM `lines` WHERE scope = ? AND account = ? AND created_at BETWEEN ? AND ?
   #
-  # 3. ADD INDEX `lines_account_created_at_idx` (account, created_at)
-  # 4. ADD INDEX `lines_account_code_created_at_idx` (account, code, created_at)
+  # * **lines_account_created_at_idx**
   #
-  #   These two are used for generating reports, which need to sum things
-  #   by account, or account and code, over a particular period.
+  #     ```sql
+  #     ADD INDEX `lines_account_created_at_idx` (account, created_at);
+  #     ```
+  #
+  # * **lines_account_code_created_at_idx**
+  #
+  #     ```sql
+  #     ADD INDEX `lines_account_code_created_at_idx` (account, code, created_at);
+  #     ```
+  #
+  # These two are used for generating reports, which need to sum things
+  # by account, or account and code, over a particular period.
+  #
   class Line < ActiveRecord::Base
     extend EncapsulateAsMoney
 
