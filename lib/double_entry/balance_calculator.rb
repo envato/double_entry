@@ -35,7 +35,7 @@ module DoubleEntry
         Money.new(lines.sum(:amount))
       else
         # all other lookups can be performed with running balances
-        line = Line.select("id, balance").from("#{Line.quoted_table_name} #{use_index}").where(conditions).order('id desc').first
+        line = lines.select("id, balance").from(lines_table_name).order('id desc').first
         line ? line.balance : Money.empty
       end
     end
@@ -70,8 +70,10 @@ module DoubleEntry
       # returned. This was biting us intermittently in spec runs.
       # See http://bugs.mysql.com/bug.php?id=51431
       Line.connection.adapter_name.match /mysql/i
+    end
 
-      #"USE INDEX (lines_scope_account_id_idx)"
+    def lines_table_name
+      "#{Line.quoted_table_name} #{'USE INDEX (lines_scope_account_id_idx)' if use_index?}"
     end
 
   end
