@@ -1,7 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
   class MonthRange < TimeRange
-    attr_reader :year, :month
 
     class << self
       def from_time(time)
@@ -34,13 +33,15 @@ module DoubleEntry
       end
     end
 
+    attr_reader :year, :month
+
     def initialize(options = {})
       super options
 
       if options.present?
         @month = options[:month]
 
-        month_start = Time.local(@year, options[:month], 1)
+        month_start = Time.local(year, options[:month], 1)
         @start = month_start
         @finish = month_start.end_of_month
 
@@ -49,26 +50,26 @@ module DoubleEntry
     end
 
     def previous
-      if @month <= 1
-        MonthRange.new :year => @year - 1, :month => 12
+      if month <= 1
+        MonthRange.new :year => year - 1, :month => 12
       else
-        MonthRange.new :year => @year, :month => @month - 1
+        MonthRange.new :year => year, :month => month - 1
       end
     end
 
     def next
-      if @month >= 12
-        MonthRange.new :year => @year + 1, :month => 1
+      if month >= 12
+        MonthRange.new :year => year + 1, :month => 1
       else
-        MonthRange.new :year => @year, :month => @month + 1
+        MonthRange.new :year => year, :month => month + 1
       end
     end
 
     def beginning_of_financial_year
       if month >= 7
-        MonthRange.new(:year => @year, :month => 7)
+        MonthRange.new(:year => year, :month => 7)
       else
-        MonthRange.new(:year => @year-1, :month => 7)
+        MonthRange.new(:year => year - 1, :month => 7)
       end
     end
 
