@@ -12,6 +12,9 @@ module DoubleEntry
         from_time(Time.now)
       end
 
+      # Obtain a squence of MonthRanges from the given start to the current
+      # month.
+      #
       # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
       #   first in the sequence of MonthRanges.
       # @return [Array<MonthRange>]
@@ -79,6 +82,9 @@ module DoubleEntry
       (self.month == other.month) and (self.year == other.year)
     end
 
+    # Obtain a squence of MonthRanges from the given start to the current
+    # month.
+    #
     # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
     #   first in the sequence of MonthRanges.
     # @return [Array<MonthRange>]
