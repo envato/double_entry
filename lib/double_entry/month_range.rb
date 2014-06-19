@@ -82,16 +82,6 @@ module DoubleEntry
       (self.month == other.month) and (self.year == other.year)
     end
 
-    # Obtain a squence of MonthRanges from the given start to the current
-    # month.
-    #
-    # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
-    #   first in the sequence of MonthRanges.
-    # @return [Array<MonthRange>]
-    def reportable_months(options = {})
-      MonthRange.reportable_months(options)
-    end
-
     def all_time
       MonthRange.new(:year => year, :month => month, :range_type => :all_time)
     end
