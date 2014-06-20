@@ -19,7 +19,7 @@ module DoubleEntry
         from_time(Time.now)
       end
 
-      # Obtain a squence of WeekRanges from the given start to the current
+      # Obtain a sequence of WeekRanges from the given start to the current
       # week.
       #
       # @option options :from [Time] Time of the first in the returned sequence
