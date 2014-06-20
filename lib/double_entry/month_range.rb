@@ -46,11 +46,9 @@ module DoubleEntry
     end
 
     def beginning_of_financial_year
-      if month >= 7
-        MonthRange.new(:year => @year, :month => 7)
-      else
-        MonthRange.new(:year => @year-1, :month => 7)
-      end
+      first_month_of_financial_year = DoubleEntry::Reporting.configuration.first_month_of_financial_year
+      year = (month >= first_month_of_financial_year) ? @year : (@year - 1)
+      MonthRange.new(:year => year, :month => first_month_of_financial_year)
     end
 
     alias_method :succ, :next
