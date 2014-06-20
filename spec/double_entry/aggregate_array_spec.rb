@@ -72,4 +72,22 @@ describe DoubleEntry::AggregateArray do
       expect { aggregate_array }.to raise_error ArgumentError, "Invalid range type 'invalid_and_should_not_work'"
     end
   end
+
+  context 'when an invalid function is provided' do
+    let(:range_type) { 'month' }
+    let(:start) { '2006-08-03' }
+
+    it 'should raise an AggregateFunctionNotSupported error' do
+      expect{
+        DoubleEntry.aggregate_array(
+          :invalid_function,
+          :savings,
+          :bonus,
+          :range_type => range_type,
+          :start => start,
+          :finish => finish,
+        )
+      }.to raise_error(DoubleEntry::AggregateFunctionNotSupported)
+    end
+  end
 end
