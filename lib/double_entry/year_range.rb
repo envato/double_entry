@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 module DoubleEntry
   class YearRange < TimeRange
     attr_reader :year
