@@ -142,6 +142,12 @@ describe DoubleEntry::Aggregate do
     ).to eq 3
   end
 
+  it 'returns correct count for weekly all_time_ranges for user' do
+    expect(
+      DoubleEntry.aggregate(:count, :savings, :bonus, scope: user, range: DoubleEntry::TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time))
+    ).to eq 3
+  end
+
   it "raises an AggregateFunctionNotSupported exception" do
     expect{
       DoubleEntry.aggregate(:not_supported_calculation, :savings, :bonus, :range => DoubleEntry::TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time))

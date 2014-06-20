@@ -3,7 +3,7 @@ module DoubleEntry
   class LineAggregate < ActiveRecord::Base
     extend EncapsulateAsMoney
 
-    def self.aggregate(function, account, code, scope, range, named_scopes)
+    def self.aggregate(function, account, code, range, named_scopes)
       collection = aggregate_collection(named_scopes)
       collection = collection.where(:account => account)
       collection = collection.where(:created_at => range.start..range.finish)

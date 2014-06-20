@@ -243,12 +243,12 @@ module DoubleEntry
     # The transfers included in the calculation can be limited by time range,
     # account scope and provided custom filters.
     #
-    # @example Find the sum for all $10 :save transfers in a user's :checking account in the current month (assume the date is January 30, 2014).
+    # @example Find the sum for all $10 :save transfers in all :checking accounts in the current month (assume the date is January 30, 2014).
     #   time_range = DoubleEntry::TimeRange.make(2014, 1)
     #   class ::DoubleEntry::Line
     #     scope :ten_dollar_transfers, -> { where(:amount => 10_00) }
     #   end
-    #   DoubleEntry.aggregate(:sum, :checking, :save, scope: user, range: time_range, filter: [:ten_dollar_transfers])
+    #   DoubleEntry.aggregate(:sum, :checking, :save, range: time_range, filter: [:ten_dollar_transfers])
     # @param function [Symbol] The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
     # @param account [Symbol] The symbol identifying the account to perform
@@ -256,16 +256,14 @@ module DoubleEntry
     # @param code [Symbol] The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @option options :scope [Symbol] Limit the calculation to only include accounts
-    #   with the given scope. As specified in the account configuration.
     # @option options :range [DoubleEntry::TimeRange] Only include transfers
     #   in the given time range in the calculation.
     # @option options :filter [Array[Symbol], or Array[Hash<Symbol,Parameter>]]
-    #   A custom scope to apply before performing the aggregate calculation.
-    #   Currently, scopes must be monkey patched into the DoubleEntry::Line
+    #   A custom filter to apply before performing the aggregate calculation.
+    #   Currently, filters must be monkey patched as scopes into the DoubleEntry::Line
     #   class in order to be used as filters, as the example shows.
-    #   If the scope requires a parameter, it must be given in a Hash, otherwise
-    #   pass an array with the symbol names for the scopes.
+    #   If the filter requires a parameter, it must be given in a Hash, otherwise
+    #   pass an array with the symbol names for the defined scopes.
     # @return Returns a Money object for :sum and :average calculations, or an
     #   Fixnum for :count calculations.
     # @raise [DoubleEntry::AggregateFunctionNotSupported] The provided function
