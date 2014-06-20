@@ -280,7 +280,6 @@ module DoubleEntry
     # and provided custom filters.
     #
     # @example Find the number of all $10 :save transfers in all :checking accounts per month for the entire year (Assume the year is 2014).
-    #   time_range = DoubleEntry::TimeRange.make(2014, 1)
     #   DoubleEntry.aggregate_array(:sum, :checking, :save, range_type: 'month', start: '2014-01-01', finish: '2014-12-31')
     # @param function [Symbol] The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
