@@ -1,39 +1,31 @@
 # encoding: utf-8
-require 'active_record'
-require 'money'
 
-# Include active record extensions
+require 'active_record'
 require 'active_record/locking_extensions'
 
+require 'active_support/all'
+
+require 'money'
 require 'encapsulate_as_money'
 
 require 'double_entry/version'
-
 require 'double_entry/configurable'
-
 require 'double_entry/account'
 require 'double_entry/account_balance'
-
 require 'double_entry/reporting'
-
 require 'double_entry/aggregate'
 require 'double_entry/aggregate_array'
-
 require 'double_entry/time_range'
 require 'double_entry/time_range_array'
-
 require 'double_entry/day_range'
 require 'double_entry/hour_range'
 require 'double_entry/week_range'
 require 'double_entry/month_range'
 require 'double_entry/year_range'
-
 require 'double_entry/line'
 require 'double_entry/line_aggregate'
 require 'double_entry/line_check'
-
 require 'double_entry/locking'
-
 require 'double_entry/transfer'
 
 # Keep track of all the monies!
