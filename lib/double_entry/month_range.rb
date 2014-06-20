@@ -1,6 +1,38 @@
 # encoding: utf-8
 module DoubleEntry
   class MonthRange < TimeRange
+
+    class << self
+      def from_time(time)
+        new(:year => time.year, :month => time.month)
+      end
+
+      def current
+        from_time(Time.now)
+      end
+
+      # Obtain a sequence of MonthRanges from the given start to the current
+      # month.
+      #
+      # @option options :from [Time] Time of the first in the returned sequence
+      #   of MonthRanges.
+      # @return [Array<MonthRange>]
+      def reportable_months(options = {})
+        month = options[:from] ? from_time(options[:from]) : earliest_month
+        last = self.current
+        [month].tap do |months|
+          while month != last
+            month = month.next
+            months << month
+          end
+        end
+      end
+
+      def earliest_month
+        from_time(DoubleEntry::Reporting.configuration.start_of_business)
+      end
+    end
+
     attr_reader :year, :month
 
     def initialize(options = {})
@@ -9,47 +41,35 @@ module DoubleEntry
       if options.present?
         @month = options[:month]
 
-        month_start = Time.local(@year, options[:month], 1)
+        month_start = Time.local(year, options[:month], 1)
         @start = month_start
         @finish = month_start.end_of_month
 
-        @start = earliest_month.start if options[:range_type] == :all_time
+        @start = MonthRange.earliest_month.start if options[:range_type] == :all_time
       end
     end
 
-    def self.from_time(time)
-      MonthRange.new(:year => time.year, :month => time.month)
-    end
-
-    def self.current
-      from_time(Time.now)
-    end
-
-    def self.reportable_months
-      MonthRange.new.reportable_months
-    end
-
     def previous
-      if @month <= 1
-        MonthRange.new :year => @year - 1, :month => 12
+      if month <= 1
+        MonthRange.new :year => year - 1, :month => 12
       else
-        MonthRange.new :year => @year, :month => @month - 1
+        MonthRange.new :year => year, :month => month - 1
       end
     end
 
     def next
-      if @month >= 12
-        MonthRange.new :year => @year + 1, :month => 1
+      if month >= 12
+        MonthRange.new :year => year + 1, :month => 1
       else
-        MonthRange.new :year => @year, :month => @month + 1
+        MonthRange.new :year => year, :month => month + 1
       end
     end
 
     def beginning_of_financial_year
       if month >= 7
-        MonthRange.new(:year => @year, :month => 7)
+        MonthRange.new(:year => year, :month => 7)
       else
-        MonthRange.new(:year => @year-1, :month => 7)
+        MonthRange.new(:year => year - 1, :month => 7)
       end
     end
 
@@ -63,20 +83,6 @@ module DoubleEntry
       (self.month == other.month) and (self.year == other.year)
     end
 
-    def reportable_months
-      first = earliest_month
-      current = MonthRange.current
-      loop = first
-      months = [first]
-
-      while loop != current
-        loop = loop.next
-        months << loop
-      end
-
-      months
-    end
-
     def all_time
       MonthRange.new(:year => year, :month => month, :range_type => :all_time)
     end
@@ -84,12 +90,5 @@ module DoubleEntry
     def to_s
       start.strftime("%Y, %b")
     end
-
-  private
-
-    def earliest_month
-      MonthRange.from_time(DoubleEntry::Reporting.configuration.start_of_business)
-    end
-
   end
 end
