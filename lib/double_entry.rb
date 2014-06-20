@@ -11,6 +11,8 @@ require 'double_entry/version'
 
 require 'double_entry/configurable'
 
+require 'double_entry/errors'
+
 require 'double_entry/account'
 require 'double_entry/account_balance'
 require 'double_entry/balance_calculator'
@@ -40,15 +42,6 @@ require 'double_entry/transfer'
 # This module provides the public interfaces for everything to do with
 # transferring money around the system.
 module DoubleEntry
-
-  class UnknownAccount < RuntimeError; end
-  class TransferNotAllowed < RuntimeError; end
-  class TransferIsNegative < RuntimeError; end
-  class RequiredMetaMissing < RuntimeError; end
-  class DuplicateAccount < RuntimeError; end
-  class DuplicateTransfer < RuntimeError; end
-  class UserAccountNotLocked < RuntimeError; end
-  class AccountWouldBeSentNegative < RuntimeError; end
 
   class << self
     attr_accessor :accounts, :transfers
