@@ -240,8 +240,8 @@ module DoubleEntry
 
     # Perform an aggregate calculation on the set of transfers for an account.
     #
-    # The transfers included in the calculation can be limited by time range,
-    # account scope and provided custom filters.
+    # The transfers included in the calculation can be limited by time range
+    # and provided custom filters.
     #
     # @example Find the sum for all $10 :save transfers in all :checking accounts in the current month (assume the date is January 30, 2014).
     #   time_range = DoubleEntry::TimeRange.make(2014, 1)
