@@ -14,8 +14,8 @@ module DoubleEntry
       # Obtain a squence of MonthRanges from the given start to the current
       # month.
       #
-      # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
-      #   first in the returned sequence of MonthRanges.
+      # @option options :from [Time] Time of the first in the returned sequence
+      #   of MonthRanges.
       # @return [Array<MonthRange>]
       def reportable_months(options = {})
         month = options[:from] ? from_time(options[:from]) : earliest_month

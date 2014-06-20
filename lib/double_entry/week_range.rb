@@ -22,8 +22,8 @@ module DoubleEntry
       # Obtain a squence of WeekRanges from the given start to the current
       # week.
       #
-      # @option options :from [Time] ('1970-01-01 00:00:00') Time of the
-      #   first in the returned sequence of WeekRanges.
+      # @option options :from [Time] Time of the first in the returned sequence
+      #   of WeekRanges.
       # @return [Array<WeekRange>]
       def reportable_weeks(options = {})
         week = options[:from] ? from_time(options[:from]) : earliest_week
