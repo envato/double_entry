@@ -16,6 +16,7 @@ require 'double_entry/errors'
 require 'double_entry/account'
 require 'double_entry/account_balance'
 require 'double_entry/balance_calculator'
+require 'double_entry/balance_transferrer'
 
 require 'double_entry/aggregate'
 require 'double_entry/aggregate_array'
@@ -106,14 +107,7 @@ module DoubleEntry
     #   accounts with the provided code is not allowed. Check configuration.
     #
     def transfer(amount, options = {})
-      raise TransferIsNegative if amount < Money.new(0)
-      from, to, code, meta, detail = options[:from], options[:to], options[:code], options[:meta], options[:detail]
-      transfer = @transfers.find(from, to, code)
-      if transfer
-        transfer.process!(amount, from, to, code, meta, detail)
-      else
-        raise TransferNotAllowed.new([from.identifier, to.identifier, code].inspect)
-      end
+      BalanceTransferrer.new(transfers).transfer(amount, options)
     end
 
     # Get the current balance of an account, as a Money object.
