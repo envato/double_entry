@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class MonthRange < TimeRange
 
     class << self
@@ -29,7 +30,7 @@ module DoubleEntry
       end
 
       def earliest_month
-        from_time(DoubleEntry::Reporting.configuration.start_of_business)
+        from_time(Reporting.configuration.start_of_business)
       end
     end
 
@@ -66,7 +67,7 @@ module DoubleEntry
     end
 
     def beginning_of_financial_year
-      first_month_of_financial_year = DoubleEntry::Reporting.configuration.first_month_of_financial_year
+      first_month_of_financial_year = Reporting.configuration.first_month_of_financial_year
       year = (month >= first_month_of_financial_year) ? @year : (@year - 1)
       MonthRange.new(:year => year, :month => first_month_of_financial_year)
     end
@@ -89,4 +90,5 @@ module DoubleEntry
       start.strftime("%Y, %b")
     end
   end
+ end
 end

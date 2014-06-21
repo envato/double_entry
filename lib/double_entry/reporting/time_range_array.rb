@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class TimeRangeArray
     class << self
 
@@ -40,4 +41,5 @@ module DoubleEntry
       end
     end
   end
+ end
 end
