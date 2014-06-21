@@ -11,6 +11,8 @@ require 'double_entry/reporting/year_range'
 require 'double_entry/reporting/line_aggregate'
 
 module DoubleEntry
+
+  # @api private
   module Reporting
     include Configurable
     extend self
