@@ -37,7 +37,7 @@ module DoubleEntry
     # Identify the scopes with the given account identifier holding at least
     # the provided minimum balance.
     #
-    # @example Find users with at lease $1,000,000 in their savings accounts
+    # @example Find users with at least $1,000,000 in their savings accounts
     #   DoubleEntry.scopes_with_minimum_balance_for_account(
     #     Money.new(1_000_000_00),
     #     :savings
