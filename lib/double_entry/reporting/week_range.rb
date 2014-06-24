@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   # We use a particularly crazy week numbering system: week 1 of any given year
   # is the first week with any days that fall into that year.
   #
@@ -43,7 +44,7 @@ module DoubleEntry
       end
 
       def earliest_week
-        from_time(DoubleEntry::Reporting.configuration.start_of_business)
+        from_time(Reporting.configuration.start_of_business)
       end
     end
 
@@ -96,4 +97,5 @@ module DoubleEntry
       self.class.send(:start_of_year, year) + (week - 1).weeks
     end
   end
+ end
 end

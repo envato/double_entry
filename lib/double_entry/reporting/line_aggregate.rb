@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class LineAggregate < ActiveRecord::Base
     extend EncapsulateAsMoney
 
@@ -15,7 +16,7 @@ module DoubleEntry
     # in named_scopes to bring in data from other tables.
     def self.aggregate_collection(named_scopes)
       if named_scopes
-        collection = Line
+        collection = DoubleEntry::Line
         named_scopes.each do |named_scope|
           if named_scope.is_a?(Hash)
             method_name = named_scope.keys[0]
@@ -26,7 +27,7 @@ module DoubleEntry
         end
         collection
       else
-        Line
+        DoubleEntry::Line
       end
     end
 
@@ -34,4 +35,5 @@ module DoubleEntry
       "#{year}:#{month}:#{week}:#{day}:#{hour}"
     end
   end
+ end
 end

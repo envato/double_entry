@@ -1,7 +1,8 @@
 require 'spec_helper'
-describe DoubleEntry::TimeRangeArray do
+module DoubleEntry::Reporting
+ describe TimeRangeArray do
   describe '.make' do
-    subject(:time_range_array) { DoubleEntry::TimeRangeArray.make(range_type, start, finish) }
+    subject(:time_range_array) { TimeRangeArray.make(range_type, start, finish) }
 
     context 'for "hour" range type' do
       let(:range_type) { 'hour' }
@@ -10,16 +11,16 @@ describe DoubleEntry::TimeRangeArray do
         let(:start)  { '2007-05-03 15:00:00' }
         let(:finish) { '2007-05-03 18:00:00' }
         it { should eq [
-          DoubleEntry::HourRange.from_time(Time.new(2007, 5, 3, 15)),
-          DoubleEntry::HourRange.from_time(Time.new(2007, 5, 3, 16)),
-          DoubleEntry::HourRange.from_time(Time.new(2007, 5, 3, 17)),
-          DoubleEntry::HourRange.from_time(Time.new(2007, 5, 3, 18)),
+          HourRange.from_time(Time.new(2007, 5, 3, 15)),
+          HourRange.from_time(Time.new(2007, 5, 3, 16)),
+          HourRange.from_time(Time.new(2007, 5, 3, 17)),
+          HourRange.from_time(Time.new(2007, 5, 3, 18)),
         ] }
       end
 
       context 'given start and finish are nil' do
         it 'should raise an error' do
-          expect { DoubleEntry::TimeRangeArray.make(range_type, nil, nil) }.
+          expect { TimeRangeArray.make(range_type, nil, nil) }.
             to raise_error 'Must specify range for hour-by-hour reports'
         end
       end
@@ -32,17 +33,17 @@ describe DoubleEntry::TimeRangeArray do
         let(:start)  { '2007-05-03' }
         let(:finish) { '2007-05-07' }
         it { should eq [
-          DoubleEntry::DayRange.from_time(Time.new(2007, 5, 3)),
-          DoubleEntry::DayRange.from_time(Time.new(2007, 5, 4)),
-          DoubleEntry::DayRange.from_time(Time.new(2007, 5, 5)),
-          DoubleEntry::DayRange.from_time(Time.new(2007, 5, 6)),
-          DoubleEntry::DayRange.from_time(Time.new(2007, 5, 7)),
+          DayRange.from_time(Time.new(2007, 5, 3)),
+          DayRange.from_time(Time.new(2007, 5, 4)),
+          DayRange.from_time(Time.new(2007, 5, 5)),
+          DayRange.from_time(Time.new(2007, 5, 6)),
+          DayRange.from_time(Time.new(2007, 5, 7)),
         ] }
       end
 
       context 'given start and finish are nil' do
         it 'should raise an error' do
-          expect { DoubleEntry::TimeRangeArray.make(range_type, nil, nil) }.
+          expect { TimeRangeArray.make(range_type, nil, nil) }.
             to raise_error 'Must specify range for day-by-day reports'
         end
       end
@@ -55,16 +56,16 @@ describe DoubleEntry::TimeRangeArray do
         let(:start)  { '2007-05-03' }
         let(:finish) { '2007-05-24' }
         it { should eq [
-          DoubleEntry::WeekRange.from_time(Time.new(2007, 5, 3)),
-          DoubleEntry::WeekRange.from_time(Time.new(2007, 5, 10)),
-          DoubleEntry::WeekRange.from_time(Time.new(2007, 5, 17)),
-          DoubleEntry::WeekRange.from_time(Time.new(2007, 5, 24)),
+          WeekRange.from_time(Time.new(2007, 5, 3)),
+          WeekRange.from_time(Time.new(2007, 5, 10)),
+          WeekRange.from_time(Time.new(2007, 5, 17)),
+          WeekRange.from_time(Time.new(2007, 5, 24)),
         ] }
       end
 
       context 'given start and finish are nil' do
         it 'should raise an error' do
-          expect { DoubleEntry::TimeRangeArray.make(range_type, nil, nil) }.
+          expect { TimeRangeArray.make(range_type, nil, nil) }.
             to raise_error 'Must specify range for week-by-week reports'
         end
       end
@@ -77,10 +78,10 @@ describe DoubleEntry::TimeRangeArray do
         let(:start)  { '2007-05-03' }
         let(:finish) { '2007-08-24' }
         it { should eq [
-          DoubleEntry::MonthRange.from_time(Time.new(2007, 5)),
-          DoubleEntry::MonthRange.from_time(Time.new(2007, 6)),
-          DoubleEntry::MonthRange.from_time(Time.new(2007, 7)),
-          DoubleEntry::MonthRange.from_time(Time.new(2007, 8)),
+          MonthRange.from_time(Time.new(2007, 5)),
+          MonthRange.from_time(Time.new(2007, 6)),
+          MonthRange.from_time(Time.new(2007, 7)),
+          MonthRange.from_time(Time.new(2007, 8)),
         ] }
       end
 
@@ -92,15 +93,15 @@ describe DoubleEntry::TimeRangeArray do
           before { Timecop.freeze(Time.new(2007, 4, 13)) }
 
           it { should eq [
-            DoubleEntry::MonthRange.from_time(Time.new(2006, 8)),
-            DoubleEntry::MonthRange.from_time(Time.new(2006, 9)),
-            DoubleEntry::MonthRange.from_time(Time.new(2006, 10)),
-            DoubleEntry::MonthRange.from_time(Time.new(2006, 11)),
-            DoubleEntry::MonthRange.from_time(Time.new(2006, 12)),
-            DoubleEntry::MonthRange.from_time(Time.new(2007, 1)),
-            DoubleEntry::MonthRange.from_time(Time.new(2007, 2)),
-            DoubleEntry::MonthRange.from_time(Time.new(2007, 3)),
-            DoubleEntry::MonthRange.from_time(Time.new(2007, 4)),
+            MonthRange.from_time(Time.new(2006, 8)),
+            MonthRange.from_time(Time.new(2006, 9)),
+            MonthRange.from_time(Time.new(2006, 10)),
+            MonthRange.from_time(Time.new(2006, 11)),
+            MonthRange.from_time(Time.new(2006, 12)),
+            MonthRange.from_time(Time.new(2007, 1)),
+            MonthRange.from_time(Time.new(2007, 2)),
+            MonthRange.from_time(Time.new(2007, 3)),
+            MonthRange.from_time(Time.new(2007, 4)),
           ] }
         end
       end
@@ -118,9 +119,9 @@ describe DoubleEntry::TimeRangeArray do
 
           it 'takes no notice of start and finish' do
             should eq [
-              DoubleEntry::YearRange.from_time(Time.new(2007)),
-              DoubleEntry::YearRange.from_time(Time.new(2008)),
-              DoubleEntry::YearRange.from_time(Time.new(2009)),
+              YearRange.from_time(Time.new(2007)),
+              YearRange.from_time(Time.new(2008)),
+              YearRange.from_time(Time.new(2009)),
             ]
           end
 
@@ -129,10 +130,10 @@ describe DoubleEntry::TimeRangeArray do
             let(:finish) { nil }
             it {
               should eq [
-                DoubleEntry::YearRange.from_time(Time.new(2006)),
-                DoubleEntry::YearRange.from_time(Time.new(2007)),
-                DoubleEntry::YearRange.from_time(Time.new(2008)),
-                DoubleEntry::YearRange.from_time(Time.new(2009)),
+                YearRange.from_time(Time.new(2006)),
+                YearRange.from_time(Time.new(2007)),
+                YearRange.from_time(Time.new(2008)),
+                YearRange.from_time(Time.new(2009)),
               ]
             }
           end
@@ -142,8 +143,9 @@ describe DoubleEntry::TimeRangeArray do
 
     context 'given an invalid range type "ueue"' do
       it 'should raise an error' do
-        expect { DoubleEntry::TimeRangeArray.make('ueue') }.to raise_error ArgumentError
+        expect { TimeRangeArray.make('ueue') }.to raise_error ArgumentError
       end
     end
   end
+ end
 end

@@ -2,6 +2,7 @@
 require 'set'
 
 module DoubleEntry
+ module Validation
   class LineCheck < ActiveRecord::Base
     extend EncapsulateAsMoney
 
@@ -115,4 +116,5 @@ module DoubleEntry
       account_balance.update_attribute(:balance, balance)
     end
   end
+ end
 end
