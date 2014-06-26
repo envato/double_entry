@@ -1,26 +1,25 @@
 # encoding: utf-8
-# These make it easier to quickly set up account balances for testing.
-
-# user scoping magic, accepts a User, Fixnum, or String
 user_scope = lambda do |user_identifier|
-  if user_identifier.is_a?(Fixnum) or user_identifier.is_a?(String)
-    user_identifier
-  elsif user_identifier.is_a?(User)
+  if user_identifier.is_a?(User)
     user_identifier.id
   else
-    raise "unknown type expected fixnum, string or user, got: #{user_identifier.inspect}"
+    user_identifier
   end
 end
 
-# A set of accounts to test with
-DoubleEntry.accounts = DoubleEntry::Account::Set.new.tap do |accounts|
-  accounts << DoubleEntry::Account.new(:identifier => :savings, :scope_identifier => user_scope, :positive_only => true)
-  accounts << DoubleEntry::Account.new(:identifier => :checking, :scope_identifier => user_scope, :positive_only => true)
-  accounts << DoubleEntry::Account.new(:identifier => :test, :scope_identifier => user_scope)
-end
+DoubleEntry.configure do |config|
 
-# A set of allowed transfers between accounts
-DoubleEntry.transfers = DoubleEntry::Transfer::Set.new.tap do |transfers|
-  transfers << DoubleEntry::Transfer.new(:from => :test, :to => :savings, :code => :bonus)
-  transfers << DoubleEntry::Transfer.new(:from => :test, :to => :checking, :code => :pay)
+  # A set of accounts to test with
+  config.define_accounts do |accounts|
+    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :positive_only => true)
+    accounts.define(:identifier => :checking, :scope_identifier => user_scope, :positive_only => true)
+    accounts.define(:identifier => :test,     :scope_identifier => user_scope)
+  end
+
+  # A set of allowed transfers between accounts
+  config.define_transfers do |transfers|
+    transfers.define(:from => :test, :to => :savings,  :code => :bonus)
+    transfers.define(:from => :test, :to => :checking, :code => :pay)
+  end
+
 end
