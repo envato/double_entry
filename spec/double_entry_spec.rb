@@ -5,13 +5,15 @@ describe DoubleEntry do
   # these specs blat the DoubleEntry configuration, so take
   # a copy and clean up after ourselves
   before do
-    @config_accounts = DoubleEntry.accounts
-    @config_transfers = DoubleEntry.transfers
+    @config_accounts = DoubleEntry.configuration.accounts
+    @config_transfers = DoubleEntry.configuration.transfers
+    DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
+    DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
   end
 
   after do
-    DoubleEntry.accounts = @config_accounts
-    DoubleEntry.transfers = @config_transfers
+    DoubleEntry.configuration.accounts = @config_accounts
+    DoubleEntry.configuration.transfers = @config_transfers
   end
 
   describe 'configuration' do
@@ -19,8 +21,8 @@ describe DoubleEntry do
       expect {
         DoubleEntry.configure do |config|
           config.define_accounts do |accounts|
-            accounts.add(:identifier => :gah!)
-            accounts.add(:identifier => :gah!)
+            accounts.define(:identifier => :gah!)
+            accounts.define(:identifier => :gah!)
           end
         end
       }.to raise_error DoubleEntry::DuplicateAccount
@@ -30,8 +32,8 @@ describe DoubleEntry do
       expect {
         DoubleEntry.configure do |config|
           config.define_transfers do |transfers|
-            transfers.add(:from => :savings, :to => :cash, :code => :xfer)
-            transfers.add(:from => :savings, :to => :cash, :code => :xfer)
+            transfers.define(:from => :savings, :to => :cash, :code => :xfer)
+            transfers.define(:from => :savings, :to => :cash, :code => :xfer)
           end
         end
       }.to raise_error DoubleEntry::DuplicateTransfer
@@ -42,8 +44,8 @@ describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.add(:identifier => :unscoped)
-          accounts.add(:identifier => :scoped, :scope_identifier => ->(u) { u.id })
+          accounts.define(:identifier => :unscoped)
+          accounts.define(:identifier => :scoped, :scope_identifier => ->(u) { u.id })
         end
       end
     end
@@ -92,13 +94,13 @@ describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.add(:identifier => :savings)
-          accounts.add(:identifier => :cash)
-          accounts.add(:identifier => :trash)
+          accounts.define(:identifier => :savings)
+          accounts.define(:identifier => :cash)
+          accounts.define(:identifier => :trash)
         end
 
         config.define_transfers do |transfers|
-          transfers.add(:from => :savings, :to => :cash, :code => :xfer, :meta_requirement => [:ref])
+          transfers.define(:from => :savings, :to => :cash, :code => :xfer, :meta_requirement => [:ref])
         end
       end
     end
@@ -167,13 +169,13 @@ describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.add(:identifier => :a)
-          accounts.add(:identifier => :b)
+          accounts.define(:identifier => :a)
+          accounts.define(:identifier => :b)
         end
 
         description = ->(line) { "Money goes #{line.credit? ? 'out' : 'in'}: #{line.amount.format}" }
         config.define_transfers do |transfers|
-          transfers.add(:code => :xfer, :from => :a, :to => :b, :description => description)
+          transfers.define(:code => :xfer, :from => :a, :to => :b, :description => description)
         end
       end
 
@@ -243,20 +245,20 @@ describe DoubleEntry do
 
     before do
       DoubleEntry.configure do |config|
-        conifg.define_accounts do |accounts|
-          accounts.add(:identifier => :work)
-          accounts.add(:identifier => :cash)
-          accounts.add(:identifier => :savings)
-          accounts.add(:identifier => :store)
+        config.define_accounts do |accounts|
+          accounts.define(:identifier => :work)
+          accounts.define(:identifier => :cash)
+          accounts.define(:identifier => :savings)
+          accounts.define(:identifier => :store)
         end
 
         config.define_transfers do |transfers|
-          transfers.add(:code => :salary,   :from => :work,    :to => :cash)
-          transfers.add(:code => :xfer,     :from => :cash,    :to => :savings)
-          transfers.add(:code => :xfer,     :from => :savings, :to => :cash)
-          transfers.add(:code => :purchase, :from => :cash,    :to => :store)
-          transfers.add(:code => :layby,    :from => :cash,    :to => :store)
-          transfers.add(:code => :deposit,  :from => :cash,    :to => :store)
+          transfers.define(:code => :salary,   :from => :work,    :to => :cash)
+          transfers.define(:code => :xfer,     :from => :cash,    :to => :savings)
+          transfers.define(:code => :xfer,     :from => :savings, :to => :cash)
+          transfers.define(:code => :purchase, :from => :cash,    :to => :store)
+          transfers.define(:code => :layby,    :from => :cash,    :to => :store)
+          transfers.define(:code => :deposit,  :from => :cash,    :to => :store)
         end
       end
 
@@ -343,16 +345,16 @@ describe DoubleEntry do
   describe 'scoping of accounts' do
     before do
       DoubleEntry.configure do |config|
-        conifg.define_accounts do |accounts|
-          accounts.add(:identifier => :bank)
-          accounts.add(:identifier => :cash,    :scope_identifier => ->(user) { user.id })
-          accounts.add(:identifier => :savings, :scope_identifier => ->(user) { user.id })
+        config.define_accounts do |accounts|
+          accounts.define(:identifier => :bank)
+          accounts.define(:identifier => :cash,    :scope_identifier => ->(user) { user.id })
+          accounts.define(:identifier => :savings, :scope_identifier => ->(user) { user.id })
         end
 
         config.define_transfers do |transfers|
-          transfers.add(:from => :bank, :to => :cash,    :code => :xfer)
-          transfers.add(:from => :cash, :to => :cash,    :code => :xfer)
-          transfers.add(:from => :cash, :to => :savings, :code => :xfer)
+          transfers.define(:from => :bank, :to => :cash,    :code => :xfer)
+          transfers.define(:from => :cash, :to => :cash,    :code => :xfer)
+          transfers.define(:from => :cash, :to => :savings, :code => :xfer)
         end
       end
     end
