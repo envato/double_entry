@@ -19,5 +19,15 @@ describe DoubleEntry::Account do
     expect(a1.hash).to eq a2.hash
     expect(a1.hash).to_not eq b.hash
   end
+end
+
+describe DoubleEntry::Account::Set do
+  describe "#define" do
+    context "given a 'savings' account is defined" do
+      before { subject.define(:identifier => "savings") }
+      its(:first) { should be_a DoubleEntry::Account }
+      its("first.identifier") { should eq "savings" }
+    end
+  end
 
 end

@@ -2,8 +2,12 @@
 module DoubleEntry
   class Account
     class Set < Array
+      def define(attributes)
+        self << Account.new(attributes)
+      end
+
       def <<(account)
-        if detect { |a| a.identifier == account.identifier }
+        if any? { |a| a.identifier == account.identifier }
           raise DuplicateAccount.new
         else
           super(account)
