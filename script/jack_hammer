@@ -68,24 +68,29 @@ end
 def create_accounts_and_transfers
   puts "Setting up #{$account_count} accounts..."
 
-  # Create the accounts.
-  scope = lambda {|x| x }
-  DoubleEntry.accounts = DoubleEntry::Account::Set.new
-  $account_count.times do |i|
-    DoubleEntry.accounts << DoubleEntry::Account.new(:identifier => :"account-#{i}", :scope_identifier => scope)
-  end
+  DoubleEntry.configure do |config|
 
-  # Create all the possible transfers.
-  DoubleEntry.transfers = DoubleEntry::Transfer::Set.new
-  DoubleEntry.accounts.each do |from|
-    DoubleEntry.accounts.each do |to|
-      DoubleEntry.transfers << DoubleEntry::Transfer.new(:from => from.identifier, :to => to.identifier, :code => :test)
+    # Create the accounts.
+    config.define_accounts do |accounts|
+      scope = ->(x) { x }
+      $account_count.times do |i|
+        accounts.define(:identifier => :"account-#{i}", :scope_identifier => scope)
+      end
     end
-  end
 
-  # Find account instances so we have something to work with.
-  $accounts = DoubleEntry.accounts.map do |account|
-    DoubleEntry.account(account.identifier, :scope => 1)
+    # Create all the possible transfers.
+    config.define_transfers do |transfers|
+      config.accounts.each do |from|
+        config.accounts.each do |to|
+          transfers.define(:from => from.identifier, :to => to.identifier, :code => :test)
+        end
+      end
+    end
+
+    # Find account instances so we have something to work with.
+    $accounts = config.accounts.map do |account|
+      DoubleEntry.account(account.identifier, :scope => 1)
+    end
   end
 end
 
@@ -93,7 +98,7 @@ end
 def run_tests
   puts "Spawning #{$process_count} processes..."
 
-  iterations_per_process = $transfer_count / $process_count / $balance_flush_count
+  iterations_per_process = [ ($transfer_count / $process_count / $balance_flush_count), 1 ].max
 
   $balance_flush_count.times do
     puts "Flushing balances"
