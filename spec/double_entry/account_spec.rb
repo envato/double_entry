@@ -29,5 +29,4 @@ describe DoubleEntry::Account::Set do
       its("first.identifier") { should eq "savings" }
     end
   end
-
 end
