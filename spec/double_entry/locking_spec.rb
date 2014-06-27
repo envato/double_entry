@@ -3,22 +3,33 @@ require 'spec_helper'
 
 describe DoubleEntry::Locking do
 
-  before(:all) { @saved_accounts,   @saved_transfers   = DoubleEntry.accounts, DoubleEntry.transfers }
-  after(:all)  { DoubleEntry.accounts, DoubleEntry.transfers = @saved_accounts,   @saved_transfers   }
+  before do
+    @config_accounts = DoubleEntry.configuration.accounts
+    @config_transfers = DoubleEntry.configuration.transfers
+    DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
+    DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+  end
+
+  after do
+    DoubleEntry.configuration.accounts = @config_accounts
+    DoubleEntry.configuration.transfers = @config_transfers
+  end
 
   before do
-    scope = lambda {|x| x }
+    scope = ->(x) { x }
 
-    DoubleEntry.accounts = DoubleEntry::Account::Set.new.tap do |accounts|
-      accounts << DoubleEntry::Account.new(:identifier => :account_a, :scope_identifier => scope)
-      accounts << DoubleEntry::Account.new(:identifier => :account_b, :scope_identifier => scope)
-      accounts << DoubleEntry::Account.new(:identifier => :account_c, :scope_identifier => scope)
-      accounts << DoubleEntry::Account.new(:identifier => :account_d, :scope_identifier => scope)
-    end
+    DoubleEntry.configure do |config|
+      config.define_accounts do |accounts|
+        accounts.define(:identifier => :account_a, :scope_identifier => scope)
+        accounts.define(:identifier => :account_b, :scope_identifier => scope)
+        accounts.define(:identifier => :account_c, :scope_identifier => scope)
+        accounts.define(:identifier => :account_d, :scope_identifier => scope)
+      end
 
-    DoubleEntry.transfers = DoubleEntry::Transfer::Set.new.tap do |transfers|
-      transfers << DoubleEntry::Transfer.new(:from => :account_a, :to => :account_b, :code => :test)
-      transfers << DoubleEntry::Transfer.new(:from => :account_c, :to => :account_d, :code => :test)
+      config.define_transfers do |transfers|
+        transfers.define(:from => :account_a, :to => :account_b, :code => :test)
+        transfers.define(:from => :account_c, :to => :account_d, :code => :test)
+      end
     end
 
     @account_a = DoubleEntry.account(:account_a, :scope => "1")

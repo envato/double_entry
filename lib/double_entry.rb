@@ -7,6 +7,7 @@ require 'encapsulate_as_money'
 
 require 'double_entry/version'
 require 'double_entry/configurable'
+require 'double_entry/configuration'
 require 'double_entry/account'
 require 'double_entry/account_balance'
 require 'double_entry/locking'
@@ -31,7 +32,6 @@ module DoubleEntry
   class AccountWouldBeSentNegative < RuntimeError; end
 
   class << self
-    attr_accessor :accounts, :transfers
 
     # Get the particular account instance with the provided identifier and
     # scope.
@@ -47,8 +47,8 @@ module DoubleEntry
     #   configured. It is unknown.
     #
     def account(identifier, options = {})
-      account = @accounts.detect do |current_account|
-        current_account.identifier == identifier and
+      account = configuration.accounts.detect do |current_account|
+        current_account.identifier == identifier &&
           (options[:scope] ? current_account.scoped? : !current_account.scoped?)
       end
 
@@ -95,7 +95,7 @@ module DoubleEntry
     def transfer(amount, options = {})
       raise TransferIsNegative if amount < Money.new(0)
       from, to, code, meta, detail = options[:from], options[:to], options[:code], options[:meta], options[:detail]
-      transfer = @transfers.find(from, to, code)
+      transfer = configuration.transfers.find(from, to, code)
       if transfer
         transfer.process!(amount, from, to, code, meta, detail)
       else
@@ -191,9 +191,9 @@ module DoubleEntry
       # make sure we have a test for this refactoring, the test
       # conditions are: i forget... but it's important!
       if line.credit?
-        @transfers.find(line.account, line.partner_account, line.code)
+        configuration.transfers.find(line.account, line.partner_account, line.code)
       else
-        @transfers.find(line.partner_account, line.account, line.code)
+        configuration.transfers.find(line.partner_account, line.account, line.code)
       end.description.call(line)
     end
 

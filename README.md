@@ -133,7 +133,7 @@ the accounts, and permitted transfers between those accounts.
 The configuration file should be kept in your application's load path.  For example,
 *config/initializers/double_entry.rb*
 
-For example, the following specifies two accounts, account_a and account_b.
+For example, the following specifies two accounts, savings and checking.
 Each account is scoped by User (where User is an object with an ID), meaning
 each user can have their own account of each type.
 
@@ -142,22 +142,24 @@ This configuration also specifies that money can be transferred between the two 
 ```ruby
 require 'double_entry'
 
-DoubleEntry.accounts = DoubleEntry::Account::Set.new.tap do |accounts|
-  user_scope = lambda do |user_identifier|
-    if user_identifier.is_a?(User)
-      user_identifier.id
-    else
-      user_identifier
+DoubleEntry.configure do |config|
+  config.define_accounts do |accounts|
+    user_scope = lambda do |user_identifier|
+      if user_identifier.is_a?(User)
+        user_identifier.id
+      else
+        user_identifier
+      end
     end
+
+    accounts.define(identifier: :savings,  scope_identifier: user_scope, positive_only: true)
+    accounts.define(identifier: :checking, scope_identifier: user_scope)
   end
 
-  accounts << DoubleEntry::Account.new(identifier: :savings,  scope_identifier: user_scope, positive_only: true)
-  accounts << DoubleEntry::Account.new(identifier: :checking, scope_identifier: user_scope)
-end
-
-DoubleEntry.transfers = DoubleEntry::Transfer::Set.new.tap do |transfers|
-  transfers << DoubleEntry::Transfer.new(from: :checking, to: :savings,  code: :deposit)
-  transfers << DoubleEntry::Transfer.new(from: :savings,  to: :checking, code: :withdraw)
+  config.define_transfers do |transfers|
+    transfers.define(from: :checking, to: :savings,  code: :deposit)
+    transfers.define(from: :savings,  to: :checking, code: :withdraw)
+  end
 end
 ```
 
