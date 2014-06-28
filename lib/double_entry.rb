@@ -12,7 +12,6 @@ require 'double_entry/configuration'
 require 'double_entry/account'
 require 'double_entry/account_balance'
 require 'double_entry/balance_calculator'
-require 'double_entry/balance_transferrer'
 require 'double_entry/locking'
 require 'double_entry/transfer'
 require 'double_entry/line'
@@ -87,7 +86,7 @@ module DoubleEntry
     #   accounts with the provided code is not allowed. Check configuration.
     #
     def transfer(amount, options = {})
-      BalanceTransferrer.new(configuration.transfers).transfer(amount, options)
+      Transfer.transfer(configuration.transfers, amount, options)
     end
 
     # Get the current or historic balance of an account.

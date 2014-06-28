@@ -1,6 +1,17 @@
 # encoding: utf-8
 module DoubleEntry
   class Transfer
+
+    # @api private
+    def self.transfer(defined_transfers, amount, options = {})
+      raise TransferIsNegative if amount < Money.empty
+      from, to, code, meta, detail = options[:from], options[:to], options[:code],  options[:meta],  options[:detail]
+      defined_transfers.
+        find!(from, to, code).
+        process!(amount, from, to, code, meta, detail)
+    end
+
+    # @api private
     class Set < Array
       def define(attributes)
         self << Transfer.new(attributes)
@@ -8,6 +19,12 @@ module DoubleEntry
 
       def find(from, to, code)
         _find(from.identifier, to.identifier, code)
+      end
+
+      def find!(from, to, code)
+        transfer = find(from, to, code)
+        raise TransferNotAllowed.new([from.identifier, to.identifier, code].inspect) unless transfer
+        transfer
       end
 
       def <<(transfer)
