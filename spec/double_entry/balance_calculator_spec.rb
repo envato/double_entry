@@ -2,24 +2,6 @@
 require 'spec_helper'
 
 describe DoubleEntry::BalanceCalculator do
-  describe '.calculate' do
-    let(:calculator) { double(:calculate => double) }
-    let(:a_hash) { {} }
-
-    before { allow(DoubleEntry::BalanceCalculator).to receive(:new).and_return(calculator) }
-
-    it 'delegates to an instance' do
-      DoubleEntry::BalanceCalculator.calculate(anything, a_hash)
-      expect(calculator).to have_received(:calculate)
-    end
-
-    it 'compacts codes and code into a single array' do
-      DoubleEntry::BalanceCalculator.calculate(anything, {:code => 'code', :codes => ['code1', 'code2']})
-      expect(DoubleEntry::BalanceCalculator).to have_received(:new).with(
-        anything, anything, anything, anything, anything, ['code1', 'code2', 'code']
-      )
-    end
-  end
 
   describe '#calculate' do
     let(:account) { double.as_null_object }
@@ -27,15 +9,21 @@ describe DoubleEntry::BalanceCalculator do
     let(:from) { nil }
     let(:to) { nil }
     let(:at) { nil }
+    let(:code) { nil }
     let(:codes) { nil }
-
     let(:relation) { double.as_null_object }
-
-    subject(:calculator) { DoubleEntry::BalanceCalculator.new(account, scope, from, to, at, codes) }
 
     before do
       allow(DoubleEntry::Line).to receive(:where).and_return(relation)
-      calculator.calculate
+      DoubleEntry::BalanceCalculator.calculate(
+        account,
+        :scope => scope,
+        :from => from,
+        :to => to,
+        :at => at,
+        :code => code,
+        :codes => codes,
+      )
     end
 
     describe 'what happens with different accounts' do
@@ -95,7 +83,7 @@ describe DoubleEntry::BalanceCalculator do
 
           it 'ignores the time range when summing the lines' do
             expect(relation).to_not have_received(:where).with(
-              :created_at, Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
+              :created_at => Time.parse('2014-06-19 10:09:18 +1000')..Time.parse('2014-06-19 20:09:18 +1000')
             )
             expect(relation).to_not have_received(:sum)
           end
@@ -112,6 +100,15 @@ describe DoubleEntry::BalanceCalculator do
           )
           expect(relation).to have_received(:sum).with(:amount)
         end
+      end
+    end
+
+    context 'when a single code is provided' do
+      let(:code) { 'code1' }
+
+      it 'scopes the lines summed by the given code' do
+        expect(relation).to have_received(:where).with(:code => ['code1'])
+        expect(relation).to have_received(:sum).with(:amount)
       end
     end
 

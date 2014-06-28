@@ -30,8 +30,17 @@ module DoubleEntry
         scope_identifier.call(scope).to_s if scoped?
       end
 
-      def balance(args = {})
-        DoubleEntry.balance(self, args)
+      # Get the current or historic balance of this account.
+      #
+      # @option options :from [Time]
+      # @option options :to [Time]
+      # @option options :at [Time]
+      # @option options :code [Symbol]
+      # @option options :codes [Array<Symbol>]
+      # @return [Money]
+      #
+      def balance(options = {})
+        BalanceCalculator.calculate(self, options)
       end
 
       include Comparable

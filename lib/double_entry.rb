@@ -110,10 +110,10 @@ module DoubleEntry
       BalanceTransferrer.new(transfers).transfer(amount, options)
     end
 
-    # Get the current balance of an account, as a Money object.
+    # Get the current or historic balance of an account.
     #
     # @param account [DoubleEntry::Account:Instance, Symbol]
-    # @option options :scope [Symbol]
+    # @option options :scope [Object, String]
     # @option options :from [Time]
     # @option options :to [Time]
     # @option options :at [Time]
