@@ -1,9 +1,25 @@
 # encoding: utf-8
 module DoubleEntry
   class Account
+
+    # @api private
+    def self.account(defined_accounts, identifier, options = {})
+      account = defined_accounts.find(identifier, options[:scope].present?)
+      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+    end
+
+    # @api private
     class Set < Array
       def define(attributes)
         self << Account.new(attributes)
+      end
+
+      def find(identifier, scoped)
+        account = detect do |account|
+          account.identifier == identifier && account.scoped? == scoped
+        end
+        raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless account
+        account
       end
 
       def <<(account)

@@ -40,16 +40,7 @@ module DoubleEntry
     #   configured. It is unknown.
     #
     def account(identifier, options = {})
-      account = configuration.accounts.detect do |current_account|
-        current_account.identifier == identifier &&
-          (options[:scope] ? current_account.scoped? : !current_account.scoped?)
-      end
-
-      if account
-        DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
-      else
-        raise UnknownAccount.new("account: #{identifier} scope: #{options[:scope]}")
-      end
+      Account.account(configuration.accounts, identifier, options)
     end
 
     # Transfer money from one account to another.
