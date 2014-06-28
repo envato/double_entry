@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class HourRange < TimeRange
     attr_reader :year, :week, :day, :hour
 
@@ -37,4 +38,5 @@ module DoubleEntry
       "#{start.hour}:00:00 - #{start.hour}:59:59"
     end
   end
+ end
 end

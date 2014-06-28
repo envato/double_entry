@@ -2,6 +2,10 @@
 module DoubleEntry
   class Transfer
     class Set < Array
+      def define(attributes)
+        self << Transfer.new(attributes)
+      end
+
       def find(from, to, code)
         _find(from.identifier, to.identifier, code)
       end

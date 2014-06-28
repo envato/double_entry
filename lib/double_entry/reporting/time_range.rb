@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class TimeRange
     attr_reader :start, :finish
     attr_reader :year, :month, :week, :day, :hour, :range_type
@@ -25,13 +26,13 @@ module DoubleEntry
     def self.range_from_time_for_period(start_time, period_name)
        case period_name
          when 'month'
-           DoubleEntry::YearRange.from_time(start_time)
+           YearRange.from_time(start_time)
          when 'week'
-            DoubleEntry::YearRange.from_time(start_time)
+            YearRange.from_time(start_time)
          when 'day'
-           DoubleEntry::MonthRange.from_time(start_time)
+           MonthRange.from_time(start_time)
          when 'hour'
-           DoubleEntry::DayRange.from_time(start_time)
+           DayRange.from_time(start_time)
        end
     end
 
@@ -49,7 +50,8 @@ module DoubleEntry
     end
 
     def human_readable_name
-      self.class.name.gsub('DoubleEntry::', '').gsub('Range', '')
+      self.class.name.gsub('DoubleEntry::Reporting::', '').gsub('Range', '')
     end
   end
+ end
 end
