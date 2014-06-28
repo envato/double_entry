@@ -53,7 +53,7 @@ module DoubleEntry
       end
 
       if account
-        DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+        Account::Instance.new(:account => account, :scope => options[:scope])
       else
         raise UnknownAccount.new("account: #{identifier} scope: #{options[:scope]}")
       end
@@ -183,7 +183,7 @@ module DoubleEntry
     #   The transaction must be the outermost database transaction
     #
     def lock_accounts(*accounts, &block)
-      DoubleEntry::Locking.lock_accounts(*accounts, &block)
+      Locking.lock_accounts(*accounts, &block)
     end
 
     # @api private
