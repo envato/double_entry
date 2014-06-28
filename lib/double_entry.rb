@@ -121,7 +121,7 @@ module DoubleEntry
     # @option options :codes [Array<Symbol>]
     # @return [Money]
     def balance(account, options = {})
-      DoubleEntry::BalanceCalculator.calculate(account, options)
+      BalanceCalculator.calculate(account, options)
     end
 
     # Identify the scopes with the given account identifier holding at least
