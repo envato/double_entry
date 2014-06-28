@@ -215,11 +215,6 @@ describe DoubleEntry do
       expect(debit_line).to_not be_credit
     end
 
-    it 'can describe itself' do
-      expect(credit_line.description).to eq 'Money goes out: $-10.00'
-      expect(debit_line.description).to eq 'Money goes in: $10.00'
-    end
-
     it 'can reference its partner' do
       expect(credit_line.partner).to eq debit_line
       expect(debit_line.partner).to eq credit_line

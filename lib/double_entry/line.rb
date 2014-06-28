@@ -122,10 +122,6 @@ module DoubleEntry
       amount > Money.empty
     end
 
-    def description
-     DoubleEntry.describe(self)
-    end
-
     # Query out just the id and created_at fields for lines, without
     # instantiating any ActiveRecord objects.
     def self.find_id_and_created_at(options)
