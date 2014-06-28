@@ -55,6 +55,19 @@ module DoubleEntry
       SQL
     end
 
+    # This is used by the concurrency test script.
+    #
+    # @api private
+    # @return [Boolean] true if all the amounts for an account add up to the final balance,
+    #   which they always should.
+    def reconciled?(account)
+      scoped_lines = Line.where(:account => "#{account.identifier}", :scope => "#{account.scope}")
+      sum_of_amounts = scoped_lines.sum(:amount)
+      final_balance  = scoped_lines.order(:id).last[:balance]
+      cached_balance = AccountBalance.find_by_account(account)[:balance]
+      final_balance == sum_of_amounts && final_balance == cached_balance
+    end
+
   private
 
     delegate :connection, :to => ActiveRecord::Base
