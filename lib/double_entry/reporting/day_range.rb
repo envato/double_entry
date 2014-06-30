@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class DayRange < TimeRange
     attr_reader :year, :week, :day
 
@@ -35,4 +36,5 @@ module DoubleEntry
       start.strftime('%Y, %a %b %d')
     end
   end
+ end
 end

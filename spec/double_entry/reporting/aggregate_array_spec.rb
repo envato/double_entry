@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe DoubleEntry::AggregateArray do
+describe DoubleEntry::Reporting::AggregateArray do
 
   let(:user) { User.make! }
   let(:start) { nil }
@@ -7,7 +7,7 @@ describe DoubleEntry::AggregateArray do
   let(:range_type) { 'year' }
 
   subject(:aggregate_array) {
-    DoubleEntry.aggregate_array(
+    DoubleEntry::Reporting.aggregate_array(
       :sum,
       :savings,
       :bonus,

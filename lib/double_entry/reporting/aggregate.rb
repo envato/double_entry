@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class Aggregate
     attr_reader :function, :account, :code, :range, :options, :filter
 
@@ -50,7 +51,7 @@ module DoubleEntry
     end
 
     def calculate
-      if range.class == DoubleEntry::YearRange
+      if range.class == YearRange
         aggregate = calculate_yearly_aggregate
       else
         aggregate = LineAggregate.aggregate(function, account, code, range, filter)
@@ -77,8 +78,8 @@ module DoubleEntry
         zero = Aggregate.formatted_amount(function, 0)
 
         result = (1..12).inject(zero) do |total, month|
-          total += DoubleEntry.aggregate(function, account, code,
-                                      :range => DoubleEntry::MonthRange.new(:year => range.year, :month => month), :filter => filter)
+          total += Reporting.aggregate(function, account, code,
+                                      :range => MonthRange.new(:year => range.year, :month => month), :filter => filter)
         end
 
         result = result.cents if result.class == Money
@@ -88,10 +89,10 @@ module DoubleEntry
 
     def calculate_yearly_average
       # need this seperate function, because an average of averages is not the correct average
-      sum = DoubleEntry.aggregate(:sum, account, code,
-                               :range => DoubleEntry::YearRange.new(:year => range.year), :filter => filter)
-      count = DoubleEntry.aggregate(:count, account, code,
-                                 :range => DoubleEntry::YearRange.new(:year => range.year), :filter => filter)
+      sum = Reporting.aggregate(:sum, account, code,
+                               :range => YearRange.new(:year => range.year), :filter => filter)
+      count = Reporting.aggregate(:count, account, code,
+                                 :range => YearRange.new(:year => range.year), :filter => filter)
       (count == 0) ? 0 : (sum / count).cents
     end
 
@@ -114,4 +115,5 @@ module DoubleEntry
       }
     end
   end
+ end
 end

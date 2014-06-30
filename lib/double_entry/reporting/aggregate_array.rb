@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class AggregateArray < Array
     # An AggregateArray is awesome
     # It is useful for making reports
@@ -37,7 +38,7 @@ module DoubleEntry
       # (this includes aggregates for the still-running period)
       all_periods.each do |period|
         unless @aggregates[period.key]
-          @aggregates[period.key] = DoubleEntry.aggregate(function, account, code, :filter => filter, :range => period)
+          @aggregates[period.key] = Reporting.aggregate(function, account, code, :filter => filter, :range => period)
         end
       end
     end
@@ -62,4 +63,5 @@ module DoubleEntry
       TimeRangeArray.make(range_type, start, finish)
     end
   end
+ end
 end

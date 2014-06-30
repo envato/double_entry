@@ -1,5 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
+ module Reporting
   class YearRange < TimeRange
     attr_reader :year
 
@@ -12,11 +13,11 @@ module DoubleEntry
     end
 
     def self.current
-      YearRange.new(:year => Time.now.year)
+      new(:year => Time.now.year)
     end
 
     def self.from_time(time)
-      YearRange.new(:year => time.year)
+      new(:year => time.year)
     end
 
     def ==(other)
@@ -35,4 +36,5 @@ module DoubleEntry
       year.to_s
     end
   end
+ end
 end
