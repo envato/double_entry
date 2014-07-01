@@ -186,17 +186,6 @@ module DoubleEntry
       Locking.lock_accounts(*accounts, &block)
     end
 
-    # @api private
-    def describe(line)
-      # make sure we have a test for this refactoring, the test
-      # conditions are: i forget... but it's important!
-      if line.credit?
-        configuration.transfers.find(line.account, line.partner_account, line.code)
-      else
-        configuration.transfers.find(line.partner_account, line.account, line.code)
-      end.description.call(line)
-    end
-
     # This is used by the concurrency test script.
     #
     # @api private
