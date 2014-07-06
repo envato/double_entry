@@ -56,7 +56,7 @@ module DoubleEntry
     #   pass an array with the symbol names for the defined scopes.
     # @return Returns a Money object for :sum and :average calculations, or a
     #   Fixnum for :count calculations.
-    # @raise [DoubleEntry::AggregateFunctionNotSupported] The provided function
+    # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
     def aggregate(function, account, code, options = {})
@@ -99,7 +99,7 @@ module DoubleEntry
     #   and :average calculations, or an array of Fixnum for :count calculations.
     #   The array is indexed by the range_type.  For example, if range_type is
     #   specified as 'month', each index in the array will represent a month.
-    # @raise [DoubleEntry::AggregateFunctionNotSupported] The provided function
+    # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
     def aggregate_array(function, account, code, options = {})

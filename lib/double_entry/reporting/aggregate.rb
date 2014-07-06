@@ -6,7 +6,7 @@ module DoubleEntry
 
     def initialize(function, account, code, options)
       @function = function.to_s
-      raise DoubleEntry::AggregateFunctionNotSupported unless %w[sum count average].include?(@function)
+      raise AggregateFunctionNotSupported unless %w[sum count average].include?(@function)
 
       @account = account.to_s
       @code = code ? code.to_s : nil
