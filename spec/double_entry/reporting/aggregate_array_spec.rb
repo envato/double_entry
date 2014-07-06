@@ -7,10 +7,11 @@ module DoubleEntry
       let(:start) { nil }
       let(:finish) { nil }
       let(:range_type) { 'year' }
+      let(:function) { :sum }
 
       subject(:aggregate_array) {
         Reporting.aggregate_array(
-          :sum,
+          function,
           :savings,
           :bonus,
           :range_type => range_type,
@@ -70,7 +71,7 @@ module DoubleEntry
 
       context 'when called with range type of "invalid_and_should_not_work"' do
         let(:range_type) { 'invalid_and_should_not_work' }
-        it 'should raise an argument error' do
+        it 'raises an argument error' do
           expect { aggregate_array }.to raise_error ArgumentError, "Invalid range type 'invalid_and_should_not_work'"
         end
       end
@@ -78,18 +79,9 @@ module DoubleEntry
       context 'when an invalid function is provided' do
         let(:range_type) { 'month' }
         let(:start) { '2006-08-03' }
-
-        it 'should raise an AggregateFunctionNotSupported error' do
-          expect{
-            Reporting.aggregate_array(
-              :invalid_function,
-              :savings,
-              :bonus,
-              :range_type => range_type,
-              :start => start,
-              :finish => finish,
-            )
-          }.to raise_error(AggregateFunctionNotSupported)
+        let(:function) { :invalid_function }
+        it 'raises an AggregateFunctionNotSupported error' do
+          expect{ aggregate_array }.to raise_error AggregateFunctionNotSupported
         end
       end
     end
