@@ -66,7 +66,9 @@ than scoped accounts due to lock contention.
 
 To get a particular account:
 
-    account = DoubleEntry.account(:spending, :scope => user)
+```ruby
+account = DoubleEntry.account(:spending, :scope => user)
+```
 
 (This actually returns an Account::Instance object.)
 
@@ -77,7 +79,9 @@ See **DoubleEntry::Account** for more info.
 
 Calling:
 
-    account.balance
+```ruby
+account.balance
+```
 
 will return the current balance for an account as a Money object.
 
@@ -86,7 +90,9 @@ will return the current balance for an account as a Money object.
 
 To transfer money between accounts:
 
-    DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
+```ruby
+DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
+```
 
 The possible transfers, and their codes, should be defined in the configuration.
 
@@ -99,10 +105,12 @@ If you're doing more than one transfer in a single financial transaction, or
 you're doing other database operations along with the transfer, you'll need to
 manually lock the accounts you're using:
 
-    DoubleEntry.lock_accounts(account_a, account_b) do
-      # Do some other stuff in here...
-      DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
-    end
+```ruby
+DoubleEntry.lock_accounts(account_a, account_b) do
+  # Do some other stuff in here...
+  DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
+end
+```
 
 The lock_accounts call generates a database transaction, which must be the
 outermost transaction.
