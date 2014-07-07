@@ -65,6 +65,25 @@ describe DoubleEntry::Line do
     end
   end
 
+  describe '#save' do
+    context 'when balance is sent negative' do
+      let(:account) {
+        DoubleEntry.account(:savings, :scope => '17', :positive_only => true)
+      }
+
+      let(:line) {
+        DoubleEntry::Line.new(
+          :balance => Money.new(-1),
+          :account => account,
+        )
+      }
+
+      it 'raises AccountWouldBeSentNegative exception' do
+        expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
+      end
+    end
+  end
+
   it "has a table name prefixed with double_entry_" do
     expect(DoubleEntry::Line.table_name).to eq "double_entry_lines"
   end
