@@ -19,7 +19,7 @@ module DoubleEntry
           account.identifier == identifier && account.scoped? == scoped
         end
         raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless account
-        account
+        return account
       end
 
       def <<(account)

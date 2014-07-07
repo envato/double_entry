@@ -24,7 +24,7 @@ module DoubleEntry
       def find!(from, to, code)
         transfer = find(from, to, code)
         raise TransferNotAllowed.new([from.identifier, to.identifier, code].inspect) unless transfer
-        transfer
+        return transfer
       end
 
       def <<(transfer)
