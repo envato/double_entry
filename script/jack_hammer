@@ -156,11 +156,11 @@ def reconcile
     error_count += 1
   end
 
-  if $accounts.all? {|account| DoubleEntry.reconciled?(account) }
+  if $accounts.all? {|account| DoubleEntry::Reporting.reconciled?(account) }
     puts "All accounts reconciled, FTW!"
   else
     $accounts.each do |account|
-      if !DoubleEntry.reconciled?(account)
+      if !DoubleEntry::Reporting.reconciled?(account)
         puts "Account #{account.identifier} failed to reconcile. :("
 
         # See http://bugs.mysql.com/bug.php?id=51431

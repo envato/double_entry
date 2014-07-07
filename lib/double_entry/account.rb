@@ -1,9 +1,25 @@
 # encoding: utf-8
 module DoubleEntry
   class Account
+
+    # @api private
+    def self.account(defined_accounts, identifier, options = {})
+      account = defined_accounts.find(identifier, options[:scope].present?)
+      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+    end
+
+    # @api private
     class Set < Array
       def define(attributes)
         self << Account.new(attributes)
+      end
+
+      def find(identifier, scoped)
+        account = detect do |account|
+          account.identifier == identifier && account.scoped? == scoped
+        end
+        raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless account
+        return account
       end
 
       def <<(account)
@@ -34,8 +50,17 @@ module DoubleEntry
         scope_identifier.call(scope).to_s if scoped?
       end
 
-      def balance(args = {})
-        DoubleEntry.balance(self, args)
+      # Get the current or historic balance of this account.
+      #
+      # @option options :from [Time]
+      # @option options :to [Time]
+      # @option options :at [Time]
+      # @option options :code [Symbol]
+      # @option options :codes [Array<Symbol>]
+      # @return [Money]
+      #
+      def balance(options = {})
+        BalanceCalculator.calculate(self, options)
       end
 
       include Comparable
