@@ -2,16 +2,15 @@
 module DoubleEntry
  module Reporting
   class Aggregate
-    attr_reader :function, :account, :code, :scope, :range, :options, :filter
+    attr_reader :function, :account, :code, :range, :options, :filter
 
     def initialize(function, account, code, options)
       @function = function.to_s
-      raise "Function not supported" unless %w[sum count average].include?(@function)
+      raise AggregateFunctionNotSupported unless %w[sum count average].include?(@function)
 
       @account = account.to_s
       @code = code ? code.to_s : nil
       @options = options
-      @scope = options[:scope]
       @range = options[:range]
       @filter = options[:filter]
     end
@@ -55,7 +54,7 @@ module DoubleEntry
       if range.class == YearRange
         aggregate = calculate_yearly_aggregate
       else
-        aggregate = LineAggregate.aggregate(function, account, code, nil, range, filter)
+        aggregate = LineAggregate.aggregate(function, account, code, range, filter)
       end
 
       if range_is_complete?

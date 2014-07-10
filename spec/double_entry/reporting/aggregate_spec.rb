@@ -5,6 +5,12 @@ module DoubleEntry
     describe Aggregate do
 
       let(:user) { User.make! }
+      let(:expected_weekly_average) do
+        (Money.new(20_00) + Money.new(40_00) + Money.new(50_00)) / 3
+      end
+      let(:expected_monthly_average) do
+        (Money.new(20_00) + Money.new(40_00) + Money.new(50_00) + Money.new(40_00) + Money.new(50_00)) / 5
+      end
 
       before do
         # Thursday
@@ -107,10 +113,40 @@ module DoubleEntry
         ).to eq Money.new(200_00)
       end
 
+      it 'calculates the average monthly all_time ranges correctly' do
+        expect(
+          Reporting.aggregate(:average, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time))
+        ).to eq expected_monthly_average
+      end
+
+      it 'returns the correct count for weekly all_time ranges correctly' do
+        expect(
+          Reporting.aggregate(:count, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time))
+        ).to eq 5
+      end
+
       it 'should calculate weekly all_time ranges correctly' do
         expect(
           Reporting.aggregate(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time))
         ).to eq Money.new(110_00)
+      end
+
+      it 'calculates the average weekly all_time ranges correctly' do
+        expect(
+          Reporting.aggregate(:average, :savings, :bonus, :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time))
+        ).to eq expected_weekly_average
+      end
+
+      it 'returns the correct count for weekly all_time ranges correctly' do
+        expect(
+          Reporting.aggregate(:count, :savings, :bonus, :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time))
+        ).to eq 3
+      end
+
+      it "raises an AggregateFunctionNotSupported exception" do
+        expect{
+          Reporting.aggregate(:not_supported_calculation, :savings, :bonus, :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time))
+        }.to raise_error(AggregateFunctionNotSupported)
       end
 
       context 'filters' do

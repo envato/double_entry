@@ -67,7 +67,7 @@ module DoubleEntry
     #   of this account.
     # @option options :to [DoubleEntry::Account::Instance] Transfer money into
     #   this account.
-    # @option options :code [Symbol] Your application specific code for this
+    # @option options :code [Symbol] The application specific code for this
     #   type of transfer. As specified in the transfer configuration.
     # @option options :meta [String] Metadata to associate with this transfer.
     # @option options :detail [ActiveRecord::Base] ActiveRecord model
@@ -114,6 +114,7 @@ module DoubleEntry
       Locking.lock_accounts(*accounts, &block)
     end
 
+    # @api private
     def table_name_prefix
       'double_entry_'
     end
