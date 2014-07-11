@@ -31,7 +31,7 @@ module DoubleEntry
     #
     # @example Obtain the 'cash' account for a user
     #   DoubleEntry.account(:cash, scope: user)
-    # @param identifier [Symbol] The symbol identifying the desired account. As
+    # @param [Symbol] identifier The symbol identifying the desired account. As
     #   specified in the account configuration.
     # @option options :scope Limit the account to the given scope. As specified
     #   in the account configuration.
@@ -61,7 +61,7 @@ module DoubleEntry
     #     to:   savings_account,
     #     code: :save,
     #   )
-    # @param amount [Money] The quantity of money to transfer from one account
+    # @param [Money] amount The quantity of money to transfer from one account
     #   to the other.
     # @option options :from [DoubleEntry::Account::Instance] Transfer money out
     #   of this account.
@@ -82,7 +82,7 @@ module DoubleEntry
 
     # Get the current or historic balance of an account.
     #
-    # @param account [DoubleEntry::Account:Instance, Symbol]
+    # @param [DoubleEntry::Account:Instance, Symbol] account
     # @option options :scope [Object, String]
     # @option options :from [Time]
     # @option options :to [Time]
