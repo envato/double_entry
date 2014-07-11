@@ -12,15 +12,24 @@ module DoubleEntry
       end
 
       def make(start = nil, finish = nil)
-        raise "Must specify start of range" if start == nil && require_start?
-        start = type.from_time(Time.parse(start || Reporting.configuration.start_of_business))
-        finish = finish ? type.from_time(Time.parse(finish)) : type.current
+        start = start_range(start)
+        finish = finish_range(finish)
         [ start ].tap do |array|
           while start != finish
             start = start.next
             array << start
           end
         end
+      end
+
+      def start_range(start = nil)
+        raise "Must specify start of range" if start.blank? && require_start?
+        start_time = start ? Time.parse(start) : Reporting.configuration.start_of_business
+        type.from_time(start_time)
+      end
+
+      def finish_range(finish = nil)
+        finish ? type.from_time(Time.parse(finish)) : type.current
       end
 
       FACTORIES = {

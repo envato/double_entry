@@ -110,12 +110,13 @@ module DoubleEntry::Reporting
     context 'for "year" range type' do
       let(:range_type) { 'year' }
 
-      context 'given start is "2007-05-03" and finish is "2008-08-24"' do
-        let(:start)  { '2007-05-03' }
-        let(:finish) { '2008-08-24' }
+      context 'given the date is "2009-11-23"' do
+        before { Timecop.freeze(Time.new(2009, 11, 23)) }
 
-        context 'and the date is "2009-11-23"' do
-          before { Timecop.freeze(Time.new(2009, 11, 23)) }
+        context 'given start is "2007-05-03" and finish is "2008-08-24"' do
+          let(:start)  { '2007-05-03' }
+          let(:finish) { '2008-08-24' }
+
 
           it 'takes notice of start and finish' do
             should eq [
@@ -123,9 +124,17 @@ module DoubleEntry::Reporting
               YearRange.from_time(Time.new(2008)),
             ]
           end
+        end
 
-          context 'given finish is nil' do
-            let(:start)  { '2006-08-03' }
+        context 'given the start of business is "2006-07-10"' do
+          before do
+            allow(DoubleEntry::Reporting).
+              to receive_message_chain('configuration.start_of_business').
+              and_return(Time.new(2006, 7, 10))
+          end
+
+          context 'given start and finish are nil' do
+            let(:start)  { nil }
             let(:finish) { nil }
             it {
               should eq [
