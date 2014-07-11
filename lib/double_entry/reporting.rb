@@ -39,8 +39,7 @@ module DoubleEntry
     #     scope :ten_dollar_transfers, -> { where(:amount => 10_00) }
     #   end
     #   DoubleEntry::Reporting.aggregate(:sum, :checking, :save, :range => time_range, :filter => [:ten_dollar_transfers])
-    #
-    # @param function [Symbol] The function to perform on the set of transfers.
+    # @param [Symbol] function The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
     # @param account [Symbol] The symbol identifying the account to perform
     #   the aggregate calculation on. As specified in the account configuration.
