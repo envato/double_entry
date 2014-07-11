@@ -38,7 +38,13 @@ module DoubleEntry
     #   DoubleEntry::Line.class_eval do
     #     scope :ten_dollar_transfers, -> { where(:amount => 10_00) }
     #   end
-    #   DoubleEntry::Reporting.aggregate(:sum, :checking, :save, :range => time_range, :filter => [:ten_dollar_transfers])
+    #   DoubleEntry::Reporting.aggregate(
+    #     :sum,
+    #     :checking,
+    #     :save,
+    #     :range => time_range,
+    #     :filter => [ :ten_dollar_transfers ],
+    #   )
     # @param [Symbol] function The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
     # @param [Symbol] account The symbol identifying the account to perform
@@ -70,7 +76,14 @@ module DoubleEntry
     # and provided custom filters.
     #
     # @example Find the number of all $10 :save transfers in all :checking accounts per month for the entire year (Assume the year is 2014).
-    #   DoubleEntry.aggregate_array(:sum, :checking, :save, range_type: 'month', start: '2014-01-01', finish: '2014-12-31')
+    #   DoubleEntry::Reporting.aggregate_array(
+    #     :sum,
+    #     :checking,
+    #     :save,
+    #     :range_type => 'month',
+    #     :start => '2014-01-01',
+    #     :finish => '2014-12-31',
+    #   )
     # @param [Symbol] function The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
     # @param [Symbol] account The symbol identifying the account to perform
@@ -110,7 +123,7 @@ module DoubleEntry
     # the provided minimum balance.
     #
     # @example Find users with at least $1,000,000 in their savings accounts
-    #   DoubleEntry.scopes_with_minimum_balance_for_account(
+    #   DoubleEntry::Reporting.scopes_with_minimum_balance_for_account(
     #     Money.new(1_000_000_00),
     #     :savings
     #   ) # might return user ids: [ 1423, 12232, 34729 ]
