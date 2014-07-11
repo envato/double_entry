@@ -56,10 +56,10 @@ module DoubleEntry
     #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   savings_account  = DoubleEntry.account(:savings,  scope: user)
     #   DoubleEntry.transfer(
-    #     Money.new(20_00),
-    #     from: checking_account,
-    #     to:   savings_account,
-    #     code: :save,
+    #     20.dollars,
+    #     :from => checking_account,
+    #     :to   => savings_account,
+    #     :code => :save,
     #   )
     # @param [Money] amount The quantity of money to transfer from one account
     #   to the other.
