@@ -1,45 +1,42 @@
 # encoding: utf-8
 module DoubleEntry
- module Reporting
-  class TimeRangeArray
-    class << self
+  module Reporting
+    class TimeRangeArray
 
-      def make(range_type, start, finish = nil)
-        raise "Must specify range for #{range_type}-by-#{range_type} reports" if start == nil
+      attr_reader :type, :require_start
+      alias_method :require_start?, :require_start
 
-        case range_type
-        when 'hour'
-          make_array HourRange, start, finish
-        when 'day'
-          make_array DayRange, start, finish
-        when 'week'
-          make_array WeekRange, start, finish
-        when 'month'
-          make_array MonthRange, start, finish
-        when 'year'
-          make_array YearRange, start
-        else
-          raise ArgumentError.new("Invalid range type '#{range_type}'")
+      def initialize(options = {})
+        @type = options[:type]
+        @require_start = options[:require_start]
+      end
+
+      def make(start = nil, finish = nil)
+        raise "Must specify start of range" if start == nil && require_start?
+        start = type.from_time(Time.parse(start || Reporting.configuration.start_of_business))
+        finish = finish ? type.from_time(Time.parse(finish)) : type.current
+        [ start ].tap do |array|
+          while start != finish
+            start = start.next
+            array << start
+          end
         end
       end
 
-      private
+      FACTORIES = {
+        'hour'  => new(:type => HourRange,  :require_start => true),
+        'day'   => new(:type => DayRange,   :require_start => true),
+        'week'  => new(:type => WeekRange,  :require_start => true),
+        'month' => new(:type => MonthRange, :require_start => false),
+        'year'  => new(:type => YearRange,  :require_start => false),
+      }
 
-      def make_array(type, start, finish = nil)
-        start = type.from_time(Time.parse(start))
-        finish = type.from_time(Time.parse(finish)) if finish
-
-        loop = start
-        last = finish || type.current
-        results = [loop]
-        while(loop != last) do
-          loop = loop.next
-          results << loop
-        end
-
-        results
+      def self.make(range_type, start = nil, finish = nil)
+        factory = FACTORIES[range_type]
+        raise ArgumentError.new("Invalid range type '#{range_type}'") unless factory
+        factory.make(start, finish)
       end
+
     end
   end
- end
 end

@@ -21,7 +21,7 @@ module DoubleEntry::Reporting
       context 'given start and finish are nil' do
         it 'should raise an error' do
           expect { TimeRangeArray.make(range_type, nil, nil) }.
-            to raise_error 'Must specify range for hour-by-hour reports'
+            to raise_error 'Must specify start of range'
         end
       end
     end
@@ -44,7 +44,7 @@ module DoubleEntry::Reporting
       context 'given start and finish are nil' do
         it 'should raise an error' do
           expect { TimeRangeArray.make(range_type, nil, nil) }.
-            to raise_error 'Must specify range for day-by-day reports'
+            to raise_error 'Must specify start of range'
         end
       end
     end
@@ -66,7 +66,7 @@ module DoubleEntry::Reporting
       context 'given start and finish are nil' do
         it 'should raise an error' do
           expect { TimeRangeArray.make(range_type, nil, nil) }.
-            to raise_error 'Must specify range for week-by-week reports'
+            to raise_error 'Must specify start of range'
         end
       end
     end
@@ -117,11 +117,10 @@ module DoubleEntry::Reporting
         context 'and the date is "2009-11-23"' do
           before { Timecop.freeze(Time.new(2009, 11, 23)) }
 
-          it 'takes no notice of start and finish' do
+          it 'takes notice of start and finish' do
             should eq [
               YearRange.from_time(Time.new(2007)),
               YearRange.from_time(Time.new(2008)),
-              YearRange.from_time(Time.new(2009)),
             ]
           end
 
