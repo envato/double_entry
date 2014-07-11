@@ -214,7 +214,7 @@ correct balances from the lines table.
 
 ## Future Direction
 
-No immediate to-do's.
+See the Github project [issues](https://github.com/envato/double_entry/issues).
 
 ## Development Environment Setup
 
