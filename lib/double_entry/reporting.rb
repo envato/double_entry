@@ -46,16 +46,16 @@ module DoubleEntry
     # @param [Symbol] code The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @option options :range [DoubleEntry::TimeRange] Only include transfers
-    #   in the given time range in the calculation.
+    # @option options :range [DoubleEntry::Reporting::TimeRange] Only include
+    #   transfers in the given time range in the calculation.
     # @option options :filter [Array<Symbol>, Array<Hash<Symbol, Object>>]
     #   A custom filter to apply before performing the aggregate calculation.
-    #   Currently, filters must be monkey patched as scopes into the DoubleEntry::Line
-    #   class in order to be used as filters, as the example shows.
-    #   If the filter requires a parameter, it must be given in a Hash, otherwise
-    #   pass an array with the symbol names for the defined scopes.
-    # @return [Money, Fixnum] Returns a Money object for :sum and :average calculations, or a
-    #   Fixnum for :count calculations.
+    #   Currently, filters must be monkey patched as scopes into the
+    #   DoubleEntry::Line class in order to be used as filters, as the example
+    #   shows. If the filter requires a parameter, it must be given in a Hash,
+    #   otherwise pass an array with the symbol names for the defined scopes.
+    # @return [Money, Fixnum] Returns a Money object for :sum and :average
+    #   calculations, or a Fixnum for :count calculations.
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
@@ -71,19 +71,19 @@ module DoubleEntry
     #
     # @example Find the number of all $10 :save transfers in all :checking accounts per month for the entire year (Assume the year is 2014).
     #   DoubleEntry.aggregate_array(:sum, :checking, :save, range_type: 'month', start: '2014-01-01', finish: '2014-12-31')
-    # @param function [Symbol] The function to perform on the set of transfers.
+    # @param [Symbol] function The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
-    # @param account [Symbol] The symbol identifying the account to perform
+    # @param [Symbol] account The symbol identifying the account to perform
     #   the aggregate calculation on. As specified in the account configuration.
-    # @param code [Symbol] The application specific code for the type of
+    # @param [Symbol] code The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @option options :filter [Array[Symbol], or Array[Hash<Symbol,Parameter>]]
+    # @option options :filter [Array<Symbol>, Array<Hash<Symbol, Object>>]
     #   A custom filter to apply before performing the aggregate calculation.
-    #   Currently, filters must be monkey patched as scopes into the DoubleEntry::Line
-    #   class in order to be used as filters, as the example shows.
-    #   If the filter requires a parameter, it must be given in a Hash, otherwise
-    #   pass an array with the symbol names for the defined scopes.
+    #   Currently, filters must be monkey patched as scopes into the
+    #   DoubleEntry::Line class in order to be used as filters, as the example
+    #   shows. If the filter requires a parameter, it must be given in a Hash,
+    #   otherwise pass an array with the symbol names for the defined scopes.
     # @option options :range_type [String] The type of time range to return data
     #   for.  For example, specifying 'month' will return an array of the resulting
     #   aggregate calculation for each month.
@@ -95,7 +95,7 @@ module DoubleEntry
     # @option options :finish [String] The finish (or end) date for the time range
     #   to perform calculations in.  The default finish date is the current date.
     #   The format of the string must be as follows: 'YYYY-mm-dd'
-    # @return [Array[Money/Fixnum]] Returns an array of Money objects for :sum
+    # @return [Array<Money, Fixnum>] Returns an array of Money objects for :sum
     #   and :average calculations, or an array of Fixnum for :count calculations.
     #   The array is indexed by the range_type.  For example, if range_type is
     #   specified as 'month', each index in the array will represent a month.
@@ -114,9 +114,9 @@ module DoubleEntry
     #     Money.new(1_000_000_00),
     #     :savings
     #   ) # might return user ids: [ 1423, 12232, 34729 ]
-    # @param minimum_balance [Money] Minimum account balance a scope must have
+    # @param [Money] minimum_balance Minimum account balance a scope must have
     #   to be included in the result set.
-    # @param account_identifier [Symbol]
+    # @param [Symbol] account_identifier 
     # @return [Array<Fixnum>] Scopes
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
