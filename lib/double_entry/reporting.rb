@@ -48,13 +48,13 @@ module DoubleEntry
     #   transfer configuration.
     # @option options :range [DoubleEntry::TimeRange] Only include transfers
     #   in the given time range in the calculation.
-    # @option options :filter [Array[Symbol], or Array[Hash<Symbol,Parameter>]]
+    # @option options :filter [Array<Symbol>, Array<Hash<Symbol, Object>>]
     #   A custom filter to apply before performing the aggregate calculation.
     #   Currently, filters must be monkey patched as scopes into the DoubleEntry::Line
     #   class in order to be used as filters, as the example shows.
     #   If the filter requires a parameter, it must be given in a Hash, otherwise
     #   pass an array with the symbol names for the defined scopes.
-    # @return Returns a Money object for :sum and :average calculations, or a
+    # @return [Money, Fixnum] Returns a Money object for :sum and :average calculations, or a
     #   Fixnum for :count calculations.
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
