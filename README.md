@@ -220,27 +220,39 @@ No immediate to-do's.
 
 1. Clone this repo.
 
-        git clone git@github.com:envato/double_entry.git && cd double_entry
+    ```sh
+    git clone git@github.com:envato/double_entry.git && cd double_entry
+    ```
 
 2. Run the included setup script to install the gem dependencies.
 
-        ./script/setup.sh
+    ```sh
+    ./script/setup.sh
+    ```
 
-3. Install MySQL and PostgreSQL. The tests run using both databases.
+3. Install MySQL and PostgreSQL. We run tests against both databases.
 4. Create a database in MySQL.
 
-        mysql -u root -e 'create database double_entry_test;'
+    ```sh
+    mysql -u root -e 'create database double_entry_test;'
+    ```
 
 5. Create a database in PostgreSQL.
 
-        psql -c 'create database double_entry_test;' -U postgres
+    ```sh
+    psql -c 'create database double_entry_test;' -U postgres
+    ```
 
 6. Specify how the tests should connect to the database
 
-        cp spec/support/database.example.yml spec/support/database.yml
-        vim spec/support/database.yml
+    ```sh
+    cp spec/support/{database.example.yml,database.yml}
+    vim spec/support/database.yml
+    ```
 
 7. Run the tests
 
-        bundle exec rake
+    ```sh
+    bundle exec rake
+    ```
 
