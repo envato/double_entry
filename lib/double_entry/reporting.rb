@@ -34,11 +34,12 @@ module DoubleEntry
     # and provided custom filters.
     #
     # @example Find the sum for all $10 :save transfers in all :checking accounts in the current month (assume the date is January 30, 2014).
-    #   time_range = DoubleEntry::TimeRange.make(2014, 1)
-    #   class ::DoubleEntry::Line
+    #   time_range = DoubleEntry::Reporting::TimeRange.make(2014, 1)
+    #   DoubleEntry::Line.class_eval do
     #     scope :ten_dollar_transfers, -> { where(:amount => 10_00) }
     #   end
-    #   DoubleEntry.aggregate(:sum, :checking, :save, range: time_range, filter: [:ten_dollar_transfers])
+    #   DoubleEntry::Reporting.aggregate(:sum, :checking, :save, :range => time_range, :filter => [:ten_dollar_transfers])
+    #
     # @param function [Symbol] The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
     # @param account [Symbol] The symbol identifying the account to perform
