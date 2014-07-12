@@ -113,7 +113,8 @@ module DoubleEntry
     #     :from  => Time.new(2012, 5,  1,  0,  0,  0),
     #     :to    => Time.new(2012, 5, 31, 23, 59, 59),
     #   )
-    # @param [DoubleEntry::Account:Instance, Symbol] account
+    # @param [DoubleEntry::Account:Instance, Symbol] account Find the balance
+    #   for this account
     # @option options :scope [Object] The scope identify of the account (only
     #   needed if the provided account is a symbol).
     # @option options :from [Time] used with :to, consider only the time
