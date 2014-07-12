@@ -82,14 +82,41 @@ module DoubleEntry
 
     # Get the current or historic balance of an account.
     #
+    # @example Obtain the current balance of my checking account
+    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   DoubleEntry.balance(checking_account)
+    # @example Obtain the current balance of my checking account (without account or user model)
+    #   DoubleEntry.balance(:checking, :scope => user_id)
+    # @example Obtain a historic balance of my checking account
+    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   DoubleEntry.balance(checking_account, :at => Time.new(2012, 1, 1))
+    # @example Obtain a historic balance of my checking account
+    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   DoubleEntry.balance(checking_account, :at => Time.new(2012, 1, 1))
+    # @example Obtain the net balance of my checking account during may
+    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   DoubleEntry.balance(
+    #     checking_account,
+    #     :from => Time.new(2012, 5,  1,  0,  0,  0),
+    #     :to   => Time.new(2012, 5, 31, 23, 59, 59),
+    #   )
+    # @example Obtain the balance of salary deposits made to my checking account during may
+    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   DoubleEntry.balance(
+    #     checking_account,
+    #     :code => :salary,
+    #     :from => Time.new(2012, 5,  1,  0,  0,  0),
+    #     :to   => Time.new(2012, 5, 31, 23, 59, 59),
+    #   )
     # @param [DoubleEntry::Account:Instance, Symbol] account
-    # @option options :scope [Object, String]
+    # @option options :scope [Object] The scope identify of the account (only
+    #   needed if the provided account is a symbol).
     # @option options :from [Time]
     # @option options :to [Time]
     # @option options :at [Time]
     # @option options :code [Symbol]
     # @option options :codes [Array<Symbol>]
-    # @return [Money]
+    # @return [Money] The balance
     def balance(account, options = {})
       BalanceCalculator.calculate(account, options)
     end
