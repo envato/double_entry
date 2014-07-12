@@ -115,7 +115,7 @@ module DoubleEntry
     #   )
     # @param [DoubleEntry::Account:Instance, Symbol] account Find the balance
     #   for this account
-    # @option options :scope [Object] The scope identify of the account (only
+    # @option options :scope [Object] The scope identifier of the account (only
     #   needed if the provided account is a symbol).
     # @option options :from [Time] used with :to, consider only the time
     #   between these dates
