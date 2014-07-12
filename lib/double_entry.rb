@@ -90,9 +90,6 @@ module DoubleEntry
     # @example Obtain a historic balance of my checking account
     #   checking_account = DoubleEntry.account(:checking, :scope => user)
     #   DoubleEntry.balance(checking_account, :at => Time.new(2012, 1, 1))
-    # @example Obtain a historic balance of my checking account
-    #   checking_account = DoubleEntry.account(:checking, :scope => user)
-    #   DoubleEntry.balance(checking_account, :at => Time.new(2012, 1, 1))
     # @example Obtain the net balance of my checking account during may
     #   checking_account = DoubleEntry.account(:checking, :scope => user)
     #   DoubleEntry.balance(
@@ -107,6 +104,14 @@ module DoubleEntry
     #     :code => :salary,
     #     :from => Time.new(2012, 5,  1,  0,  0,  0),
     #     :to   => Time.new(2012, 5, 31, 23, 59, 59),
+    #   )
+    # @example Obtain the balance of salary & lottery deposits made to my checking account during may
+    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   DoubleEntry.balance(
+    #     checking_account,
+    #     :codes => [ :salary, :lottery ],
+    #     :from  => Time.new(2012, 5,  1,  0,  0,  0),
+    #     :to    => Time.new(2012, 5, 31, 23, 59, 59),
     #   )
     # @param [DoubleEntry::Account:Instance, Symbol] account
     # @option options :scope [Object] The scope identify of the account (only
