@@ -116,11 +116,14 @@ module DoubleEntry
     # @param [DoubleEntry::Account:Instance, Symbol] account
     # @option options :scope [Object] The scope identify of the account (only
     #   needed if the provided account is a symbol).
-    # @option options :from [Time]
-    # @option options :to [Time]
-    # @option options :at [Time]
-    # @option options :code [Symbol]
-    # @option options :codes [Array<Symbol>]
+    # @option options :from [Time] used with :to, consider only the time
+    #   between these dates
+    # @option options :to [Time] used with :from, consider only the time
+    #   between these dates
+    # @option options :at [Time] obtain the account balance at this time
+    # @option options :code [Symbol] consider only the transfers with this code
+    # @option options :codes [Array<Symbol>] consider only the transfers with
+    #   these codes
     # @return [Money] The balance
     def balance(account, options = {})
       BalanceCalculator.calculate(account, options)
