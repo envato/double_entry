@@ -100,7 +100,7 @@ describe DoubleEntry do
         end
 
         config.define_transfers do |transfers|
-          transfers.define(:from => :savings, :to => :cash, :code => :xfer, :meta_requirement => [:ref])
+          transfers.define(:from => :savings, :to => :cash, :code => :xfer)
         end
       end
     end
@@ -115,7 +115,6 @@ describe DoubleEntry do
         :from => savings,
         :to   => cash,
         :code => :xfer,
-        :meta => { :ref => 'shopping!' },
       )
     end
 
@@ -137,7 +136,6 @@ describe DoubleEntry do
           :from => savings,
           :to   => cash,
           :code => :yfer,
-          :meta => { :ref => 'shopping!' },
         )
       }.to raise_error DoubleEntry::TransferNotAllowed
     end
@@ -150,18 +148,6 @@ describe DoubleEntry do
           :to   => trash,
         )
       }.to raise_error DoubleEntry::TransferNotAllowed
-    end
-
-    it 'raises an exception when required meta data is omitted' do
-      expect {
-        DoubleEntry.transfer(
-          Money.new(100_00),
-          :from => savings,
-          :to   => cash,
-          :code => :xfer,
-          :meta => {},
-        )
-      }.to raise_error DoubleEntry::RequiredMetaMissing
     end
   end
 
