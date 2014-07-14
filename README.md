@@ -31,16 +31,27 @@ Rails Versions: Rails 3.2.x, 4.0.x, 4.1.x
 
 In your application's `Gemfile`, add:
 
-    gem 'double_entry'
+```ruby
+gem 'double_entry'
+```
 
-Then run:
+Download and install the gem with Bundler:
 
-    bundle
-    rails generate double_entry:install
+```sh
+bundle
+```
 
-Run migration files:
+Generate Rails schema migrations for the required tables:
 
-    rake db:migrate
+```sh
+rails generate double_entry:install
+```
+
+Update the local database:
+
+```sh
+rake db:migrate
+```
 
 
 ## Interface
@@ -91,7 +102,12 @@ will return the current balance for an account as a Money object.
 To transfer money between accounts:
 
 ```ruby
-DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
+DoubleEntry.transfer(
+  20.dollars,
+  :from => one_account,
+  :to   => another_account,
+  :code => :a_business_code_for_this_type_of_transfer,
+)
 ```
 
 The possible transfers, and their codes, should be defined in the configuration.
@@ -107,8 +123,9 @@ manually lock the accounts you're using:
 
 ```ruby
 DoubleEntry.lock_accounts(account_a, account_b) do
-  # Do some other stuff in here...
+  # Perhaps transfer some money
   DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
+  # Perform other tasks that should be commited atomically with the transfer of funds...
 end
 ```
 
@@ -214,33 +231,45 @@ correct balances from the lines table.
 
 ## Future Direction
 
-No immediate to-do's.
+See the Github project [issues](https://github.com/envato/double_entry/issues).
 
 ## Development Environment Setup
 
 1. Clone this repo.
 
-        git clone git@github.com:envato/double_entry.git && cd double_entry
+    ```sh
+    git clone git@github.com:envato/double_entry.git && cd double_entry
+    ```
 
 2. Run the included setup script to install the gem dependencies.
 
-        ./script/setup.sh
+    ```sh
+    ./script/setup.sh
+    ```
 
-3. Install MySQL and PostgreSQL. The tests run using both databases.
+3. Install MySQL and PostgreSQL. We run tests against both databases.
 4. Create a database in MySQL.
 
-        mysql -u root -e 'create database double_entry_test;'
+    ```sh
+    mysql -u root -e 'create database double_entry_test;'
+    ```
 
 5. Create a database in PostgreSQL.
 
-        psql -c 'create database double_entry_test;' -U postgres
+    ```sh
+    psql -c 'create database double_entry_test;' -U postgres
+    ```
 
 6. Specify how the tests should connect to the database
 
-        cp spec/support/database.example.yml spec/support/database.yml
-        vim spec/support/database.yml
+    ```sh
+    cp spec/support/{database.example.yml,database.yml}
+    vim spec/support/database.yml
+    ```
 
 7. Run the tests
 
-        bundle exec rake
+    ```sh
+    bundle exec rake
+    ```
 
