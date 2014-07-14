@@ -21,7 +21,6 @@ ActiveRecord::Schema.define do
     t.integer  "partner_id"
     t.string   "partner_account"
     t.string   "partner_scope"
-    t.string   "meta"
     t.integer  "detail_id"
     t.string   "detail_type"
     t.datetime "created_at"

@@ -72,16 +72,6 @@ module DoubleEntry
       self[:code].try(:to_sym)
     end
 
-    def meta=(meta)
-      self[:meta] = Marshal.dump(meta)
-      meta
-    end
-
-    def meta
-      meta = self[:meta]
-      meta ? Marshal.load(meta) : {}
-    end
-
     def account=(account)
       self[:account] = account.identifier.to_s
       self.scope = account.scope_identity

@@ -5,10 +5,10 @@ module DoubleEntry
     # @api private
     def self.transfer(defined_transfers, amount, options = {})
       raise TransferIsNegative if amount < Money.empty
-      from, to, code, meta, detail = options[:from], options[:to], options[:code],  options[:meta],  options[:detail]
+      from, to, code, detail = options[:from], options[:to], options[:code],  options[:detail]
       defined_transfers.
         find!(from, to, code).
-        process!(amount, from, to, code, meta, detail)
+        process(amount, from, to, code, detail)
     end
 
     # @api private
@@ -44,22 +44,15 @@ module DoubleEntry
       end
     end
 
-    attr_accessor :code, :from, :to, :description, :meta_requirement
+    attr_accessor :code, :from, :to, :description
 
     def initialize(attributes)
-      @meta_requirement = []
       attributes.each { |name, value| send("#{name}=", value) }
     end
 
-    def process!(amount, from, to, code, meta, detail)
+    def process(amount, from, to, code, detail)
       if from.scope_identity == to.scope_identity and from.identifier == to.identifier
         raise TransferNotAllowed.new
-      end
-
-      meta_requirement.each do |key|
-        if meta[key].nil?
-          raise RequiredMetaMissing.new
-        end
       end
 
       Locking.lock_accounts(from, to) do
@@ -74,7 +67,6 @@ module DoubleEntry
         credit.amount,  debit.amount  = -amount, amount
         credit.account, debit.account = from, to
         credit.code,    debit.code    = code, code
-        credit.meta,    debit.meta    = meta, meta
         credit.detail,  debit.detail  = detail, detail
         credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
 
