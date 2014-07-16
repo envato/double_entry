@@ -114,14 +114,6 @@ module DoubleEntry
       end
     end
 
-    def credit?
-      amount < Money.empty
-    end
-
-    def debit?
-      amount > Money.empty
-    end
-
     # Query out just the id and created_at fields for lines, without
     # instantiating any ActiveRecord objects.
     def self.find_id_and_created_at(options)
