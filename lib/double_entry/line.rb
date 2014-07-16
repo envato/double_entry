@@ -107,11 +107,19 @@ module DoubleEntry
     end
 
     def pair
-      if credit?
+      if decrease?
         [self, partner]
       else
         [partner, self]
       end
+    end
+
+    def decrease?
+      amount < Money.empty
+    end
+
+    def increase?
+      amount > Money.empty
     end
 
     # Query out just the id and created_at fields for lines, without
