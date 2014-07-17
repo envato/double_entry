@@ -97,18 +97,18 @@ module DoubleEntry
     end
 
     def pair
-      if credit?
+      if decrease?
         [self, partner]
       else
         [partner, self]
       end
     end
 
-    def credit?
+    def decrease?
       amount < Money.empty
     end
 
-    def debit?
+    def increase?
       amount > Money.empty
     end
 

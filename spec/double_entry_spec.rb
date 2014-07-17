@@ -159,7 +159,7 @@ describe DoubleEntry do
           accounts.define(:identifier => :b)
         end
 
-        description = ->(line) { "Money goes #{line.credit? ? 'out' : 'in'}: #{line.amount.format}" }
+        description = ->(line) { "Money goes #{line.decrease? ? 'out' : 'in'}: #{line.amount.format}" }
         config.define_transfers do |transfers|
           transfers.define(:code => :xfer, :from => :a, :to => :b, :description => description)
         end
@@ -194,11 +194,11 @@ describe DoubleEntry do
       expect(credit_line.partner_account).to eq debit_line.account
     end
 
-    it 'knows if it is a credit or debit' do
-      expect(credit_line).to be_credit
-      expect(debit_line).to be_debit
-      expect(credit_line).to_not be_debit
-      expect(debit_line).to_not be_credit
+    it 'knows if it is an increase or decrease' do
+      expect(credit_line).to be_decrease
+      expect(debit_line).to be_increase
+      expect(credit_line).to_not be_increase
+      expect(debit_line).to_not be_decrease
     end
 
     it 'can reference its partner' do
