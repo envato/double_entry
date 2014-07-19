@@ -33,17 +33,10 @@ module DoubleEntry
 
     class Instance
       attr_accessor :account, :scope
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :to => :account
 
       def initialize(attributes)
         attributes.each { |name, value| send("#{name}=", value) }
-      end
-
-      def method_missing(method, *args)
-        if block_given?
-          account.send(method, *args, &Proc.new)
-        else
-          account.send(method, *args)
-        end
       end
 
       def scope_identity
