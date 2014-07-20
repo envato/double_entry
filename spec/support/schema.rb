@@ -57,7 +57,7 @@ ActiveRecord::Schema.define do
 
   # test table only
   create_table "users", :force => true do |t|
-    t.string     "username"
+    t.string     "username", :null => false
     t.timestamps
   end
 
