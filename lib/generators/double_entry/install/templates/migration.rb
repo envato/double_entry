@@ -2,7 +2,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
 
   def self.up
     create_table "double_entry_account_balances", :force => true do |t|
-      t.integer    "balance"
+      t.integer    "balance",               :null => false
       t.string     "account", :limit => 31, :null => false
       t.string     "scope",   :limit => 23
       t.timestamps
@@ -12,8 +12,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
     add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
     create_table "double_entry_lines", :force => true do |t|
-      t.integer    "amount"
-      t.integer    "balance"
+      t.integer    "amount",                        :null => false
+      t.integer    "balance",                       :null => false
       t.integer    "partner_id"
       t.string     "code",            :limit => 47, :null => false
       t.string     "account",         :limit => 31, :null => false
@@ -40,7 +40,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.integer    "week"
       t.integer    "day"
       t.integer    "hour"
-      t.integer    "amount"
+      t.integer    "amount",                   :null => false
       t.timestamps
       t.string     "filter"
       t.string     "range_type"
@@ -49,8 +49,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
     add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
 
     create_table "double_entry_line_checks", :force => true do |t|
-      t.integer    "last_line_id"
-      t.boolean    "errors_found"
+      t.integer    "last_line_id", :null => false
+      t.boolean    "errors_found", :null => false
       t.timestamps
       t.text       "log"
     end
