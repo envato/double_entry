@@ -44,10 +44,13 @@ module DoubleEntry
       end
     end
 
-    attr_accessor :code, :from, :to, :description
+    attr_reader :code, :from, :to, :description
 
     def initialize(attributes)
-      attributes.each { |name, value| send("#{name}=", value) }
+      @code = attributes[:code]
+      @from = attributes[:from]
+      @to = attributes[:to]
+      @description = attributes[:description]
     end
 
     def process(amount, from, to, code, detail)
