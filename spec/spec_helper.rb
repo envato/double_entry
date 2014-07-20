@@ -22,6 +22,7 @@ I18n.config.enforce_available_locales = false
 require 'double_entry'
 require 'rspec'
 require 'rspec/its'
+require 'shoulda/matchers'
 require 'database_cleaner'
 require 'machinist/active_record'
 require 'timecop'

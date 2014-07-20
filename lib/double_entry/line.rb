@@ -28,7 +28,7 @@ module DoubleEntry
   # ```
   #
   # ### lines_scope_account_created_at_idx
-  # 
+  #
   # ```sql
   # ADD INDEX `lines_scope_account_created_at_idx` (scope, account, created_at)
   # ```
@@ -63,6 +63,8 @@ module DoubleEntry
 
     encapsulate_as_money :amount, :balance
 
+    validates :account, :partner_account, :presence => true
+
     def code=(code)
       self[:code] = code.try(:to_s)
       code
@@ -73,23 +75,27 @@ module DoubleEntry
     end
 
     def account=(account)
-      self[:account] = account.identifier.to_s
-      self.scope = account.scope_identity
+      self[:account] = account && account.identifier.to_s
+      self.scope = account && account.scope_identity
       account
     end
 
     def account
-      DoubleEntry.account(self[:account].to_sym, :scope => scope)
+      if self[:account]
+        DoubleEntry.account(self[:account].to_sym, :scope => scope)
+      end
     end
 
     def partner_account=(partner_account)
-      self[:partner_account] = partner_account.identifier.to_s
-      self.partner_scope = partner_account.scope_identity
+      self[:partner_account] = partner_account && partner_account.identifier.to_s
+      self.partner_scope = partner_account && partner_account.scope_identity
       partner_account
     end
 
     def partner_account
-      DoubleEntry.account(self[:partner_account].to_sym, :scope => partner_scope)
+      if self[:partner_account]
+        DoubleEntry.account(self[:partner_account].to_sym, :scope => partner_scope)
+      end
     end
 
     def partner

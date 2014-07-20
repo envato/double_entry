@@ -2,6 +2,9 @@
 require "spec_helper"
 describe DoubleEntry::Line do
 
+  it { should validate_presence_of(:account) }
+  it { should validate_presence_of(:partner_account) }
+
   describe "persistent attributes" do
     let(:persisted_line) {
       DoubleEntry::Line.new(
