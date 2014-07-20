@@ -4,6 +4,22 @@ module DoubleEntry
   describe Account do
     let(:identity_scope) { ->(value) { value } }
 
+    describe "::new" do
+      context "given an identifier 31 characters in length" do
+        let(:identifier) { "xxxxxxxx 31 characters xxxxxxxx" }
+        specify do
+          expect { Account.new(:identifier => identifier) }.to_not raise_error
+        end
+      end
+
+      context "given an identifier 32 characters in length" do
+        let(:identifier) { "xxxxxxxx 32 characters xxxxxxxxx" }
+        specify do
+          expect { Account.new(:identifier => identifier) }.to raise_error AccountIdentifierTooLongError, /'#{identifier}'/
+        end
+      end
+    end
+
     describe Account::Instance do
       it "is sortable" do
         account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)

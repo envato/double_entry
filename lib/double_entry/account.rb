@@ -105,6 +105,9 @@ module DoubleEntry
       self.identifier = attributes[:identifier]
       self.scope_identifier = attributes[:scope_identifier]
       self.positive_only = attributes[:positive_only]
+      if identifier.length > 31
+        raise AccountIdentifierTooLongError.new "account identifier '#{identifier}' is too long. Please limit it to 31 characters."
+      end
     end
 
     def scoped?
