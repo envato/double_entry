@@ -49,8 +49,14 @@ describe DoubleEntry::Locking do
   end
 
   it "should take the balance for new account balance records from the lines table" do
-    DoubleEntry::Line.create!(:account => @account_a, :amount => Money.new(3_00), :balance => Money.new( 3_00), :code => :test)
-    DoubleEntry::Line.create!(:account => @account_a, :amount => Money.new(7_00), :balance => Money.new(10_00), :code => :test)
+    DoubleEntry::Line.create!(
+      :account => @account_a, :partner_account => @account_b,
+      :amount => Money.new(3_00), :balance => Money.new( 3_00), :code => :test
+    )
+    DoubleEntry::Line.create!(
+      :account => @account_a, :partner_account => @account_b,
+      :amount => Money.new(7_00), :balance => Money.new(10_00), :code => :test
+    )
 
     expect do
       DoubleEntry::Locking.lock_accounts(@account_a) { }
