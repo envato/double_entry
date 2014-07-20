@@ -30,7 +30,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'pg'
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'rspec-its'
-  gem.add_development_dependency 'shoulda-matchers'
   gem.add_development_dependency 'database_cleaner'
   gem.add_development_dependency 'generator_spec'
   gem.add_development_dependency 'machinist'
