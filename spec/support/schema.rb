@@ -31,7 +31,7 @@ ActiveRecord::Schema.define do
   add_index "double_entry_lines", ["scope", "account", "id"],         :name => "lines_scope_account_id_idx"
 
   create_table "double_entry_line_aggregates", :force => true do |t|
-    t.string     "function"
+    t.string     "function",   :limit => 15, :null => false
     t.string     "account",    :limit => 31, :null => false
     t.string     "code",       :limit => 47
     t.string     "scope",      :limit => 23
@@ -42,8 +42,8 @@ ActiveRecord::Schema.define do
     t.integer    "hour"
     t.integer    "amount",                   :null => false
     t.timestamps
+    t.string     "range_type", :limit => 15, :null => false
     t.string     "filter"
-    t.string     "range_type"
   end
 
   add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
