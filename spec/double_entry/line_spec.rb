@@ -23,11 +23,6 @@ describe DoubleEntry::Line do
       its(:code) { should eq :the_code }
     end
 
-    context "given code = nil" do
-      let(:code) { nil }
-      its(:code) { should eq nil }
-    end
-
     context "given account = :test, 54 " do
       let(:account) { DoubleEntry.account(:test, :scope => "54") }
       its("account.account.identifier") { should eq :test }
