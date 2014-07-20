@@ -35,7 +35,8 @@ module DoubleEntry
       attr_accessor :account, :scope
 
       def initialize(attributes)
-        attributes.each { |name, value| send("#{name}=", value) }
+        self.account = attributes[:account]
+        self.scope = attributes[:scope]
       end
 
       def method_missing(method, *args)
@@ -101,7 +102,9 @@ module DoubleEntry
     attr_accessor :identifier, :scope_identifier, :positive_only
 
     def initialize(attributes)
-      attributes.each { |name, value| send("#{name}=", value) }
+      self.identifier = attributes[:identifier]
+      self.scope_identifier = attributes[:scope_identifier]
+      self.positive_only = attributes[:positive_only]
     end
 
     def scoped?
