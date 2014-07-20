@@ -4,7 +4,7 @@ ActiveRecord::Schema.define do
   create_table "double_entry_account_balances", :force => true do |t|
     t.integer    "balance"
     t.string     "account", :limit => 31, :null => false
-    t.string     "scope"
+    t.string     "scope",   :limit => 23
     t.timestamps
   end
 
@@ -17,9 +17,9 @@ ActiveRecord::Schema.define do
     t.integer    "partner_id"
     t.string     "code",            :limit => 47, :null => false
     t.string     "account",         :limit => 31, :null => false
-    t.string     "scope"
+    t.string     "scope",           :limit => 23
     t.string     "partner_account", :limit => 31, :null => false
-    t.string     "partner_scope"
+    t.string     "partner_scope",   :limit => 23
     t.timestamps
     t.integer    "detail_id"
     t.string     "detail_type"
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define do
     t.string     "function"
     t.string     "account",    :limit => 31, :null => false
     t.string     "code",       :limit => 47
-    t.string     "scope"
+    t.string     "scope",      :limit => 23
     t.integer    "year"
     t.integer    "month"
     t.integer    "week"
