@@ -15,7 +15,7 @@ ActiveRecord::Schema.define do
     t.integer    "amount"
     t.integer    "balance"
     t.integer    "partner_id"
-    t.string     "code"
+    t.string     "code",            :limit => 47, :null => false
     t.string     "account",         :limit => 31, :null => false
     t.string     "scope"
     t.string     "partner_account", :limit => 31, :null => false
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define do
   create_table "double_entry_line_aggregates", :force => true do |t|
     t.string     "function"
     t.string     "account",    :limit => 31, :null => false
-    t.string     "code"
+    t.string     "code",       :limit => 47
     t.string     "scope"
     t.integer    "year"
     t.integer    "month"
