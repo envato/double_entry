@@ -63,8 +63,6 @@ module DoubleEntry
 
     encapsulate_as_money :amount, :balance
 
-    validates :account, :partner_account, :presence => true
-
     def code=(code)
       self[:code] = code.try(:to_s)
       code
