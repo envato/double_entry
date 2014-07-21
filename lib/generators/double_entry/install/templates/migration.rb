@@ -2,9 +2,9 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
 
   def self.up
     create_table "double_entry_account_balances", :force => true do |t|
-      t.integer    "balance",               :null => false
       t.string     "account", :limit => 31, :null => false
       t.string     "scope",   :limit => 23
+      t.integer    "balance",               :null => false
       t.timestamps
     end
 
@@ -12,17 +12,17 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
     add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
     create_table "double_entry_lines", :force => true do |t|
+      t.string     "account",         :limit => 31, :null => false
+      t.string     "scope",           :limit => 23
+      t.string     "code",            :limit => 47, :null => false
       t.integer    "amount",                        :null => false
       t.integer    "balance",                       :null => false
       t.integer    "partner_id"
-      t.string     "code",            :limit => 47, :null => false
-      t.string     "account",         :limit => 31, :null => false
-      t.string     "scope",           :limit => 23
       t.string     "partner_account", :limit => 31, :null => false
       t.string     "partner_scope",   :limit => 23
-      t.timestamps
       t.integer    "detail_id"
       t.string     "detail_type"
+      t.timestamps
     end
 
     add_index "double_entry_lines", ["account", "code", "created_at"],  :name => "lines_account_code_created_at_idx"
@@ -41,9 +41,9 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.integer    "day"
       t.integer    "hour"
       t.integer    "amount",                   :null => false
-      t.timestamps
-      t.string     "range_type", :limit => 15, :null => false
       t.string     "filter"
+      t.string     "range_type", :limit => 15, :null => false
+      t.timestamps
     end
 
     add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
@@ -51,8 +51,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
     create_table "double_entry_line_checks", :force => true do |t|
       t.integer    "last_line_id", :null => false
       t.boolean    "errors_found", :null => false
-      t.timestamps
       t.text       "log"
+      t.timestamps
     end
 
   end
