@@ -2,6 +2,23 @@
 require 'spec_helper'
 module DoubleEntry
   describe Transfer do
+
+    describe "::new" do
+      context "given a code 47 characters in length" do
+        let(:code) { "xxxxxxxxxxxxxxxx 47 characters xxxxxxxxxxxxxxxx" }
+        specify do
+          expect { Transfer.new(:code => code) }.to_not raise_error
+        end
+      end
+
+      context "given a code 48 characters in length" do
+        let(:code) { "xxxxxxxxxxxxxxxx 48 characters xxxxxxxxxxxxxxxxx" }
+        specify do
+          expect { Transfer.new(:code => code) }.to raise_error TransferCodeTooLongError, /'#{code}'/
+        end
+      end
+    end
+
     describe Transfer::Set do
       describe "#define" do
         before do

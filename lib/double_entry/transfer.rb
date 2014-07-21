@@ -51,6 +51,9 @@ module DoubleEntry
       @from = attributes[:from]
       @to = attributes[:to]
       @description = attributes[:description]
+      if code.length > 47
+        raise TransferCodeTooLongError.new "transfer code '#{code}' is too long. Please limit it to 47 characters."
+      end
     end
 
     def process(amount, from, to, code, detail)
