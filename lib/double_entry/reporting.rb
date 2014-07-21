@@ -150,7 +150,8 @@ module DoubleEntry
     #   which they always should.
     #
     def reconciled?(account)
-      scoped_lines = Line.where(:account => "#{account.identifier}", :scope => "#{account.scope}")
+      scoped_lines = Line.where(:account => "#{account.identifier}")
+      scoped_lines = scoped_lines.where(:scope => "#{account.scope_identity}") if account.scoped?
       sum_of_amounts = scoped_lines.sum(:amount)
       final_balance  = scoped_lines.order(:id).last[:balance]
       cached_balance = AccountBalance.find_by_account(account)[:balance]
