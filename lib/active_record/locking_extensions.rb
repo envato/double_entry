@@ -35,12 +35,13 @@ module ActiveRecord
       #   Mysql::Error: Deadlock found when trying to get lock
       #   PG::Error: ERROR:  duplicate key value violates unique constraint
       #   Mysql2::Error: Duplicate entry 'keith' for key 'index_users_on_username': INSERT INTO `users...
+      #   ActiveRecord::RecordNotUnique  SQLite3::ConstraintException: column username is not unique: INSERT INTO "users"...
       begin
         create!(*args)
-      rescue ActiveRecord::StatementInvalid => exception
-        if  exception.message =~ /duplicate/i
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotUnique => exception
+        if  exception.message =~ /duplicate/i || exception.message =~ /is not unique/i
           # Just ignore it...someone else has already created the record.
-        elsif  exception.message =~ /deadlock/i
+        elsif  exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
           # Somebody else is in the midst of creating the record. We'd better
           # retry, so we ensure they're done before we move on.
           retry

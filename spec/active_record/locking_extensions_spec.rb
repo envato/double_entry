@@ -4,6 +4,7 @@ require 'spec_helper'
 describe ActiveRecord::LockingExtensions do
   PG_DEADLOCK    = ActiveRecord::StatementInvalid.new("PG::Error: ERROR:  deadlock detected")
   MYSQL_DEADLOCK = ActiveRecord::StatementInvalid.new("Mysql::Error: Deadlock found when trying to get lock")
+  SQLITE3_LOCK   = ActiveRecord::StatementInvalid.new("SQLite3::BusyException: database is locked: UPDATE...")
 
   context "#restartable_transaction" do
     it "keeps running the lock until a ActiveRecord::RestartTransaction isn't raised" do
@@ -45,6 +46,13 @@ describe ActiveRecord::LockingExtensions do
 
       it "in postgres" do
         expect(User).to receive(:create!).ordered.and_raise(PG_DEADLOCK)
+        expect(User).to receive(:create!).ordered.and_return(true)
+
+        expect { User.create_ignoring_duplicates! }.to_not raise_error
+      end
+
+      it "in sqlite3" do
+        expect(User).to receive(:create!).ordered.and_raise(SQLITE3_LOCK)
         expect(User).to receive(:create!).ordered.and_return(true)
 
         expect { User.create_ignoring_duplicates! }.to_not raise_error
