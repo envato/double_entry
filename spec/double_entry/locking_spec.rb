@@ -132,24 +132,25 @@ describe DoubleEntry::Locking do
 
   it "allows multiple threads to lock at the same time" do
     expect do
-      threads = Array.new
+      unless ENV['DB'] == 'sqlite' #sqlite cannot handle this
+        threads = Array.new
 
-      threads << Thread.new do
-        sleep 0.05
-        DoubleEntry::Locking.lock_accounts(@account_a, @account_b) do
-          DoubleEntry.transfer(Money.new(10_00), :from => @account_a, :to => @account_b, :code => :test)
+        threads << Thread.new do
+          sleep 0.05
+          DoubleEntry::Locking.lock_accounts(@account_a, @account_b) do
+            DoubleEntry.transfer(Money.new(10_00), :from => @account_a, :to => @account_b, :code => :test)
+          end
         end
-      end
 
-      threads << Thread.new do
-        DoubleEntry::Locking.lock_accounts(@account_c, @account_d) do
-          sleep 0.1
-          DoubleEntry.transfer(Money.new(10_00), :from => @account_c, :to => @account_d, :code => :test)
+        threads << Thread.new do
+          DoubleEntry::Locking.lock_accounts(@account_c, @account_d) do
+            sleep 0.1
+            DoubleEntry.transfer(Money.new(10_00), :from => @account_c, :to => @account_d, :code => :test)
+          end
         end
+
+        threads.each(&:join)
       end
-
-      threads.each(&:join)
-
     end.to_not raise_error
   end
 
