@@ -21,7 +21,7 @@ support = File.expand_path("../../spec/support/", __FILE__)
 db_engine = ENV['DB'] || 'mysql'
 
 if db_engine == 'sqlite'
-  puts "This is never going to pass... ( or is it..)"
+  puts "Skipping jackhammer for SQLITE..."
   exit 0
 end
 
