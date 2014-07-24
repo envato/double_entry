@@ -18,8 +18,9 @@ require 'database_cleaner'
 
 support = File.expand_path("../../spec/support/", __FILE__)
 
-ENV['DB'] ||= 'mysql'
-ActiveRecord::Base.establish_connection YAML.load_file(File.join(support, "database.yml"))[ENV['DB']]
+db_engine = ENV['DB'] || 'mysql'
+
+ActiveRecord::Base.establish_connection YAML.load_file(File.join(support, "database.yml"))[db_engine]
 require "#{support}/schema"
 
 lib = File.expand_path('../../lib', __FILE__)
