@@ -16,7 +16,7 @@ spec/support/database.yml
 test/tmp
 test/version_tmp
 tmp
-db/
+db/*.sqlite3
 bin/
 log/
 /Gemfile.lock
