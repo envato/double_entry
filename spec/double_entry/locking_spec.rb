@@ -130,9 +130,11 @@ describe DoubleEntry::Locking do
     expect(DoubleEntry.balance(@account_b)).to eq Money.new(0)
   end
 
-  it "allows multiple threads to lock at the same time" do
-    expect do
-      unless ENV['DB'] == 'sqlite' #sqlite cannot handle this
+  # sqlite cannot handle these cases so they don't run when DB=sqlite
+  describe "concurrent locking", :unless => ENV['DB'] == 'sqlite' do
+
+    it "allows multiple threads to lock at the same time" do
+      expect do
         threads = Array.new
 
         threads << Thread.new do
@@ -150,12 +152,10 @@ describe DoubleEntry::Locking do
         end
 
         threads.each(&:join)
-      end
-    end.to_not raise_error
-  end
+      end.to_not raise_error
+    end
 
-  it "allows multiple threads to lock accounts without balances at the same time" do
-    unless ENV['DB'] == 'sqlite' #sqlite cannot handle this
+    it "allows multiple threads to lock accounts without balances at the same time" do
       threads = Array.new
       expect do
         threads << Thread.new { DoubleEntry::Locking.lock_accounts(@account_a, @account_b) { sleep 0.1 } }
