@@ -131,39 +131,35 @@ describe DoubleEntry::Locking do
   end
 
   it "allows multiple threads to lock at the same time" do
-    unless ENV['DB'] == 'sqlite' # sqlite cannot lock multiple threads at once
-      expect do
-        threads = Array.new
+    expect do
+      threads = Array.new
 
-        threads << Thread.new do
-          sleep 0.05
-          DoubleEntry::Locking.lock_accounts(@account_a, @account_b) do
-            DoubleEntry.transfer(Money.new(10_00), :from => @account_a, :to => @account_b, :code => :test)
-          end
+      threads << Thread.new do
+        sleep 0.05
+        DoubleEntry::Locking.lock_accounts(@account_a, @account_b) do
+          DoubleEntry.transfer(Money.new(10_00), :from => @account_a, :to => @account_b, :code => :test)
         end
+      end
 
-        threads << Thread.new do
-          DoubleEntry::Locking.lock_accounts(@account_c, @account_d) do
-            sleep 0.1
-            DoubleEntry.transfer(Money.new(10_00), :from => @account_c, :to => @account_d, :code => :test)
-          end
+      threads << Thread.new do
+        DoubleEntry::Locking.lock_accounts(@account_c, @account_d) do
+          sleep 0.1
+          DoubleEntry.transfer(Money.new(10_00), :from => @account_c, :to => @account_d, :code => :test)
         end
+      end
 
-        threads.each(&:join)
+      threads.each(&:join)
 
-      end.to_not raise_error
-    end
+    end.to_not raise_error
   end
 
   it "allows multiple threads to lock accounts without balances at the same time" do
-    unless ENV['DB'] == 'sqlite' # sqlite cannot lock multiple threads at once
-      threads = Array.new
-      expect do
-        threads << Thread.new { DoubleEntry::Locking.lock_accounts(@account_a, @account_b) { sleep 1 } }
-        threads << Thread.new { DoubleEntry::Locking.lock_accounts(@account_c, @account_d) { sleep 1 } }
+    threads = Array.new
+    expect do
+      threads << Thread.new { DoubleEntry::Locking.lock_accounts(@account_a, @account_b) { sleep 0.1 } }
+      threads << Thread.new { DoubleEntry::Locking.lock_accounts(@account_c, @account_d) { sleep 0.1 } }
 
-        threads.each(&:join)
-      end.to_not raise_error
-    end
+      threads.each(&:join)
+    end.to_not raise_error
   end
 end
