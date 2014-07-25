@@ -60,7 +60,7 @@ module DoubleEntry
 
     belongs_to :detail, :polymorphic => true
     before_save :do_validations
-
+    #delegate :currency, :to => :account
     encapsulate_as_money :amount, :balance
 
     def code=(code)
@@ -75,7 +75,6 @@ module DoubleEntry
     def account=(_account)
       self[:account] = _account.identifier.to_s
       self.scope = _account.scope_identity
-      self.currency = _account.currency
       raise "Missing Account" unless account
       _account
     end

@@ -5,7 +5,6 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string   "account",    :null => false
       t.string   "scope"
       t.integer  "balance"
-      t.string   "currency", :default => "USD", :length => 3
       t.timestamps
     end
 
@@ -17,7 +16,6 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string   "scope"
       t.string   "code"
       t.integer  "amount"
-      t.string   "currency", :default => "USD", :length => 3
       t.integer  "balance"
       t.integer  "partner_id"
       t.string   "partner_account"
