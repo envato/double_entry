@@ -149,6 +149,16 @@ describe DoubleEntry do
         )
       }.to raise_error DoubleEntry::TransferNotAllowed
     end
+
+    it 'raises an exception when the transfer is not allowed (mismatched currencies)' do
+      expect {
+        DoubleEntry.transfer(
+          Money.new(100_00),
+          :from => cash,
+          :to   => trash,
+        )
+      }.to raise_error DoubleEntry::TransferNotAllowed
+    end
   end
 
   describe 'lines' do

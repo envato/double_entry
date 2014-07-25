@@ -23,6 +23,7 @@ ActiveRecord::Schema.define do
     t.string   "partner_scope"
     t.integer  "detail_id"
     t.string   "detail_type"
+    t.string   "currency"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

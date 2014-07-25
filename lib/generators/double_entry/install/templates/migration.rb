@@ -5,6 +5,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string   "account",    :null => false
       t.string   "scope"
       t.integer  "balance"
+      t.string   "currency", :default => "USD", :length => 3
       t.timestamps
     end
 
@@ -16,6 +17,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string   "scope"
       t.string   "code"
       t.integer  "amount"
+      t.string   "currency", :default => "USD", :length => 3
       t.integer  "balance"
       t.integer  "partner_id"
       t.string   "partner_account"
@@ -41,9 +43,9 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.integer  "day"
       t.integer  "hour"
       t.integer  "amount"
-      t.timestamps
       t.string   "filter"
       t.string   "range_type"
+      t.timestamps
     end
 
     add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"

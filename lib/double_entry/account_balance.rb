@@ -28,4 +28,3 @@ module DoubleEntry
   end
 
 end
-

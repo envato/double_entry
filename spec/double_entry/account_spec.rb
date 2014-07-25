@@ -19,6 +19,19 @@ describe DoubleEntry::Account do
     expect(a1.hash).to eq a2.hash
     expect(a1.hash).to_not eq b.hash
   end
+
+  describe "currency" do
+
+    it "defaults to USD currency" do
+      account = DoubleEntry::Account.new(:identifier => "savings", :scope_identifier => empty_scope)
+      expect(DoubleEntry::Account::Instance.new(:account => account).currency).to eq("USD")
+    end
+
+    it "allows the currency to be set" do
+      account = DoubleEntry::Account.new(:identifier => "savings", :scope_identifier => empty_scope, :currency => "AUD")
+      expect(DoubleEntry::Account::Instance.new(:account => account).currency).to eq("AUD")
+    end
+  end
 end
 
 describe DoubleEntry::Account::Set do

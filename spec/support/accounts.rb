@@ -14,12 +14,14 @@ DoubleEntry.configure do |config|
     accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :checking, :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :test,     :scope_identifier => user_scope)
+    accounts.define(:identifier => :btc_test, :scope_identifier => user_scope, :currency => "BTC")
   end
 
   # A set of allowed transfers between accounts
   config.define_transfers do |transfers|
-    transfers.define(:from => :test, :to => :savings,  :code => :bonus)
-    transfers.define(:from => :test, :to => :checking, :code => :pay)
+    transfers.define(:from => :test,    :to => :savings,  :code => :bonus)
+    transfers.define(:from => :test,    :to => :checking, :code => :pay)
+    transfers.define(:from => :savings, :to => :test,     :code => :test_withdrawal)
   end
 
 end
