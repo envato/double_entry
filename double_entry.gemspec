@@ -20,7 +20,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_dependency 'money',                 '>= 5.1.0'
-  gem.add_dependency 'encapsulate_as_money'
   gem.add_dependency 'activerecord',          '>= 3.2.9'
   gem.add_dependency 'activesupport',         '>= 3.0.0'
   gem.add_dependency 'railties',              '>= 3.0.0'
