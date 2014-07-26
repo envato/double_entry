@@ -30,6 +30,19 @@ module DoubleEntry
         its("first.identifier") { should eq "savings" }
       end
     end
+
+    describe "#ar_scope_identifier" do
+      subject(:scope) { Account::Set.new.ar_scope_identifier(ar_class) }
+
+      context "given ActiveRecordScopeFactory is stubbed" do
+        let(:scope_identifier) { double(:scope_identifier) }
+        let(:scope_factory) { double(:scope_factory, :scope_identifier => scope_identifier) }
+        let(:ar_class) { double(:ar_class) }
+        before { allow(Account::ActiveRecordScopeFactory).to receive(:new).with(ar_class).and_return(scope_factory) }
+
+        it { should eq scope_identifier }
+      end
+    end
   end
 
   describe Account::ActiveRecordScopeFactory do
