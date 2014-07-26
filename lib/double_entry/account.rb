@@ -31,6 +31,18 @@ module DoubleEntry
       end
     end
 
+    class ActiveRecordScopeFactory
+      def initialize(active_record_class)
+        @active_record_class = active_record_class
+      end
+
+      def scope_identifier
+        Proc.new do |value|
+          value.is_a?(@active_record_class) ? value.id : value
+        end
+      end
+    end
+
     class Instance
       attr_accessor :account, :scope
       delegate :identifier, :scope_identifier, :scoped?, :positive_only, :to => :account
