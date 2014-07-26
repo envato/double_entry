@@ -1,16 +1,10 @@
 # encoding: utf-8
-user_scope = lambda do |user_identifier|
-  if user_identifier.is_a?(User)
-    user_identifier.id
-  else
-    user_identifier
-  end
-end
-
+require_relative 'blueprints'
 DoubleEntry.configure do |config|
 
   # A set of accounts to test with
   config.define_accounts do |accounts|
+    user_scope = accounts.ar_scope_identifier(User)
     accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :checking, :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :test,     :scope_identifier => user_scope)
