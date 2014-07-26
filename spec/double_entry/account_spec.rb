@@ -2,17 +2,17 @@
 require 'spec_helper'
 module DoubleEntry
   describe Account do
-    let(:empty_scope) { lambda {|value| value } }
+    let(:identity_scope) { ->(value) { value } }
 
     it "instances should be sortable" do
-      account = Account.new(:identifier => "savings", :scope_identifier => empty_scope)
+      account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)
       a = Account::Instance.new(:account => account, :scope => "123")
       b = Account::Instance.new(:account => account, :scope => "456")
       expect([b, a].sort).to eq [a, b]
     end
 
     it "instances should be hashable" do
-      account = Account.new(:identifier => "savings", :scope_identifier => empty_scope)
+      account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)
       a1 = Account::Instance.new(:account => account, :scope => "123")
       a2 = Account::Instance.new(:account => account, :scope => "123")
       b  = Account::Instance.new(:account => account, :scope => "456")

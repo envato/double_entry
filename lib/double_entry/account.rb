@@ -37,9 +37,7 @@ module DoubleEntry
       end
 
       def scope_identifier
-        Proc.new do |value|
-          value.is_a?(@active_record_class) ? value.id : value
-        end
+        ->(value) { value.is_a?(@active_record_class) ? value.id : value }
       end
     end
 
