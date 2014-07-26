@@ -31,8 +31,8 @@ module DoubleEntry
       end
     end
 
-    describe "#ar_scope_identifier" do
-      subject(:scope) { Account::Set.new.ar_scope_identifier(ar_class) }
+    describe "#active_record_scope_identifier" do
+      subject(:scope) { Account::Set.new.active_record_scope_identifier(ar_class) }
 
       context "given ActiveRecordScopeFactory is stubbed" do
         let(:scope_identifier) { double(:scope_identifier) }

@@ -30,7 +30,7 @@ module DoubleEntry
         end
       end
 
-      def ar_scope_identifier(active_record_class)
+      def active_record_scope_identifier(active_record_class)
         ActiveRecordScopeFactory.new(active_record_class).scope_identifier
       end
     end
