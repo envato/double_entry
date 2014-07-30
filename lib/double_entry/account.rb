@@ -95,7 +95,7 @@ module DoubleEntry
 
     def initialize(attributes)
       attributes.each { |name, value| send("#{name}=", value) }
-      self.currency ||= "USD"
+      self.currency ||= Money.default_currency
     end
 
     def scoped?
