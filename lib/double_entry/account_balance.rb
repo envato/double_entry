@@ -9,14 +9,22 @@ module DoubleEntry
   #
   # Account balances are created on demand when transfers occur.
   class AccountBalance < ActiveRecord::Base
-    extend EncapsulateAsMoney
+    extend EncapsulateAsMoneyWithCurrency
 
-    encapsulate_as_money :balance
+    encapsulate_as_money_and_currency :balance
 
     def account=(account)
       self[:account] = account.identifier.to_s
       self[:scope] = account.scope_identity
       account
+    end
+
+    def account
+      DoubleEntry.account(self[:account].to_sym, :scope => self[:scope])
+    end
+
+    def currency
+      account.currency
     end
 
     def self.find_by_account(account, options = {})

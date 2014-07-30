@@ -162,7 +162,6 @@ module DoubleEntry
         @accounts_without_balances.each do |account|
           # Get the initial balance from the lines table.
           balance = account.balance
-
           # Try to create the balance record, but ignore it if someone else has done it in the meantime.
           AccountBalance.create_ignoring_duplicates!(:account => account, :balance => balance)
         end

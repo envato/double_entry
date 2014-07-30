@@ -2,7 +2,7 @@
 module DoubleEntry
  module Reporting
   class LineAggregate < ActiveRecord::Base
-    extend EncapsulateAsMoney
+    extend EncapsulateAsMoneyWithCurrency
 
     def self.aggregate(function, account, code, range, named_scopes)
       collection = aggregate_collection(named_scopes)
