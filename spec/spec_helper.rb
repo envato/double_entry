@@ -3,8 +3,9 @@ require 'bundler/setup'
 require 'active_record'
 require 'active_support'
 
-ENV['DB'] ||= 'mysql'
-ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path("../support/database.yml", __FILE__))[ENV['DB']]
+db_engine = ENV['DB'] || 'mysql'
+
+ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path("../support/database.yml", __FILE__))[db_engine]
 
 FileUtils.mkdir_p 'log'
 FileUtils.rm 'log/test.log', :force => true
