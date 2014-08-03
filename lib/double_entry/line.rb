@@ -56,11 +56,25 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-    extend EncapsulateAsMoneyWithCurrency
 
     belongs_to :detail, :polymorphic => true
     before_save :do_validations
-    encapsulate_as_money_and_currency :amount, :balance
+
+    def amount
+      self[:amount] && Money.new(self[:amount], currency)
+    end
+
+    def amount=(money)
+      self[:amount] = (money && money.fractional)
+    end
+
+    def balance
+      self[:balance] && Money.new(self[:balance], currency)
+    end
+
+    def balance=(money)
+      self[:balance] = (money && money.fractional)
+    end
 
     def code=(code)
       self[:code] = code.try(:to_s)

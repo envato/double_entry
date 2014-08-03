@@ -3,7 +3,6 @@ require 'active_record'
 require 'active_record/locking_extensions'
 require 'active_support/all'
 require 'money'
-require 'encapsulate_as_money'
 
 require 'double_entry/version'
 require 'double_entry/errors'
