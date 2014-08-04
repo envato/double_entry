@@ -8,6 +8,9 @@ describe DoubleEntry::Locking do
     @config_transfers = DoubleEntry.configuration.transfers
     DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
     DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+    DoubleEntry.configure do |config|
+      config.default_currency = :usd
+    end
   end
 
   after do
@@ -51,7 +54,7 @@ describe DoubleEntry::Locking do
   it "takes the balance for new account balance records from the lines table" do
     DoubleEntry::Line.create!(:account => @account_a, :partner_account => @account_b, :amount => Money.new(3_00), :balance => Money.new( 3_00), :code => :test)
     DoubleEntry::Line.create!(:account => @account_a, :partner_account => @account_b, :amount => Money.new(7_00), :balance => Money.new(10_00), :code => :test)
-  
+
     expect do
       DoubleEntry::Locking.lock_accounts(@account_a) { }
     end.to change(DoubleEntry::AccountBalance, :count).by(1)
