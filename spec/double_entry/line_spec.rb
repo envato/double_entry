@@ -53,25 +53,6 @@ describe DoubleEntry::Line do
     end
 
     describe "validation" do
-
-      # not sure why this doesn't pass
-      # context "negative accounts" do
-      #   let(:account) { DoubleEntry.account(:savings, :scope => "17") }
-      #   let(:partner_account) { DoubleEntry.account(:test, :scope => "17") }
-      #   let(:persisted_line) {
-      #     DoubleEntry::Line.new(
-      #       :amount => Money.new(10_00),
-      #       :balance => Money.empty,
-      #       :account => account,
-      #       :partner_account => partner_account,
-      #       :code => :test_withdrawal,
-      #     )
-      #   }
-      #   it "doesn't allow savings to go negative" do
-      #     expect{  persisted_line.save! }.to raise_error(DoubleEntry::AccountWouldBeSentNegative)
-      #   end
-      # end
-
       context "currency" do
         let(:account) { DoubleEntry.account(:test, :scope => "17") }
         let(:partner_account) { DoubleEntry.account(:btc_test, :scope => "72") }
