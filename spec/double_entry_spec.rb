@@ -109,17 +109,20 @@ describe DoubleEntry do
           accounts.define(:identifier => :savings)
           accounts.define(:identifier => :cash)
           accounts.define(:identifier => :trash)
+          accounts.define(:identifier => :bitbucket, :currency => :btc)
         end
 
         config.define_transfers do |transfers|
           transfers.define(:from => :savings, :to => :cash, :code => :xfer)
+          transfers.define(:from => :trash, :to => :bitbucket, :code => :mismatch_xfer)
         end
       end
     end
 
-    let(:savings) { DoubleEntry.account(:savings) }
-    let(:cash)    { DoubleEntry.account(:cash) }
-    let(:trash)   { DoubleEntry.account(:trash) }
+    let(:savings)   { DoubleEntry.account(:savings) }
+    let(:cash)      { DoubleEntry.account(:cash) }
+    let(:trash)     { DoubleEntry.account(:trash) }
+    let(:bitbucket) { DoubleEntry.account(:bitbucket) }
 
     it 'can transfer from an account to an account, if the transfer is allowed' do
       DoubleEntry.transfer(
@@ -166,10 +169,11 @@ describe DoubleEntry do
       expect {
         DoubleEntry.transfer(
           Money.new(100_00),
-          :from => cash,
-          :to   => trash,
+          :from => trash,
+          :to   => bitbucket,
+          :code => :mismatch_xfer
         )
-      }.to raise_error DoubleEntry::TransferNotAllowed
+      }.to raise_error DoubleEntry::MismatchedCurrencies
     end
   end
 
