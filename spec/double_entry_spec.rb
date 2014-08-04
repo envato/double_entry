@@ -340,7 +340,7 @@ describe DoubleEntry do
       expect(cash.balance(:from => 3.weeks.ago, :to => 2.weeks.ago)).to eq Money.new(500_00)
     end
 
-    it 'can be queries between two points in time, even in the future' do
+    it 'can be queried between two points in time, even in the future' do
       expect(btc_wallet.balance(:from => Time.now, :to => 2.weeks.from_now)).to eq Money.new(200_00, 'BTC')
     end
 
