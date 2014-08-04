@@ -17,5 +17,13 @@ module DoubleEntry
     def define_transfers
       yield transfers
     end
+
+    def default_currency
+      @default_currency || Money.default_currency
+    end
+
+    def set_default_currency
+      @default_currency = yield
+    end
   end
 end

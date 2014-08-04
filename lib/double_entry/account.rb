@@ -10,14 +10,13 @@ module DoubleEntry
 
     # @api private
     def self.currency(defined_accounts, account)
-      if account.is_a?(Symbol)
-        code = account
-      else
-        code = account.identifier
-      end
-      defined_accounts.detect do |account|
+      code = account.is_a?(Symbol) ? account : account.identifier
+
+      found_account = defined_accounts.detect do |account|
         account.identifier == code
-      end.try(:currency)
+      end
+
+      found_account.try(:currency) || DoubleEntry.default_currency
     end
 
     # @api private
@@ -107,7 +106,7 @@ module DoubleEntry
 
     def initialize(attributes)
       attributes.each { |name, value| send("#{name}=", value) }
-      self.currency ||= Money.default_currency
+      self.currency ||= DoubleEntry.default_currency
     end
 
     def scoped?
