@@ -26,6 +26,7 @@ Rails Versions: Rails 3.2.x, 4.0.x, 4.1.x
 **Databases Supported:**
  * MySQL
  * PostgreSQL
+ * SQLite
 
 ## Installation
 
@@ -124,7 +125,7 @@ manually lock the accounts you're using:
 ```ruby
 DoubleEntry.lock_accounts(account_a, account_b) do
   # Perhaps transfer some money
-  DoubleEntry.transfer(20.dollars, :from => account_a, :to => account_b, :code => :purchase)
+  DoubleEntry.transfer(Money.new(20_00), :from => account_a, :to => account_b, :code => :purchase)
   # Perform other tasks that should be commited atomically with the transfer of funds...
 end
 ```
@@ -188,6 +189,25 @@ DoubleEntry.configure do |config|
 end
 ```
 
+By default an account's currency is USD. To change this globally:
+
+```ruby
+DoubleEntry.configure do |config|
+  config.default_currency = :aud
+end
+```
+
+You can also specify a currency on a per account basis.
+Transfers between accounts of different currencies are not allowed.
+
+```ruby
+DoubleEntry.configure do |config|
+  config.define_accounts do |accounts|
+    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :currency => :aud)
+  end
+end
+```
+
 ## Jackhammer
 
 Run a concurrency test on the code.
@@ -247,7 +267,7 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
     ./script/setup.sh
     ```
 
-3. Install MySQL and PostgreSQL. We run tests against both databases.
+3. Install MySQL, PostgreSQL and SQLite. We run tests against all three databases.
 4. Create a database in MySQL.
 
     ```sh
@@ -272,4 +292,3 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
     ```sh
     bundle exec rake
     ```
-

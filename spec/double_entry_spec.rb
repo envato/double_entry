@@ -7,13 +7,16 @@ describe DoubleEntry do
   before do
     @config_accounts = DoubleEntry.configuration.accounts
     @config_transfers = DoubleEntry.configuration.transfers
+    @config_currency = DoubleEntry.configuration.default_currency
     DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
     DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+    DoubleEntry.configuration.default_currency = Money::Currency.find(:usd)
   end
 
   after do
     DoubleEntry.configuration.accounts = @config_accounts
     DoubleEntry.configuration.transfers = @config_transfers
+    DoubleEntry.configuration.default_currency = @config_currency
   end
 
   describe 'configuration' do
@@ -37,6 +40,16 @@ describe DoubleEntry do
           end
         end
       }.to raise_error DoubleEntry::DuplicateTransfer
+    end
+
+    it 'sets the default currency' do
+      DoubleEntry.configure do |config|
+        config.default_currency = 'AUD'
+        config.define_accounts do |accounts|
+          accounts.define(:identifier => :test_currency)
+        end
+      end
+      expect(DoubleEntry.account(:test_currency).currency).to eq(Money::Currency.find(:aud))
     end
   end
 
