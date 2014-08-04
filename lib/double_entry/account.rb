@@ -9,6 +9,18 @@ module DoubleEntry
     end
 
     # @api private
+    def self.currency(defined_accounts, account)
+      if account.is_a?(Symbol)
+        code = account
+      else
+        code = account.identifier
+      end
+      defined_accounts.detect do |account|
+        account.identifier == code
+      end.try(:currency)
+    end
+
+    # @api private
     class Set < Array
       def define(attributes)
         self << Account.new(attributes)
