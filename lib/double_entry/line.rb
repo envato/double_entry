@@ -28,7 +28,7 @@ module DoubleEntry
   # ```
   #
   # ### lines_scope_account_created_at_idx
-  # 
+  #
   # ```sql
   # ADD INDEX `lines_scope_account_created_at_idx` (scope, account, created_at)
   # ```
@@ -56,12 +56,25 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-    extend EncapsulateAsMoney
 
     belongs_to :detail, :polymorphic => true
-    before_save :check_balance_will_not_be_sent_negative
+    before_save :do_validations
 
-    encapsulate_as_money :amount, :balance
+    def amount
+      self[:amount] && Money.new(self[:amount], currency)
+    end
+
+    def amount=(money)
+      self[:amount] = (money && money.fractional)
+    end
+
+    def balance
+      self[:balance] && Money.new(self[:balance], currency)
+    end
+
+    def balance=(money)
+      self[:balance] = (money && money.fractional)
+    end
 
     def code=(code)
       self[:code] = code.try(:to_s)
@@ -72,20 +85,26 @@ module DoubleEntry
       self[:code].try(:to_sym)
     end
 
-    def account=(account)
-      self[:account] = account.identifier.to_s
-      self.scope = account.scope_identity
-      account
+    def account=(_account)
+      self[:account] = _account.identifier.to_s
+      self.scope = _account.scope_identity
+      raise "Missing Account" unless account
+      _account
     end
 
     def account
       DoubleEntry.account(self[:account].to_sym, :scope => scope)
     end
 
-    def partner_account=(partner_account)
-      self[:partner_account] = partner_account.identifier.to_s
-      self.partner_scope = partner_account.scope_identity
-      partner_account
+    def currency
+      account.currency if self[:account]
+    end
+
+    def partner_account=(_partner_account)
+      self[:partner_account] = _partner_account.identifier.to_s
+      self.partner_scope = _partner_account.scope_identity
+      raise "Missing Partner Account" unless partner_account
+      _partner_account
     end
 
     def partner_account
@@ -105,11 +124,11 @@ module DoubleEntry
     end
 
     def decrease?
-      amount < Money.empty
+      amount < Money.zero
     end
 
     def increase?
-      amount > Money.empty
+      amount > Money.zero
     end
 
     # Query out just the id and created_at fields for lines, without
@@ -123,9 +142,20 @@ module DoubleEntry
 
     private
 
+    def do_validations
+      check_balance_will_not_be_sent_negative
+      check_currencies_match
+    end
+
     def check_balance_will_not_be_sent_negative
       if self.account.positive_only and self.balance < Money.new(0)
         raise AccountWouldBeSentNegative.new(account)
+      end
+    end
+
+    def check_currencies_match
+      if account.currency != partner_account.currency
+        raise MismatchedCurrencies.new
       end
     end
   end

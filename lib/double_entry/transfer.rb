@@ -52,9 +52,11 @@ module DoubleEntry
 
     def process(amount, from, to, code, detail)
       if from.scope_identity == to.scope_identity and from.identifier == to.identifier
-        raise TransferNotAllowed.new
+        raise TransferNotAllowed.new("from and to are identical")
       end
-
+      if to.currency != from.currency
+        raise MismatchedCurrencies.new("Missmatched currency")
+      end
       Locking.lock_accounts(from, to) do
         credit, debit = Line.new, Line.new
 

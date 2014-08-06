@@ -16,3 +16,9 @@ postgres:
   pool: 100
   timeout: 5000
   host: localhost
+
+sqlite:
+  adapter: sqlite3
+  encoding: utf8
+  database: db/double_entry_test.sqlite3
+  pool: 100
