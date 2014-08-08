@@ -29,6 +29,20 @@ module DoubleEntry
           super(account)
         end
       end
+
+      def active_record_scope_identifier(active_record_class)
+        ActiveRecordScopeFactory.new(active_record_class).scope_identifier
+      end
+    end
+
+    class ActiveRecordScopeFactory
+      def initialize(active_record_class)
+        @active_record_class = active_record_class
+      end
+
+      def scope_identifier
+        ->(value) { value.is_a?(@active_record_class) ? value.id : value }
+      end
     end
 
     class Instance

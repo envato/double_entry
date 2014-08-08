@@ -6,6 +6,7 @@ rvm:
 env:
   - DB=mysql
   - DB=postgres
+  - DB=sqlite
 before_script:
   - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'

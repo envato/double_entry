@@ -6,7 +6,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
 task :default do
-  %w(mysql postgres).each do |db|
+  %w(mysql postgres sqlite).each do |db|
     puts "Running tests with `DB=#{db}`"
     ENV['DB'] = db
     Rake::Task["spec"].execute

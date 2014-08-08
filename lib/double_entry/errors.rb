@@ -6,10 +6,8 @@ module DoubleEntry
   class TransferNotAllowed < RuntimeError; end
   class TransferIsNegative < RuntimeError; end
   class TransferCodeTooLongError < RuntimeError; end
-  class RequiredMetaMissing < RuntimeError; end
   class DuplicateAccount < RuntimeError; end
   class DuplicateTransfer < RuntimeError; end
-  class UserAccountNotLocked < RuntimeError; end
   class AccountWouldBeSentNegative < RuntimeError; end
 
 end
