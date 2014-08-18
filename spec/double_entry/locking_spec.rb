@@ -27,6 +27,7 @@ describe DoubleEntry::Locking do
         accounts.define(:identifier => :account_b, :scope_identifier => scope)
         accounts.define(:identifier => :account_c, :scope_identifier => scope)
         accounts.define(:identifier => :account_d, :scope_identifier => scope)
+        accounts.define(:identifier => :account_e)
       end
 
       config.define_transfers do |transfers|
@@ -39,6 +40,7 @@ describe DoubleEntry::Locking do
     @account_b = DoubleEntry.account(:account_b, :scope => "2")
     @account_c = DoubleEntry.account(:account_c, :scope => "3")
     @account_d = DoubleEntry.account(:account_d, :scope => "4")
+    @account_e = DoubleEntry.account(:account_e)
   end
 
   it "creates missing account balance records" do
@@ -131,6 +133,14 @@ describe DoubleEntry::Locking do
     end.to raise_error("Yeah, right")
     expect(DoubleEntry.balance(@account_a)).to eq Money.new(0)
     expect(DoubleEntry.balance(@account_b)).to eq Money.new(0)
+  end
+
+  it "allows locking a scoped account and a non scoped account" do
+    expect do
+      DoubleEntry::Locking.lock_accounts(@account_d, @account_e) do
+        # do nothing
+      end
+    end.to_not raise_error
   end
 
   # sqlite cannot handle these cases so they don't run when DB=sqlite
