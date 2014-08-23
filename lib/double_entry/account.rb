@@ -81,11 +81,7 @@ module DoubleEntry
       end
 
       def <=>(account)
-        if scoped?
-          [scope_identity, identifier.to_s] <=> [account.scope_identity, account.identifier.to_s]
-        else
-          identifier.to_s <=> account.identifier.to_s
-        end
+        [scope_identity.to_s, identifier.to_s] <=> [account.scope_identity.to_s, account.identifier.to_s]
       end
 
       def hash
