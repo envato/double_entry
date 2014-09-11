@@ -124,11 +124,11 @@ module DoubleEntry
     end
 
     def decrease?
-      amount < Money.zero
+      amount < Money.empty
     end
 
     def increase?
-      amount > Money.zero
+      amount > Money.empty
     end
 
     # Query out just the id and created_at fields for lines, without
