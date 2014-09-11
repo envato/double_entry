@@ -144,18 +144,11 @@ module DoubleEntry
 
     def do_validations
       check_balance_will_not_be_sent_negative
-      check_currencies_match
     end
 
     def check_balance_will_not_be_sent_negative
       if self.account.positive_only and self.balance < Money.new(0)
         raise AccountWouldBeSentNegative.new(account)
-      end
-    end
-
-    def check_currencies_match
-      if account.currency != partner_account.currency
-        raise MismatchedCurrencies.new
       end
     end
   end
