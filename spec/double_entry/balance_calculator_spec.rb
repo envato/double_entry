@@ -48,23 +48,6 @@ describe DoubleEntry::BalanceCalculator do
           end
         end
       end
-
-      context 'when the given account is DoubleEntry::Account-like' do
-        let(:account) do
-          DoubleEntry::Account::Instance.new(
-            :account => DoubleEntry::Account.new(
-                          :identifier => 'account_identity',
-                          :scope_identifier => lambda { |scope_id| scope_id },
-                        ),
-            :scope   => 'account_scope_identity'
-          )
-        end
-
-        it 'scopes the lines summed by the accounts identifier and its scope identity' do
-          expect(DoubleEntry::Line).to have_received(:where).with(:account => 'account_identity')
-          expect(relation).to have_received(:where).with(:scope => 'account_scope_identity')
-        end
-      end
     end
 
     describe 'what happens with different times' do

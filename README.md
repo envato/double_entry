@@ -182,13 +182,7 @@ DoubleEntry.configure do |config|
 end
 ```
 
-By default an account's currency is USD. To change this globally:
-
-```ruby
-DoubleEntry.configure do |config|
-  config.default_currency = :aud
-end
-```
+By default an account's currency is the same as Money.default_currency from the money gem.
 
 You can also specify a currency on a per account basis.
 Transfers between accounts of different currencies are not allowed.
