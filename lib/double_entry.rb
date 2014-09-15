@@ -136,13 +136,6 @@ module DoubleEntry
       Account.currency(configuration.accounts, account)
     end
 
-    # Get the default currency
-    #
-    # @return [Currency] the default currency
-    def default_currency
-      configuration.default_currency
-    end
-
     # Lock accounts in preparation for transfers.
     #
     # This creates a transaction, and uses database-level locking to ensure

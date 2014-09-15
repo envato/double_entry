@@ -30,7 +30,7 @@ module DoubleEntry
           order('id DESC').
           limit(1).
           pluck(:balance)
-        result.empty? ? Money.zero(currency) : Money.new(result.first, currency)
+        result.empty? ? Money.empty(currency) : Money.new(result.first, currency)
       end
     end
 

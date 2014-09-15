@@ -8,9 +8,6 @@ describe DoubleEntry::Locking do
     @config_transfers = DoubleEntry.configuration.transfers
     DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
     DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
-    DoubleEntry.configure do |config|
-      config.default_currency = :usd
-    end
   end
 
   after do

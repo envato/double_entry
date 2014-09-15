@@ -16,7 +16,7 @@ module DoubleEntry
         account.identifier == code
       end
 
-      found_account.try(:currency) || DoubleEntry.default_currency
+      found_account.currency
     end
 
     # @api private
@@ -116,7 +116,7 @@ module DoubleEntry
 
     def initialize(attributes)
       attributes.each { |name, value| send("#{name}=", value) }
-      self.currency ||= DoubleEntry.default_currency
+      self.currency ||= Money.default_currency
     end
 
     def scoped?

@@ -55,7 +55,7 @@ module DoubleEntry
         raise TransferNotAllowed.new("from and to are identical")
       end
       if to.currency != from.currency
-        raise MismatchedCurrencies.new("Missmatched currency")
+        raise MismatchedCurrencies.new("Missmatched currency (#{to.currency} <> #{from.currency})")
       end
       Locking.lock_accounts(from, to) do
         credit, debit = Line.new, Line.new

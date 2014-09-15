@@ -51,15 +51,5 @@ describe DoubleEntry::Line do
         its(:currency) { should eq "BTC" }
       end
     end
-
-    describe "validation" do
-      context "currency" do
-        let(:account) { DoubleEntry.account(:test, :scope => "17") }
-        let(:partner_account) { DoubleEntry.account(:btc_test, :scope => "72") }
-        it 'checks for mismatched currencies of transfers' do
-          expect{ persisted_line.save! }.to raise_error(DoubleEntry::MismatchedCurrencies)
-        end
-      end
-    end
   end
 end
