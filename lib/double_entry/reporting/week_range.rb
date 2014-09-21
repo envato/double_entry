@@ -12,7 +12,7 @@ module DoubleEntry
       def from_time(time)
         time = time.to_time if time.is_a? Date
         year = time.end_of_week.year
-        week = ((time.beginning_of_week - start_of_year(year)) / 1.week).floor + 1
+        week = ((time.beginning_of_week - start_of_year(year) + dst_offset(time.beginning_of_week)) / 1.week).floor + 1
         new(:year => year, :week => week)
       end
 
@@ -38,6 +38,10 @@ module DoubleEntry
       end
 
     private
+
+      def dst_offset(time)
+        time.dst? ? 1.hour : 0
+      end
 
       def start_of_year(year)
         Time.local(year, 1, 1).beginning_of_week

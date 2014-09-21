@@ -15,6 +15,14 @@ describe WeekRange do
     expect(range.start).to eq Time.parse("2010-12-27 00:00:00")
   end
 
+  it "handles daylight savings time properly" do
+    Time.use_zone('America/Los_Angeles') do
+      time = Time.zone.parse('Mon, 10 Mar 2014')
+      range = WeekRange.from_time time
+      expect(range.start.day).to eq 10
+    end
+  end
+
   describe "::from_time" do
     subject(:from_time) { WeekRange.from_time(given_time) }
 
