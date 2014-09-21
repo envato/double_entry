@@ -10,9 +10,16 @@ module DoubleEntry
     class << self
 
       def from_time(time)
-        time = time.to_time if time.is_a? Date
-        year = time.end_of_week.year
-        week = ((time.beginning_of_week - start_of_year(year)) / 1.week).floor + 1
+        date = time.to_date
+        week = date.cweek
+        year = date.end_of_week.year
+
+        if date.beginning_of_week.year != year
+          week = 1
+        elsif date.beginning_of_year.cwday > Date::DAYNAMES.index('Thursday')
+          week += 1
+        end
+
         new(:year => year, :week => week)
       end
 
