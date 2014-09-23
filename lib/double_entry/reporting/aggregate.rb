@@ -8,7 +8,7 @@ module DoubleEntry
       @function = function.to_s
       raise AggregateFunctionNotSupported unless %w[sum count average].include?(@function)
 
-      @account = account.to_s
+      @account = account
       @code = code ? code.to_s : nil
       @options = options
       @range = options[:range]
@@ -25,17 +25,17 @@ module DoubleEntry
     end
 
     def formatted_amount
-      Aggregate.formatted_amount(function, amount)
+      Aggregate.formatted_amount(function, amount, currency)
     end
 
-    def self.formatted_amount(function, amount)
+    def self.formatted_amount(function, amount, currency)
       safe_amount = amount || 0
 
       case function.to_s
       when 'count'
         safe_amount
       else
-        Money.new(safe_amount)
+        Money.new(safe_amount, currency)
       end
     end
 
@@ -44,6 +44,10 @@ module DoubleEntry
     def retrieve
       aggregate = LineAggregate.where(field_hash).first
       aggregate.amount if aggregate
+    end
+
+    def currency
+      DoubleEntry.currency(account)
     end
 
     def clear_old_aggregates
@@ -75,7 +79,7 @@ module DoubleEntry
       when 'average'
         calculate_yearly_average
       else
-        zero = Aggregate.formatted_amount(function, 0)
+        zero = Aggregate.formatted_amount(function, 0, currency)
 
         result = (1..12).inject(zero) do |total, month|
           total += Reporting.aggregate(function, account, code,

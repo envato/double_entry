@@ -8,12 +8,13 @@ module DoubleEntry
       let(:finish) { nil }
       let(:range_type) { 'year' }
       let(:function) { :sum }
-
+      let(:account) { :savings }
+      let(:transfer_code) { :bonus }
       subject(:aggregate_array) {
         Reporting.aggregate_array(
           function,
-          :savings,
-          :bonus,
+          account,
+          transfer_code,
           :range_type => range_type,
           :start => start,
           :finish => finish,
@@ -67,6 +68,20 @@ module DoubleEntry
             it { should eq [ Money.new(0), Money.new(0), Money.new(10_00), Money.new(0), Money.new(20_00), Money.new(0), Money.new(0) ] }
           end
         end
+      end
+
+      context 'when account is in BTC currency' do
+        let(:account) { :btc_savings }
+        let(:range_type) { 'year' }
+        let(:start) { "#{Time.now.year}-01-01" }
+        let(:transfer_code) { :btc_test_transfer }
+
+        before do
+          perform_btc_deposit(user, 100_000_000)
+          perform_btc_deposit(user, 100_000_000)
+        end
+
+        it { should eq [ Money.new(200_000_000, :btc) ] }
       end
 
       context 'when called with range type of "invalid_and_should_not_work"' do
