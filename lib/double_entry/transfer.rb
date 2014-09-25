@@ -51,10 +51,6 @@ module DoubleEntry
     end
 
     def process(amount, from, to, code, detail)
-      if from.scope_identity == to.scope_identity and from.identifier == to.identifier
-        raise TransferNotAllowed.new
-      end
-
       Locking.lock_accounts(from, to) do
         credit, debit = Line.new, Line.new
 
@@ -78,6 +74,5 @@ module DoubleEntry
         credit.update_attribute :partner_id, debit.id
       end
     end
-
   end
 end

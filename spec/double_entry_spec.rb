@@ -369,12 +369,6 @@ describe DoubleEntry do
       expect(DoubleEntry.balance(:cash, :scope => ryan)).to eq -Money.new(10_00)
     end
 
-    it 'raises exception if you try to transfer between the same account, despite it being scoped' do
-      expect do
-        DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => ryans_cash, :code => :xfer)
-      end.to raise_error(DoubleEntry::TransferNotAllowed)
-    end
-
     it 'allows transfer from one persons account to the same persons other kind of account' do
       DoubleEntry.transfer(Money.new(100_00), :from => ryans_cash, :to => ryans_savings, :code => :xfer)
       expect(ryans_cash.balance).to eq -Money.new(100_00)
