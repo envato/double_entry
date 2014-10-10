@@ -51,8 +51,9 @@ module DoubleEntry
     end
 
     def process(amount, from, to, code, detail)
-      if from.scope_identity == to.scope_identity and from.identifier == to.identifier
-        raise TransferNotAllowed.new
+
+      if to.currency != from.currency
+        raise MismatchedCurrencies.new("Missmatched currency (#{to.currency} <> #{from.currency})")
       end
 
       Locking.lock_accounts(from, to) do
@@ -78,6 +79,5 @@ module DoubleEntry
         credit.update_attribute :partner_id, debit.id
       end
     end
-
   end
 end

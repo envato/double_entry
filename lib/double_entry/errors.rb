@@ -7,5 +7,6 @@ module DoubleEntry
   class DuplicateAccount < RuntimeError; end
   class DuplicateTransfer < RuntimeError; end
   class AccountWouldBeSentNegative < RuntimeError; end
-
+  class MismatchedCurrencies < RuntimeError; end
+  class MissingAccountError < RuntimeError; end;
 end

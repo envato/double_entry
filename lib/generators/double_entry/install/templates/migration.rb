@@ -41,9 +41,9 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.integer  "day"
       t.integer  "hour"
       t.integer  "amount"
-      t.timestamps
       t.string   "filter"
       t.string   "range_type"
+      t.timestamps
     end
 
     add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
