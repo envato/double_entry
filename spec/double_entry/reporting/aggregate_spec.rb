@@ -203,5 +203,18 @@ module DoubleEntry
         end
       end
     end
+    describe Aggregate, "currencies" do
+      let(:user) { User.make! }
+      before do
+        perform_btc_deposit(user, 100_000_000)
+        perform_btc_deposit(user, 200_000_000)
+      end
+
+      it 'should calculate the sum in the correct currency' do
+        expect(
+          Reporting.aggregate(:sum, :btc_savings, :btc_test_transfer, :range => TimeRange.make(:year => Time.now.year))
+        ).to eq Money.new(300_000_000, :btc)
+      end
+    end
   end
 end
