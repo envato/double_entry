@@ -51,6 +51,11 @@ module DoubleEntry
     end
 
     def process(amount, from, to, code, detail)
+
+      if to.currency != from.currency
+        raise MismatchedCurrencies.new("Missmatched currency (#{to.currency} <> #{from.currency})")
+      end
+
       Locking.lock_accounts(from, to) do
         credit, debit = Line.new, Line.new
 

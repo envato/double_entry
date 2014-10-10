@@ -4,7 +4,6 @@ require 'set'
 module DoubleEntry
  module Validation
   class LineCheck < ActiveRecord::Base
-    extend EncapsulateAsMoney
 
     default_scope -> { order('created_at') }
 

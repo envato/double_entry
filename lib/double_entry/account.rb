@@ -9,6 +9,17 @@ module DoubleEntry
     end
 
     # @api private
+    def self.currency(defined_accounts, account)
+      code = account.is_a?(Symbol) ? account : account.identifier
+
+      found_account = defined_accounts.detect do |account|
+        account.identifier == code
+      end
+
+      found_account.currency
+    end
+
+    # @api private
     class Set < Array
       def define(attributes)
         self << Account.new(attributes)
@@ -47,7 +58,7 @@ module DoubleEntry
 
     class Instance
       attr_accessor :account, :scope
-      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :to => :account
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :currency, :to => :account
 
       def initialize(attributes)
         attributes.each { |name, value| send("#{name}=", value) }
@@ -93,7 +104,7 @@ module DoubleEntry
       end
 
       def to_s
-        "\#{Account account: #{identifier} scope: #{scope}}"
+        "\#{Account account: #{identifier} scope: #{scope} currency: #{currency}}"
       end
 
       def inspect
@@ -101,10 +112,11 @@ module DoubleEntry
       end
     end
 
-    attr_accessor :identifier, :scope_identifier, :positive_only
+    attr_accessor :identifier, :scope_identifier, :positive_only, :currency
 
     def initialize(attributes)
       attributes.each { |name, value| send("#{name}=", value) }
+      self.currency ||= Money.default_currency
     end
 
     def scoped?

@@ -3,7 +3,6 @@ require 'active_record'
 require 'active_record/locking_extensions'
 require 'active_support/all'
 require 'money'
-require 'encapsulate_as_money'
 
 require 'double_entry/version'
 require 'double_entry/errors'
@@ -127,6 +126,14 @@ module DoubleEntry
     # @return [Money] The balance
     def balance(account, options = {})
       BalanceCalculator.calculate(account, options)
+    end
+
+    # Get the currency of an account.
+    #
+    # @param [DoubleEntry::Account:Instance, Symbol] account Find the currency for this account
+    # @return [Currency] the currency
+    def currency(account)
+      Account.currency(configuration.accounts, account)
     end
 
     # Lock accounts in preparation for transfers.
