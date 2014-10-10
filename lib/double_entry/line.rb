@@ -28,7 +28,7 @@ module DoubleEntry
   # ```
   #
   # ### lines_scope_account_created_at_idx
-  # 
+  #
   # ```sql
   # ADD INDEX `lines_scope_account_created_at_idx` (scope, account, created_at)
   # ```
@@ -59,9 +59,18 @@ module DoubleEntry
     extend EncapsulateAsMoney
 
     belongs_to :detail, :polymorphic => true
-    before_save :check_balance_will_not_be_sent_negative
 
     encapsulate_as_money :amount, :balance
+
+    def save(*)
+      check_balance_will_not_be_sent_negative
+      super
+    end
+
+    def save!(*)
+      check_balance_will_not_be_sent_negative
+      super
+    end
 
     def code=(code)
       self[:code] = code.try(:to_s)
