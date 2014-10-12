@@ -76,6 +76,16 @@ module DoubleEntry
       self[:balance] = (money && money.fractional)
     end
 
+    def save(*)
+      check_balance_will_not_be_sent_negative
+      super
+    end
+
+    def save!(*)
+      check_balance_will_not_be_sent_negative
+      super
+    end
+
     def code=(code)
       self[:code] = code.try(:to_s)
       code
