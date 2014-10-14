@@ -97,17 +97,20 @@ describe DoubleEntry do
           accounts.define(:identifier => :savings)
           accounts.define(:identifier => :cash)
           accounts.define(:identifier => :trash)
+          accounts.define(:identifier => :bitbucket, :currency => :btc)
         end
 
         config.define_transfers do |transfers|
           transfers.define(:from => :savings, :to => :cash, :code => :xfer)
+          transfers.define(:from => :trash, :to => :bitbucket, :code => :mismatch_xfer)
         end
       end
     end
 
-    let(:savings) { DoubleEntry.account(:savings) }
-    let(:cash)    { DoubleEntry.account(:cash) }
-    let(:trash)   { DoubleEntry.account(:trash) }
+    let(:savings)   { DoubleEntry.account(:savings) }
+    let(:cash)      { DoubleEntry.account(:cash) }
+    let(:trash)     { DoubleEntry.account(:trash) }
+    let(:bitbucket) { DoubleEntry.account(:bitbucket) }
 
     it 'can transfer from an account to an account, if the transfer is allowed' do
       DoubleEntry.transfer(
@@ -148,6 +151,17 @@ describe DoubleEntry do
           :to   => trash,
         )
       }.to raise_error DoubleEntry::TransferNotAllowed
+    end
+
+    it 'raises an exception when the transfer is not allowed (mismatched currencies)' do
+      expect {
+        DoubleEntry.transfer(
+          Money.new(100_00),
+          :from => trash,
+          :to   => bitbucket,
+          :code => :mismatch_xfer
+        )
+      }.to raise_error DoubleEntry::MismatchedCurrencies
     end
   end
 
@@ -219,10 +233,12 @@ describe DoubleEntry do
 
   describe 'balances' do
 
-    let(:work)    { DoubleEntry.account(:work) }
-    let(:savings) { DoubleEntry.account(:savings) }
-    let(:cash)    { DoubleEntry.account(:cash) }
-    let(:store)   { DoubleEntry.account(:store) }
+    let(:work)       { DoubleEntry.account(:work) }
+    let(:savings)    { DoubleEntry.account(:savings) }
+    let(:cash)       { DoubleEntry.account(:cash) }
+    let(:store)      { DoubleEntry.account(:store) }
+    let(:btc_store)  { DoubleEntry.account(:btc_store) }
+    let(:btc_wallet) { DoubleEntry.account(:btc_wallet) }
 
     before do
       DoubleEntry.configure do |config|
@@ -231,6 +247,8 @@ describe DoubleEntry do
           accounts.define(:identifier => :cash)
           accounts.define(:identifier => :savings)
           accounts.define(:identifier => :store)
+          accounts.define(:identifier => :btc_store, :currency => 'BTC')
+          accounts.define(:identifier => :btc_wallet, :currency => 'BTC')
         end
 
         config.define_transfers do |transfers|
@@ -240,6 +258,7 @@ describe DoubleEntry do
           transfers.define(:code => :purchase, :from => :cash,    :to => :store)
           transfers.define(:code => :layby,    :from => :cash,    :to => :store)
           transfers.define(:code => :deposit,  :from => :cash,    :to => :store)
+          transfers.define(:code => :btc_ex,   :from => :btc_store,    :to => :btc_wallet)
         end
       end
 
@@ -267,7 +286,8 @@ describe DoubleEntry do
       end
 
       Timecop.freeze 1.week.from_now do
-        # go to the star wars convention AND ROCK OUT IN YOUR ACE DARTH VADER COSTUME!!!
+        # it's the future, man
+        DoubleEntry.transfer(Money.new(200_00, 'BTC'), :from => btc_store, :code => :btc_ex, :to => btc_wallet)
       end
     end
 
@@ -276,12 +296,17 @@ describe DoubleEntry do
       expect(cash.balance).to eq Money.new(100_00)
       expect(savings.balance).to eq Money.new(300_00)
       expect(store.balance).to eq Money.new(600_00)
+      expect(btc_wallet.balance).to eq Money.new(200_00, 'BTC')
     end
 
     it 'should have correct account balance records' do
-      [work, cash, savings, store].each do |account|
+      [work, cash, savings, store, btc_wallet].each do |account|
         expect(DoubleEntry::AccountBalance.find_by_account(account).balance).to eq account.balance
       end
+    end
+
+    it 'should have correct account balance currencies' do
+      expect(DoubleEntry::AccountBalance.find_by_account(btc_wallet).balance.currency).to eq 'BTC'
     end
 
     it 'affects origin/destination balance after transfer' do
@@ -301,6 +326,10 @@ describe DoubleEntry do
 
     it 'can be queries between two points in time' do
       expect(cash.balance(:from => 3.weeks.ago, :to => 2.weeks.ago)).to eq Money.new(500_00)
+    end
+
+    it 'can be queried between two points in time, even in the future' do
+      expect(btc_wallet.balance(:from => Time.now, :to => 2.weeks.from_now)).to eq Money.new(200_00, 'BTC')
     end
 
     it 'can report on balances, scoped by code' do
@@ -341,6 +370,8 @@ describe DoubleEntry do
     end
 
     let(:bank) { DoubleEntry.account(:bank) }
+    let(:cash) { DoubleEntry.account(:cash) }
+    let(:savings) { DoubleEntry.account(:savings) }
 
     let(:john) { User.make! }
     let(:johns_cash) { DoubleEntry.account(:cash, :scope => john) }
@@ -386,5 +417,4 @@ describe DoubleEntry do
       expect(DoubleEntry.balance(:savings)).to eq ryans_savings.balance + johns_savings.balance
     end
   end
-
 end

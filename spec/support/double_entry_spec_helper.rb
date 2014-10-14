@@ -16,4 +16,12 @@ module DoubleEntrySpecHelper
     )
   end
 
+  def perform_btc_deposit(user, amount)
+    DoubleEntry.transfer(Money.new(amount, :btc),
+      :from => DoubleEntry.account(:btc_test, :scope => user),
+      :to   => DoubleEntry.account(:btc_savings, :scope => user),
+      :code => :btc_test_transfer,
+    )
+  end
+
 end

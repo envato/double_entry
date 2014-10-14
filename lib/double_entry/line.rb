@@ -56,11 +56,24 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-    extend EncapsulateAsMoney
 
     belongs_to :detail, :polymorphic => true
 
-    encapsulate_as_money :amount, :balance
+    def amount
+      self[:amount] && Money.new(self[:amount], currency)
+    end
+
+    def amount=(money)
+      self[:amount] = (money && money.fractional)
+    end
+
+    def balance
+      self[:balance] && Money.new(self[:balance], currency)
+    end
+
+    def balance=(money)
+      self[:balance] = (money && money.fractional)
+    end
 
     def save(*)
       check_balance_will_not_be_sent_negative
@@ -81,20 +94,26 @@ module DoubleEntry
       self[:code].try(:to_sym)
     end
 
-    def account=(account)
-      self[:account] = account.identifier.to_s
-      self.scope = account.scope_identity
-      account
+    def account=(_account)
+      self[:account] = _account.identifier.to_s
+      self.scope = _account.scope_identity
+      raise "Missing Account" unless account
+      _account
     end
 
     def account
       DoubleEntry.account(self[:account].to_sym, :scope => scope)
     end
 
-    def partner_account=(partner_account)
-      self[:partner_account] = partner_account.identifier.to_s
-      self.partner_scope = partner_account.scope_identity
-      partner_account
+    def currency
+      account.currency if self[:account]
+    end
+
+    def partner_account=(_partner_account)
+      self[:partner_account] = _partner_account.identifier.to_s
+      self.partner_scope = _partner_account.scope_identity
+      raise "Missing Partner Account" unless partner_account
+      _partner_account
     end
 
     def partner_account

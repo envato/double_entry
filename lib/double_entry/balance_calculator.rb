@@ -18,10 +18,11 @@ module DoubleEntry
       options = Options.new(account, args)
       relations = RelationBuilder.new(options)
       lines = relations.build
+      currency = DoubleEntry.currency(account)
 
       if options.between? || options.code?
         # from and to or code lookups have to be done via sum
-        Money.new(lines.sum(:amount))
+        Money.new(lines.sum(:amount), currency)
       else
         # all other lookups can be performed with running balances
         result = lines.
@@ -29,7 +30,7 @@ module DoubleEntry
           order('id DESC').
           limit(1).
           pluck(:balance)
-        result.empty? ? Money.empty : Money.new(result.first)
+        result.empty? ? Money.empty(currency) : Money.new(result.first, currency)
       end
     end
 

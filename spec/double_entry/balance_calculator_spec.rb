@@ -4,8 +4,8 @@ require 'spec_helper'
 describe DoubleEntry::BalanceCalculator do
 
   describe '#calculate' do
-    let(:account) { double.as_null_object }
-    let(:scope) { nil }
+    let(:account) { DoubleEntry::account(:test, :scope => scope) }
+    let(:scope) { double(:id => 1) }
     let(:from) { nil }
     let(:to) { nil }
     let(:at) { nil }
@@ -28,10 +28,10 @@ describe DoubleEntry::BalanceCalculator do
 
     describe 'what happens with different accounts' do
       context 'when the given account is a symbol' do
-        let(:account) { :account }
+        let(:account) { :test }
 
         it 'scopes the lines summed by the account symbol' do
-          expect(DoubleEntry::Line).to have_received(:where).with(:account => 'account')
+          expect(DoubleEntry::Line).to have_received(:where).with(:account => 'test')
         end
 
         context 'with a scopeable entity provided' do
@@ -46,23 +46,6 @@ describe DoubleEntry::BalanceCalculator do
           it 'does not scope the lines summed by the given scope' do
             expect(relation).to_not have_received(:where).with(:scope => 'scope')
           end
-        end
-      end
-
-      context 'when the given account is DoubleEntry::Account-like' do
-        let(:account) do
-          DoubleEntry::Account::Instance.new(
-            :account => DoubleEntry::Account.new(
-                          :identifier => 'account_identity',
-                          :scope_identifier => lambda { |scope_id| scope_id },
-                        ),
-            :scope   => 'account_scope_identity'
-          )
-        end
-
-        it 'scopes the lines summed by the accounts identifier and its scope identity' do
-          expect(DoubleEntry::Line).to have_received(:where).with(:account => 'account_identity')
-          expect(relation).to have_received(:where).with(:scope => 'account_scope_identity')
         end
       end
     end
