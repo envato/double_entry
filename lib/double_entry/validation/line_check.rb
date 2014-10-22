@@ -93,7 +93,7 @@ module DoubleEntry
 
     def recalculate_account(account)
       DoubleEntry.lock_accounts(account) do
-        recalculated_balance = Money.empty
+        recalculated_balance = Money.empty(account.currency)
 
         lines_for_account(account).each do |line|
           recalculated_balance += line.amount
