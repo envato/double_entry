@@ -58,7 +58,6 @@ module DoubleEntry
   class Line < ActiveRecord::Base
 
     belongs_to :detail, :polymorphic => true
-    before_save :do_validations
 
     def amount
       self[:amount] && Money.new(self[:amount], currency)
@@ -74,6 +73,16 @@ module DoubleEntry
 
     def balance=(money)
       self[:balance] = (money && money.fractional)
+    end
+
+    def save(*)
+      check_balance_will_not_be_sent_negative
+      super
+    end
+
+    def save!(*)
+      check_balance_will_not_be_sent_negative
+      super
     end
 
     def code=(code)
@@ -141,10 +150,6 @@ module DoubleEntry
     end
 
     private
-
-    def do_validations
-      check_balance_will_not_be_sent_negative
-    end
 
     def check_balance_will_not_be_sent_negative
       if self.account.positive_only and self.balance < Money.new(0)
