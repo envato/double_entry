@@ -5,7 +5,15 @@ require 'active_support'
 
 db_engine = ENV['DB'] || 'mysql'
 
-ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path("../support/database.yml", __FILE__))[db_engine]
+database_config_file = File.expand_path("../support/database.yml", __FILE__)
+
+if File.exists?(database_config_file)
+  ActiveRecord::Base.establish_connection YAML.load_file(database_config_file)[db_engine]
+else
+  puts "Please configure your spec/support/database.yml file."
+  puts "See spec/support/database.example.yml"
+  exit 1
+end
 
 FileUtils.mkdir_p 'log'
 FileUtils.rm 'log/test.log', :force => true
