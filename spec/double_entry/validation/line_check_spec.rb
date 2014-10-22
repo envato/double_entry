@@ -52,6 +52,11 @@ module DoubleEntry::Validation
           line_check = LineCheck.perform!
           expect(LineCheck.last).to eq line_check
         end
+
+        context 'with a non default currency' do
+          before { User.make!(:bitcoin_balance => Money.new(100_00, 'BTC')) }
+          its(:errors_found) { should eq false }
+        end
       end
 
       context 'And there is a consistency error in lines' do
