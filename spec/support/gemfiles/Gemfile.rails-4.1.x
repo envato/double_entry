@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gemspec :path => '../'
+gemspec :path => '../../../'
 
-gem 'rails', '~>4.1.0'
+gem 'rails', '~> 4.1.0'
