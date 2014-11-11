@@ -48,7 +48,7 @@ module ActiveRecord
       begin
         yield
       rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotUnique => exception
-        if  exception.message =~ /duplicate/i || exception.message =~ /(is|are) not unique/i
+        if  exception.message =~ /duplicate/i || exception.message =~ /ConstraintException/
           # Just ignore it...someone else has already created the record.
         else
           raise
