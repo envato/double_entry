@@ -97,6 +97,10 @@ module ActiveRecord
         info "Duplicate ignored"
         debug event[:exception]
       end
+
+      def logger
+        ActiveRecord::Base.logger
+      end
     end
   end
 
