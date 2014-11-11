@@ -21,6 +21,8 @@ module ActiveRecord
         yield
       rescue ActiveRecord::StatementInvalid => exception
         if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
+          ActiveRecord::Base.logger.info "Deadlock causing restart"
+          ActiveRecord::Base.logger.info exception
           raise ActiveRecord::RestartTransaction
         else
           raise
@@ -49,6 +51,8 @@ module ActiveRecord
         yield
       rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotUnique => exception
         if  exception.message =~ /duplicate/i || exception.message =~ /ConstraintException/
+          ActiveRecord::Base.logger.info "Duplicate being ignored"
+          ActiveRecord::Base.logger.info exception
           # Just ignore it...someone else has already created the record.
         else
           raise
@@ -66,6 +70,8 @@ module ActiveRecord
         if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
           # Somebody else is in the midst of creating the record. We'd better
           # retry, so we ensure they're done before we move on.
+          ActiveRecord::Base.logger.info "Deadlock causing retry"
+          ActiveRecord::Base.logger.info exception
           retry
         else
           raise
