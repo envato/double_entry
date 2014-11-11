@@ -13,17 +13,21 @@ DoubleEntry is an accounting system based on the principles of a
 system.  While this gem acts like a double-entry bookkeeping system, as it creates
 two entries in the database for each transfer, it does *not* enforce accounting rules.
 
-DoubleEntry uses the Money gem to avoid floating point rounding errors.
+DoubleEntry uses the [Money gem](https://github.com/RubyMoney/money) to encapsulate operations on currency values.
 
 ## Compatibility
 
-DoubleEntry has been tested with:
+DoubleEntry is tested against:
 
-Ruby Versions: 1.9.3, 2.0.0, 2.1.2
+Ruby
+ * 1.9.3
+ * 2.1.4
 
-Rails Versions: Rails 3.2.x, 4.0.x, 4.1.x
+Rails
+ * 3.2.x
+ * 4.1.x
 
-**Databases Supported:**
+Databases
  * MySQL
  * PostgreSQL
  * SQLite
