@@ -64,7 +64,8 @@ module DoubleEntry
       # yes, it needs to be find_by_sql, because any other find will be affected
       # by the find_each call in perform!
       previous_line = Line.find_by_sql(["SELECT * FROM #{Line.quoted_table_name} #{force_index} WHERE account = ? AND scope = ? AND id < ? ORDER BY id DESC LIMIT 1", line.account.identifier.to_s, line.scope, line.id])
-      previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.empty
+
+      previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.empty(line.account.currency)
 
       if line.balance != (line.amount + previous_balance)
         log << line_error_message(line, previous_line, previous_balance)
@@ -92,7 +93,7 @@ module DoubleEntry
 
     def recalculate_account(account)
       DoubleEntry.lock_accounts(account) do
-        recalculated_balance = Money.empty
+        recalculated_balance = Money.empty(account.currency)
 
         lines_for_account(account).each do |line|
           recalculated_balance += line.amount
