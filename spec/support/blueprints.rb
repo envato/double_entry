@@ -2,6 +2,7 @@ class UserBlueprint < Machinist::ActiveRecord::Blueprint
   def make!(attributes = {})
     savings_balance = attributes.delete(:savings_balance)
     checking_balance = attributes.delete(:checking_balance)
+    bitcoin_balance = attributes.delete(:bitcoin_balance)
     user = super(attributes)
     if savings_balance
       DoubleEntry.transfer(
@@ -17,6 +18,14 @@ class UserBlueprint < Machinist::ActiveRecord::Blueprint
         :from => DoubleEntry.account(:test, :scope => user),
         :to   => DoubleEntry.account(:checking, :scope => user),
         :code => :pay,
+      )
+    end
+    if bitcoin_balance
+      DoubleEntry.transfer(
+        bitcoin_balance,
+        :from => DoubleEntry.account(:btc_test, :scope => user),
+        :to   => DoubleEntry.account(:btc_savings, :scope => user),
+        :code => :btc_test_transfer,
       )
     end
     user
