@@ -5,10 +5,11 @@ require 'active_support'
 
 db_engine = ENV['DB'] || 'mysql'
 
-ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path("../support/database.yml", __FILE__))[db_engine]
-
+FileUtils.mkdir_p 'tmp/db'
 FileUtils.mkdir_p 'log'
 FileUtils.rm 'log/test.log', :force => true
+
+ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path("../support/database.yml", __FILE__))[db_engine]
 
 # Buffered Logger was deprecated in ActiveSupport 4.0.0 and was removed in 4.1.0
 # Logger was added in ActiveSupport 4.0.0
