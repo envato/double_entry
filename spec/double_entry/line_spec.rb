@@ -9,7 +9,7 @@ describe DoubleEntry::Line do
     let(:persisted_line) {
       DoubleEntry::Line.new(
         :amount => Money.new(10_00),
-        :balance => Money.empty,
+        :balance => Money.zero,
         :account => account,
         :partner_account => partner_account,
         :code => code,
