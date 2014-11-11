@@ -1,4 +1,7 @@
 # encoding: utf-8
+require "active_support/log_subscriber"
+require "active_support/notifications"
+
 module ActiveRecord
 
   # These methods are available as class methods on ActiveRecord::Base.
@@ -21,8 +24,8 @@ module ActiveRecord
         yield
       rescue ActiveRecord::StatementInvalid => exception
         if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
-          ActiveRecord::Base.logger.info "Deadlock causing restart"
-          ActiveRecord::Base.logger.info exception
+          ActiveSupport::Notifications.publish("deadlock_restart.active_record", :exception => exception)
+
           raise ActiveRecord::RestartTransaction
         else
           raise
@@ -51,8 +54,8 @@ module ActiveRecord
         yield
       rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotUnique => exception
         if  exception.message =~ /duplicate/i || exception.message =~ /ConstraintException/
-          ActiveRecord::Base.logger.info "Duplicate being ignored"
-          ActiveRecord::Base.logger.info exception
+          ActiveSupport::Notifications.publish("duplicate_ignore.active_record", :exception => exception)
+
           # Just ignore it...someone else has already created the record.
         else
           raise
@@ -70,12 +73,29 @@ module ActiveRecord
         if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
           # Somebody else is in the midst of creating the record. We'd better
           # retry, so we ensure they're done before we move on.
-          ActiveRecord::Base.logger.info "Deadlock causing retry"
-          ActiveRecord::Base.logger.info exception
+          ActiveSupport::Notifications.publish("deadlock_retry.active_record", :exception => exception)
+
           retry
         else
           raise
         end
+      end
+    end
+
+    class LogSubscriber < ActiveSupport::LogSubscriber
+      def deadlock_restart(event)
+        info "Deadlock causing restart"
+        debug event[:exception]
+      end
+
+      def deadlock_retry(event)
+        info "Deadlock causing retry"
+        debug event[:exception]
+      end
+
+      def duplicate_ignore(event)
+        info "Duplicate ignored"
+        debug event[:exception]
       end
     end
   end
@@ -86,4 +106,6 @@ module ActiveRecord
 
 end
 
+
 ActiveRecord::Base.extend(ActiveRecord::LockingExtensions)
+ActiveRecord::LockingExtensions::LogSubscriber.attach_to :active_record
