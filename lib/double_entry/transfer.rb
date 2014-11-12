@@ -4,7 +4,7 @@ module DoubleEntry
 
     # @api private
     def self.transfer(defined_transfers, amount, options = {})
-      raise TransferIsNegative if amount < Money.empty
+      raise TransferIsNegative if amount < Money.zero
       from, to, code, detail = options[:from], options[:to], options[:code],  options[:detail]
       defined_transfers.
         find!(from, to, code).
