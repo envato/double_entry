@@ -108,7 +108,7 @@ To transfer money between accounts:
 
 ```ruby
 DoubleEntry.transfer(
-  20.dollars,
+  Money.new(20_00),
   :from => one_account,
   :to   => another_account,
   :code => :a_business_code_for_this_type_of_transfer,
