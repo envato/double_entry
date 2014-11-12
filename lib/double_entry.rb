@@ -125,6 +125,7 @@ module DoubleEntry
     #   these codes
     # @return [Money] The balance
     def balance(account, options = {})
+      account = account(account, options) if account.is_a? Symbol
       BalanceCalculator.calculate(account, options)
     end
 

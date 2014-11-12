@@ -68,6 +68,7 @@ module DoubleEntry
 
       def initialize(attributes)
         attributes.each { |name, value| send("#{name}=", value) }
+        ensure_scope_is_valid
       end
 
       def scope_identity
@@ -115,6 +116,12 @@ module DoubleEntry
 
       def inspect
         to_s
+      end
+
+      private
+
+      def ensure_scope_is_valid
+        scope_identity
       end
     end
 
