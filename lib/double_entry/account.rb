@@ -52,7 +52,13 @@ module DoubleEntry
       end
 
       def scope_identifier
-        ->(value) { value.is_a?(@active_record_class) ? value.id : value }
+        lambda do |value|
+          case value
+            when @active_record_class then value.id
+            when String, Fixnum then value
+            else raise AccountScopeMismatchError.new("Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`")
+          end
+        end
       end
     end
 

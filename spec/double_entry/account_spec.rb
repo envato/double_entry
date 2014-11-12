@@ -73,6 +73,13 @@ module DoubleEntry
             it { should eq 32 }
           end
 
+          context "given differing model instance with ID 32" do
+            let(:value) { double(:id => 32) }
+            it "raises an error" do
+              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+            end
+          end
+
           context "given the String 'I am a bearded lady'" do
             let(:value) { "I am a bearded lady" }
 
