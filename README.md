@@ -21,7 +21,7 @@ DoubleEntry is tested against:
 
 Ruby
  * 1.9.3
- * 2.1.4
+ * 2.1.5
 
 Rails
  * 3.2.x
