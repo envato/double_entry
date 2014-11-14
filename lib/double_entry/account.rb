@@ -54,9 +54,12 @@ module DoubleEntry
       def scope_identifier
         lambda do |value|
           case value
-            when @active_record_class then value.id
-            when String, Fixnum then value
-            else raise AccountScopeMismatchError.new("Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`")
+          when @active_record_class
+            value.id
+          when String, Fixnum
+            value
+          else
+            raise AccountScopeMismatchError.new("Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`")
           end
         end
       end
