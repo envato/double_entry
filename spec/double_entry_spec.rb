@@ -424,5 +424,9 @@ describe DoubleEntry do
       expect(ryans_cash.balance).to eq -Money.new(100_00)
       expect(ryans_savings.balance).to eq Money.new(100_00)
     end
+
+    it 'disallows you to report on scoped accounts globally' do
+      expect { DoubleEntry.balance(:cash) }.to raise_error DoubleEntry::UnknownAccount
+    end
   end
 end
