@@ -3,13 +3,8 @@ module DoubleEntry
   include Configurable
 
   class Configuration
-    delegate :accounts, :accounts=, :to => 'DoubleEntry::Account'
-    attr_accessor :transfers
-
-    def initialize #:nodoc:
-      @accounts = Account::Set.new
-      @transfers = Transfer::Set.new
-    end
+    delegate :accounts, :accounts=, :to => "DoubleEntry::Account"
+    delegate :transfers, :transfers=, :to => "DoubleEntry::Transfer"
 
     def define_accounts
       yield accounts
