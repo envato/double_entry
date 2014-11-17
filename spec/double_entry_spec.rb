@@ -356,9 +356,10 @@ describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
+          user_scope = accounts.active_record_scope_identifier(User)
           accounts.define(:identifier => :bank)
-          accounts.define(:identifier => :cash,    :scope_identifier => ->(user) { user.id })
-          accounts.define(:identifier => :savings, :scope_identifier => ->(user) { user.id })
+          accounts.define(:identifier => :cash,    :scope_identifier => user_scope)
+          accounts.define(:identifier => :savings, :scope_identifier => user_scope)
         end
 
         config.define_transfers do |transfers|
@@ -400,6 +401,18 @@ describe DoubleEntry do
       expect(DoubleEntry.balance(:cash, :scope => ryan)).to eq -Money.new(10_00)
     end
 
+    it 'raises an exception if you try to scope with an object instance of differing class to that defined on the account' do
+      not_a_user = double(:id => 7)
+
+      expect {
+        DoubleEntry.account(:savings, :scope => not_a_user)
+      }.to raise_error DoubleEntry::AccountScopeMismatchError
+
+      expect {
+        DoubleEntry.balance(:savings, :scope => not_a_user)
+      }.to raise_error DoubleEntry::AccountScopeMismatchError
+    end
+
     it 'raises exception if you try to transfer between the same account, despite it being scoped' do
       expect do
         DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => ryans_cash, :code => :xfer)
@@ -412,9 +425,8 @@ describe DoubleEntry do
       expect(ryans_savings.balance).to eq Money.new(100_00)
     end
 
-    it 'allows you to report on scoped accounts globally' do
-      expect(DoubleEntry.balance(:cash)).to eq ryans_cash.balance + johns_cash.balance
-      expect(DoubleEntry.balance(:savings)).to eq ryans_savings.balance + johns_savings.balance
+    it 'disallows you to report on scoped accounts globally' do
+      expect { DoubleEntry.balance(:cash) }.to raise_error DoubleEntry::UnknownAccount
     end
   end
 end

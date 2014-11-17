@@ -52,7 +52,16 @@ module DoubleEntry
       end
 
       def scope_identifier
-        ->(value) { value.is_a?(@active_record_class) ? value.id : value }
+        lambda do |value|
+          case value
+          when @active_record_class
+            value.id
+          when String, Fixnum
+            value
+          else
+            raise AccountScopeMismatchError.new("Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`")
+          end
+        end
       end
     end
 
@@ -62,6 +71,7 @@ module DoubleEntry
 
       def initialize(attributes)
         attributes.each { |name, value| send("#{name}=", value) }
+        ensure_scope_is_valid
       end
 
       def scope_identity
@@ -109,6 +119,12 @@ module DoubleEntry
 
       def inspect
         to_s
+      end
+
+      private
+
+      def ensure_scope_is_valid
+        scope_identity
       end
     end
 

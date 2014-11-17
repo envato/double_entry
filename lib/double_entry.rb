@@ -37,6 +37,8 @@ module DoubleEntry
     # @return [DoubleEntry::Account::Instance]
     # @raise [DoubleEntry::UnknownAccount] The described account has not been
     #   configured. It is unknown.
+    # @raise [DoubleEntry::AccountScopeMismatchError] The provided scope does not
+    #   match that defined on the account.
     #
     def account(identifier, options = {})
       Account.account(configuration.accounts, identifier, options)
@@ -124,7 +126,12 @@ module DoubleEntry
     # @option options :codes [Array<Symbol>] consider only the transfers with
     #   these codes
     # @return [Money] The balance
+    # @raise [DoubleEntry::UnknownAccount] The described account has not been
+    #   configured. It is unknown.
+    # @raise [DoubleEntry::AccountScopeMismatchError] The provided scope does not
+    #   match that defined on the account.
     def balance(account, options = {})
+      account = account(account, options) if account.is_a? Symbol
       BalanceCalculator.calculate(account, options)
     end
 

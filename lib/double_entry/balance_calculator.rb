@@ -5,8 +5,7 @@ module DoubleEntry
 
     # Get the current or historic balance of an account.
     #
-    # @param account [DoubleEntry::Account:Instance, Symbol]
-    # @option args :scope [Object, String]
+    # @param account [DoubleEntry::Account:Instance]
     # @option args :from [Time]
     # @option args :to [Time]
     # @option args :at [Time]
@@ -53,13 +52,8 @@ module DoubleEntry
       attr_reader :account, :scope, :from, :to, :at, :codes
 
       def initialize(account, args = {})
-        if account.is_a? Symbol
-          @account = account.to_s
-          @scope = args[:scope].present? ? args[:scope].id.to_s : nil
-        else
-          @account = account.identifier.to_s
-          @scope = account.scope_identity
-        end
+        @account = account.identifier.to_s
+        @scope = account.scope_identity
         @codes = (args[:codes].to_a << args[:code]).compact
         @from = args[:from]
         @to = args[:to]

@@ -1,6 +1,5 @@
 # encoding: utf-8
 module DoubleEntry
-
   class UnknownAccount < RuntimeError; end
   class TransferNotAllowed < RuntimeError; end
   class TransferIsNegative < RuntimeError; end
@@ -9,4 +8,5 @@ module DoubleEntry
   class AccountWouldBeSentNegative < RuntimeError; end
   class MismatchedCurrencies < RuntimeError; end
   class MissingAccountError < RuntimeError; end;
+  class AccountScopeMismatchError < RuntimeError; end;
 end
