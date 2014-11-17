@@ -66,11 +66,12 @@ module DoubleEntry
     end
 
     class Instance
-      attr_accessor :account, :scope
+      attr_reader :account, :scope
       delegate :identifier, :scope_identifier, :scoped?, :positive_only, :currency, :to => :account
 
-      def initialize(attributes)
-        attributes.each { |name, value| send("#{name}=", value) }
+      def initialize(args)
+        @account = args[:account]
+        @scope = args[:scope]
         ensure_scope_is_valid
       end
 
@@ -128,11 +129,13 @@ module DoubleEntry
       end
     end
 
-    attr_accessor :identifier, :scope_identifier, :positive_only, :currency
+    attr_reader :identifier, :scope_identifier, :positive_only, :currency
 
-    def initialize(attributes)
-      attributes.each { |name, value| send("#{name}=", value) }
-      self.currency ||= Money.default_currency
+    def initialize(args)
+      @identifier = args[:identifier]
+      @scope_identifier = args[:scope_identifier]
+      @positive_only = args[:positive_only]
+      @currency = args[:currency] || Money.default_currency
     end
 
     def scoped?
