@@ -64,7 +64,7 @@ module DoubleEntry
     end
 
     def currency
-      DoubleEntry.currency(account)
+      DoubleEntry::Account.currency(account)
     end
   end
  end

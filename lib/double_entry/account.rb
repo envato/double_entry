@@ -17,14 +17,8 @@ module DoubleEntry
       end
 
       # @api private
-      def currency(_, account)
-        code = account.is_a?(Symbol) ? account : account.identifier
-
-        found_account = accounts.detect do |account|
-          account.identifier == code
-        end
-
-        found_account.currency
+      def currency(identifier)
+        accounts.detect { |a| a.identifier == identifier }.try(:currency)
       end
     end
 

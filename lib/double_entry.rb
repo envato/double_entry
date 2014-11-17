@@ -135,14 +135,6 @@ module DoubleEntry
       BalanceCalculator.calculate(account, options)
     end
 
-    # Get the currency of an account.
-    #
-    # @param [DoubleEntry::Account:Instance, Symbol] account Find the currency for this account
-    # @return [Currency] the currency
-    def currency(account)
-      Account.currency(configuration.accounts, account)
-    end
-
     # Lock accounts in preparation for transfers.
     #
     # This creates a transaction, and uses database-level locking to ensure
