@@ -77,7 +77,7 @@ module DoubleEntry
     #   accounts with the provided code is not allowed. Check configuration.
     #
     def transfer(amount, options = {})
-      Transfer.transfer(configuration.transfers, amount, options)
+      Transfer.transfer(amount, options)
     end
 
     # Get the current or historic balance of an account.

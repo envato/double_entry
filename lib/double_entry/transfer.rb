@@ -11,7 +11,7 @@ module DoubleEntry
       end
 
       # @api private
-      def transfer(_, amount, options = {})
+      def transfer(amount, options = {})
         raise TransferIsNegative if amount < Money.zero
         from = options[:from]
         to = options[:to]
