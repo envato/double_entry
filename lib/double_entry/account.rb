@@ -2,21 +2,30 @@
 module DoubleEntry
   class Account
 
-    # @api private
-    def self.account(defined_accounts, identifier, options = {})
-      account = defined_accounts.find(identifier, options[:scope].present?)
-      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
-    end
+    class << self
+      attr_writer :accounts
 
-    # @api private
-    def self.currency(defined_accounts, account)
-      code = account.is_a?(Symbol) ? account : account.identifier
-
-      found_account = defined_accounts.detect do |account|
-        account.identifier == code
+      # @api private
+      def accounts
+        @accounts ||= Account::Set.new
       end
 
-      found_account.currency
+      # @api private
+      def account(_, identifier, options = {})
+        account = accounts.find(identifier, options[:scope].present?)
+        DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+      end
+
+      # @api private
+      def currency(_, account)
+        code = account.is_a?(Symbol) ? account : account.identifier
+
+        found_account = accounts.detect do |account|
+          account.identifier == code
+        end
+
+        found_account.currency
+      end
     end
 
     # @api private

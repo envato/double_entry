@@ -3,7 +3,8 @@ module DoubleEntry
   include Configurable
 
   class Configuration
-    attr_accessor :accounts, :transfers
+    delegate :accounts, :accounts=, :to => 'DoubleEntry::Account'
+    attr_accessor :transfers
 
     def initialize #:nodoc:
       @accounts = Account::Set.new
