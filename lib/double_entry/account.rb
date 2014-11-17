@@ -11,7 +11,7 @@ module DoubleEntry
       end
 
       # @api private
-      def account(_, identifier, options = {})
+      def account(identifier, options = {})
         account = accounts.find(identifier, options[:scope].present?)
         DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
       end

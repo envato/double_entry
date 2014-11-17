@@ -41,7 +41,7 @@ module DoubleEntry
     #   match that defined on the account.
     #
     def account(identifier, options = {})
-      Account.account(configuration.accounts, identifier, options)
+      Account.account(identifier, options)
     end
 
     # Transfer money from one account to another.
