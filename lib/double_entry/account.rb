@@ -7,13 +7,13 @@ module DoubleEntry
 
       # @api private
       def accounts
-        @accounts ||= Account::Set.new
+        @accounts ||= Set.new
       end
 
       # @api private
       def account(identifier, options = {})
         account = accounts.find(identifier, options[:scope].present?)
-        DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+        Instance.new(:account => account, :scope => options[:scope])
       end
 
       # @api private
