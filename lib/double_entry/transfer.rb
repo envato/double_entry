@@ -2,13 +2,23 @@
 module DoubleEntry
   class Transfer
 
-    # @api private
-    def self.transfer(defined_transfers, amount, options = {})
-      raise TransferIsNegative if amount < Money.zero
-      from, to, code, detail = options[:from], options[:to], options[:code],  options[:detail]
-      defined_transfers.
-        find!(from, to, code).
-        process(amount, from, to, code, detail)
+    class << self
+      attr_writer :transfers
+
+      # @api private
+      def transfers
+        @transfers ||= Set.new
+      end
+
+      # @api private
+      def transfer(amount, options = {})
+        raise TransferIsNegative if amount < Money.zero
+        from = options[:from]
+        to = options[:to]
+        code = options[:code]
+        detail = options[:detail]
+        transfers.find!(from, to, code).process(amount, from, to, code, detail)
+      end
     end
 
     # @api private

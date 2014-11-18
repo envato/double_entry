@@ -41,7 +41,7 @@ module DoubleEntry
     #   match that defined on the account.
     #
     def account(identifier, options = {})
-      Account.account(configuration.accounts, identifier, options)
+      Account.account(identifier, options)
     end
 
     # Transfer money from one account to another.
@@ -77,7 +77,7 @@ module DoubleEntry
     #   accounts with the provided code is not allowed. Check configuration.
     #
     def transfer(amount, options = {})
-      Transfer.transfer(configuration.transfers, amount, options)
+      Transfer.transfer(amount, options)
     end
 
     # Get the current or historic balance of an account.
@@ -133,14 +133,6 @@ module DoubleEntry
     def balance(account, options = {})
       account = account(account, options) if account.is_a? Symbol
       BalanceCalculator.calculate(account, options)
-    end
-
-    # Get the currency of an account.
-    #
-    # @param [DoubleEntry::Account:Instance, Symbol] account Find the currency for this account
-    # @return [Currency] the currency
-    def currency(account)
-      Account.currency(configuration.accounts, account)
     end
 
     # Lock accounts in preparation for transfers.

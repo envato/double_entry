@@ -47,7 +47,7 @@ module DoubleEntry
     end
 
     def currency
-      DoubleEntry.currency(account)
+      DoubleEntry::Account.currency(account)
     end
 
     def clear_old_aggregates
