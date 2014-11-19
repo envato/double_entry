@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'active_record'
 require 'active_record/locking_extensions'
+require 'active_record/locking_extensions/log_subscriber'
 require 'active_support/all'
 require 'money'
 
