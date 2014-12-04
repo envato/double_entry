@@ -39,6 +39,18 @@ module DoubleEntry
       end
     end
 
+    describe "currency" do
+      it "defaults to USD currency" do
+        account = DoubleEntry::Account.new(:identifier => "savings", :scope_identifier => identity_scope)
+        expect(DoubleEntry::Account::Instance.new(:account => account).currency).to eq("USD")
+      end
+
+      it "allows the currency to be set" do
+        account = DoubleEntry::Account.new(:identifier => "savings", :scope_identifier => identity_scope, :currency => "AUD")
+        expect(DoubleEntry::Account::Instance.new(:account => account).currency).to eq("AUD")
+      end
+    end
+
     describe Account::Set do
       describe "#define" do
         context "given a 'savings' account is defined" do
@@ -77,6 +89,13 @@ module DoubleEntry
             let(:value) { User.make(:id => 32) }
 
             it { should eq 32 }
+          end
+
+          context "given differing model instance with ID 32" do
+            let(:value) { double(:id => 32) }
+            it "raises an error" do
+              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+            end
           end
 
           context "given the String 'I am a bearded lady'" do

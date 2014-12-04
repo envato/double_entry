@@ -2,10 +2,24 @@
 module DoubleEntry
   class Account
 
-    # @api private
-    def self.account(defined_accounts, identifier, options = {})
-      account = defined_accounts.find(identifier, options[:scope].present?)
-      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
+    class << self
+      attr_writer :accounts
+
+      # @api private
+      def accounts
+        @accounts ||= Set.new
+      end
+
+      # @api private
+      def account(identifier, options = {})
+        account = accounts.find(identifier, options[:scope].present?)
+        Instance.new(:account => account, :scope => options[:scope])
+      end
+
+      # @api private
+      def currency(identifier)
+        accounts.detect { |a| a.identifier == identifier }.try(:currency)
+      end
     end
 
     # @api private
@@ -41,17 +55,27 @@ module DoubleEntry
       end
 
       def scope_identifier
-        ->(value) { value.is_a?(@active_record_class) ? value.id : value }
+        lambda do |value|
+          case value
+          when @active_record_class
+            value.id
+          when String, Fixnum
+            value
+          else
+            raise AccountScopeMismatchError.new("Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`")
+          end
+        end
       end
     end
 
     class Instance
       attr_reader :account, :scope
-      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :to => :account
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :currency, :to => :account
 
-      def initialize(attributes)
-        @account = attributes[:account]
-        @scope = attributes[:scope]
+      def initialize(args)
+        @account = args[:account]
+        @scope = args[:scope]
+        ensure_scope_is_valid
       end
 
       def scope_identity
@@ -82,11 +106,7 @@ module DoubleEntry
       end
 
       def <=>(account)
-        if scoped?
-          [scope_identity, identifier.to_s] <=> [account.scope_identity, account.identifier.to_s]
-        else
-          identifier.to_s <=> account.identifier.to_s
-        end
+        [scope_identity.to_s, identifier.to_s] <=> [account.scope_identity.to_s, account.identifier.to_s]
       end
 
       def hash
@@ -98,20 +118,27 @@ module DoubleEntry
       end
 
       def to_s
-        "\#{Account account: #{identifier} scope: #{scope}}"
+        "\#{Account account: #{identifier} scope: #{scope} currency: #{currency}}"
       end
 
       def inspect
         to_s
       end
+
+      private
+
+      def ensure_scope_is_valid
+        scope_identity
+      end
     end
 
-    attr_reader :identifier, :scope_identifier, :positive_only
+    attr_reader :identifier, :scope_identifier, :positive_only, :currency
 
-    def initialize(attributes)
-      @identifier = attributes[:identifier]
-      @scope_identifier = attributes[:scope_identifier]
-      @positive_only = attributes[:positive_only]
+    def initialize(args)
+      @identifier = args[:identifier]
+      @scope_identifier = args[:scope_identifier]
+      @positive_only = args[:positive_only]
+      @currency = args[:currency] || Money.default_currency
       if identifier.length > 31
         raise AccountIdentifierTooLongError.new "account identifier '#{identifier}' is too long. Please limit it to 31 characters."
       end

@@ -1,9 +1,9 @@
 # encoding: utf-8
 require 'active_record'
 require 'active_record/locking_extensions'
+require 'active_record/locking_extensions/log_subscriber'
 require 'active_support/all'
 require 'money'
-require 'encapsulate_as_money'
 
 require 'double_entry/version'
 require 'double_entry/errors'
@@ -38,9 +38,11 @@ module DoubleEntry
     # @return [DoubleEntry::Account::Instance]
     # @raise [DoubleEntry::UnknownAccount] The described account has not been
     #   configured. It is unknown.
+    # @raise [DoubleEntry::AccountScopeMismatchError] The provided scope does not
+    #   match that defined on the account.
     #
     def account(identifier, options = {})
-      Account.account(configuration.accounts, identifier, options)
+      Account.account(identifier, options)
     end
 
     # Transfer money from one account to another.
@@ -76,7 +78,7 @@ module DoubleEntry
     #   accounts with the provided code is not allowed. Check configuration.
     #
     def transfer(amount, options = {})
-      Transfer.transfer(configuration.transfers, amount, options)
+      Transfer.transfer(amount, options)
     end
 
     # Get the current or historic balance of an account.
@@ -125,7 +127,12 @@ module DoubleEntry
     # @option options :codes [Array<Symbol>] consider only the transfers with
     #   these codes
     # @return [Money] The balance
+    # @raise [DoubleEntry::UnknownAccount] The described account has not been
+    #   configured. It is unknown.
+    # @raise [DoubleEntry::AccountScopeMismatchError] The provided scope does not
+    #   match that defined on the account.
     def balance(account, options = {})
+      account = account(account, options) if account.is_a? Symbol
       BalanceCalculator.calculate(account, options)
     end
 

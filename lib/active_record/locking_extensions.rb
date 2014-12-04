@@ -1,4 +1,6 @@
 # encoding: utf-8
+require "active_support/notifications"
+
 module ActiveRecord
 
   # These methods are available as class methods on ActiveRecord::Base.
@@ -21,6 +23,8 @@ module ActiveRecord
         yield
       rescue ActiveRecord::StatementInvalid => exception
         if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
+          ActiveSupport::Notifications.publish("deadlock_restart.active_record", :exception => exception)
+
           raise ActiveRecord::RestartTransaction
         else
           raise
@@ -48,7 +52,9 @@ module ActiveRecord
       begin
         yield
       rescue ActiveRecord::StatementInvalid, ActiveRecord::RecordNotUnique => exception
-        if  exception.message =~ /duplicate/i || exception.message =~ /(is|are) not unique/i
+        if  exception.message =~ /duplicate/i || exception.message =~ /ConstraintException/
+          ActiveSupport::Notifications.publish("duplicate_ignore.active_record", :exception => exception)
+
           # Just ignore it...someone else has already created the record.
         else
           raise
@@ -66,6 +72,8 @@ module ActiveRecord
         if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
           # Somebody else is in the midst of creating the record. We'd better
           # retry, so we ensure they're done before we move on.
+          ActiveSupport::Notifications.publish("deadlock_retry.active_record", :exception => exception)
+
           retry
         else
           raise
@@ -79,5 +87,6 @@ module ActiveRecord
   end
 
 end
+
 
 ActiveRecord::Base.extend(ActiveRecord::LockingExtensions)

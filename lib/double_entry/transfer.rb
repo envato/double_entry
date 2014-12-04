@@ -2,13 +2,23 @@
 module DoubleEntry
   class Transfer
 
-    # @api private
-    def self.transfer(defined_transfers, amount, options = {})
-      raise TransferIsNegative if amount < Money.empty
-      from, to, code, detail = options[:from], options[:to], options[:code],  options[:detail]
-      defined_transfers.
-        find!(from, to, code).
-        process(amount, from, to, code, detail)
+    class << self
+      attr_writer :transfers
+
+      # @api private
+      def transfers
+        @transfers ||= Set.new
+      end
+
+      # @api private
+      def transfer(amount, options = {})
+        raise TransferIsNegative if amount < Money.zero
+        from = options[:from]
+        to = options[:to]
+        code = options[:code]
+        detail = options[:detail]
+        transfers.find!(from, to, code).process(amount, from, to, code, detail)
+      end
     end
 
     # @api private
@@ -58,9 +68,11 @@ module DoubleEntry
 
     def process(amount, from, to, code, detail)
       if from.scope_identity == to.scope_identity and from.identifier == to.identifier
-        raise TransferNotAllowed.new
+        raise TransferNotAllowed.new("from and to are identical")
       end
-
+      if to.currency != from.currency
+        raise MismatchedCurrencies.new("Missmatched currency (#{to.currency} <> #{from.currency})")
+      end
       Locking.lock_accounts(from, to) do
         credit, debit = Line.new, Line.new
 

@@ -5,8 +5,7 @@ module DoubleEntry
 
     # Get the current or historic balance of an account.
     #
-    # @param account [DoubleEntry::Account:Instance, Symbol]
-    # @option args :scope [Object, String]
+    # @param account [DoubleEntry::Account:Instance]
     # @option args :from [Time]
     # @option args :to [Time]
     # @option args :at [Time]
@@ -21,7 +20,7 @@ module DoubleEntry
 
       if options.between? || options.code?
         # from and to or code lookups have to be done via sum
-        Money.new(lines.sum(:amount))
+        Money.new(lines.sum(:amount), account.currency)
       else
         # all other lookups can be performed with running balances
         result = lines.
@@ -29,7 +28,7 @@ module DoubleEntry
           order('id DESC').
           limit(1).
           pluck(:balance)
-        result.empty? ? Money.empty : Money.new(result.first)
+        result.empty? ? Money.zero(account.currency) : Money.new(result.first, account.currency)
       end
     end
 
@@ -52,13 +51,8 @@ module DoubleEntry
       attr_reader :account, :scope, :from, :to, :at, :codes
 
       def initialize(account, args = {})
-        if account.is_a? Symbol
-          @account = account.to_s
-          @scope = args[:scope].present? ? args[:scope].id.to_s : nil
-        else
-          @account = account.identifier.to_s
-          @scope = account.scope_identity
-        end
+        @account = account.identifier.to_s
+        @scope = account.scope_identity
         @codes = (args[:codes].to_a << args[:code]).compact
         @from = args[:from]
         @to = args[:to]
