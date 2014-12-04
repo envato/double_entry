@@ -143,8 +143,9 @@ module DoubleEntry
       @scope_identifier = args[:scope_identifier]
       @positive_only = args[:positive_only]
       @currency = args[:currency] || Money.default_currency
-      if identifier.length > 31
-        raise AccountIdentifierTooLongError.new "account identifier '#{identifier}' is too long. Please limit it to 31 characters."
+      max_length = 31
+      if identifier.length > max_length
+        raise AccountIdentifierTooLongError.new "account identifier '#{identifier}' is too long. Please limit it to #{max_length} characters."
       end
     end
 

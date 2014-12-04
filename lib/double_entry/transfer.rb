@@ -60,8 +60,9 @@ module DoubleEntry
       @code = attributes[:code]
       @from = attributes[:from]
       @to = attributes[:to]
-      if code.length > 47
-        raise TransferCodeTooLongError.new "transfer code '#{code}' is too long. Please limit it to 47 characters."
+      max_length = 47
+      if code.length > max_length
+        raise TransferCodeTooLongError.new "transfer code '#{code}' is too long. Please limit it to #{max_length} characters."
       end
     end
 
