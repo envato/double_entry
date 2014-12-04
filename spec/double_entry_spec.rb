@@ -173,9 +173,8 @@ describe DoubleEntry do
           accounts.define(:identifier => :b)
         end
 
-        description = ->(line) { "Money goes #{line.decrease? ? 'out' : 'in'}: #{line.amount.format}" }
         config.define_transfers do |transfers|
-          transfers.define(:code => :xfer, :from => :a, :to => :b, :description => description)
+          transfers.define(:code => :xfer, :from => :a, :to => :b)
         end
       end
 

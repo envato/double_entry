@@ -54,13 +54,12 @@ module DoubleEntry
       end
     end
 
-    attr_reader :code, :from, :to, :description
+    attr_reader :code, :from, :to
 
     def initialize(attributes)
       @code = attributes[:code]
       @from = attributes[:from]
       @to = attributes[:to]
-      @description = attributes[:description]
       if code.length > 47
         raise TransferCodeTooLongError.new "transfer code '#{code}' is too long. Please limit it to 47 characters."
       end
