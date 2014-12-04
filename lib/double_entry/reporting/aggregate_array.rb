@@ -9,7 +9,7 @@ module DoubleEntry
     #
     # For example, you could request all sales
     # broken down by month and it would return an array of values
-    attr_reader :function, :account, :code, :filter, :range_type, :start, :finish
+    attr_reader :function, :account, :code, :filter, :range_type, :start, :finish, :currency
 
     def initialize(function, account, code, options)
       @function = function.to_s
@@ -19,6 +19,7 @@ module DoubleEntry
       @range_type = options[:range_type]
       @start = options[:start]
       @finish = options[:finish]
+      @currency = DoubleEntry::Account.currency(account)
 
       retrieve_aggregates
       fill_in_missing_aggregates
@@ -69,10 +70,6 @@ module DoubleEntry
       else
         Money.new(amount, currency)
       end
-    end
-
-    def currency
-      DoubleEntry::Account.currency(account)
     end
   end
  end
