@@ -12,7 +12,7 @@ module DoubleEntry
     attr_reader :function, :account, :code, :filter, :range_type, :start, :finish
 
     def initialize(function, account, code, options)
-      @function = function
+      @function = function.to_s
       @account = account
       @code = code
       @filter = options[:filter]
@@ -47,7 +47,7 @@ module DoubleEntry
     def retrieve_aggregates
       raise ArgumentError.new("Invalid range type '#{range_type}'") unless %w(year month week day hour).include? range_type
       @aggregates = LineAggregate.
-        where(:function => function.to_s).
+        where(:function => function).
         where(:range_type => 'normal').
         where(:account => account.to_s).
         where(:code => code.to_s).
@@ -64,7 +64,7 @@ module DoubleEntry
 
     def formatted_amount(amount)
       amount ||= 0
-      if function.to_s == "count"
+      if function == "count"
         amount
       else
         Money.new(amount, currency)

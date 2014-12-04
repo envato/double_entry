@@ -27,7 +27,7 @@ module DoubleEntry
 
     def formatted_amount(amount = amount)
       amount ||= 0
-      if function.to_s == "count"
+      if function == "count"
         amount
       else
         Money.new(amount, currency)
@@ -66,8 +66,7 @@ module DoubleEntry
       # otherwise they will get excruciatingly slow to calculate
       # as the year progresses.  (I am thinking mainly of the 'current' year.)
       # Combining monthly aggregates will mean that the figure will be partially memoized
-      case function.to_s
-      when 'average'
+      if function == "average"
         calculate_yearly_average
       else
         zero = formatted_amount(0)
