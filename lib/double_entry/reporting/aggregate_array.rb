@@ -53,9 +53,8 @@ module DoubleEntry
         where(:code => code.to_s).
         where(:filter => filter.inspect).
         where(LineAggregate.arel_table[range_type].not_eq(nil)).
-        inject({}) do |hash, result|
+        each_with_object({}) do |hash, result|
           hash[result.key] = Aggregate.formatted_amount(function, result.amount, currency)
-          hash
         end
     end
 
