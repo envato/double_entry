@@ -128,7 +128,11 @@ module DoubleEntry
       private
 
       def ensure_scope_is_valid
-        scope_identity
+        identity = scope_identity
+        max_length = 23
+        if identity && identity.length > max_length
+          raise ScopeIdentifierTooLongError.new "scope identifier '#{identity}' is too long. Please limit it to #{max_length} characters."
+        end
       end
     end
 

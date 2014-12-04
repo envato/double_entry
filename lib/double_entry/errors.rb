@@ -2,6 +2,7 @@
 module DoubleEntry
   class UnknownAccount < RuntimeError; end
   class AccountIdentifierTooLongError < RuntimeError; end
+  class ScopeIdentifierTooLongError < RuntimeError; end
   class TransferNotAllowed < RuntimeError; end
   class TransferIsNegative < RuntimeError; end
   class TransferCodeTooLongError < RuntimeError; end

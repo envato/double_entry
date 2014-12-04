@@ -37,6 +37,21 @@ module DoubleEntry
         expect(a1.hash).to eq a2.hash
         expect(a1.hash).to_not eq b.hash
       end
+
+      describe "::new" do
+        let(:account) { Account.new(:identifier => "x", :scope_identifier => identity_scope) }
+        subject(:initialize_account_instance) { Account::Instance.new(:account => account, :scope => scope) }
+
+        context "given a scope identifier 23 characters in length" do
+          let(:scope) { "xxxx 23 characters xxxx" }
+          specify { expect { initialize_account_instance }.to_not raise_error }
+        end
+
+        context "given a scope identifier 24 characters in length" do
+          let(:scope) { "xxxx 24 characters xxxxx" }
+          specify { expect { initialize_account_instance }.to raise_error ScopeIdentifierTooLongError, /'#{scope}'/ }
+        end
+      end
     end
 
     describe "currency" do
