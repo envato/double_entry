@@ -54,12 +54,21 @@ module DoubleEntry
         where(:filter => filter.inspect).
         where(LineAggregate.arel_table[range_type].not_eq(nil)).
         each_with_object({}) do |hash, result|
-          hash[result.key] = Aggregate.formatted_amount(function, result.amount, currency)
+          hash[result.key] = formatted_amount(result.amount)
         end
     end
 
     def all_periods
       TimeRangeArray.make(range_type, start, finish)
+    end
+
+    def formatted_amount(amount)
+      amount ||= 0
+      if function.to_s == "count"
+        amount
+      else
+        Money.new(amount, currency)
+      end
     end
 
     def currency
