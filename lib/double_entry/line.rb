@@ -102,9 +102,7 @@ module DoubleEntry
     end
 
     def account
-      if self[:account]
-        DoubleEntry.account(self[:account].to_sym, :scope => scope)
-      end
+      DoubleEntry.account(self[:account].to_sym, :scope => scope)
     end
 
     def currency
@@ -119,9 +117,7 @@ module DoubleEntry
     end
 
     def partner_account
-      if self[:partner_account]
-        DoubleEntry.account(self[:partner_account].to_sym, :scope => partner_scope)
-      end
+      DoubleEntry.account(self[:partner_account].to_sym, :scope => partner_scope)
     end
 
     def partner
