@@ -93,10 +93,9 @@ module DoubleEntry
 
     def calculate_yearly_average
       # need this seperate function, because an average of averages is not the correct average
-      sum = Reporting.aggregate(:sum, account, code,
-                               :range => YearRange.new(:year => range.year), :filter => filter)
-      count = Reporting.aggregate(:count, account, code,
-                                 :range => YearRange.new(:year => range.year), :filter => filter)
+      year_range = YearRange.new(:year => range.year)
+      sum = Reporting.aggregate(:sum, account, code, :range => year_range, :filter => filter)
+      count = Reporting.aggregate(:count, account, code, :range => year_range, :filter => filter)
       (count == 0) ? 0 : (sum / count).cents
     end
 
