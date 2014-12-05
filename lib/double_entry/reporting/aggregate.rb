@@ -2,7 +2,7 @@
 module DoubleEntry
  module Reporting
   class Aggregate
-    attr_reader :function, :account, :code, :range, :options, :filter
+    attr_reader :function, :account, :code, :range, :options, :filter, :currency
 
     def initialize(function, account, code, options)
       @function = function.to_s
@@ -13,6 +13,7 @@ module DoubleEntry
       @options = options
       @range = options[:range]
       @filter = options[:filter]
+      @currency = DoubleEntry::Account.currency(account)
     end
 
     def amount(force_recalculation = false)
@@ -24,18 +25,12 @@ module DoubleEntry
       end
     end
 
-    def formatted_amount
-      Aggregate.formatted_amount(function, amount, currency)
-    end
-
-    def self.formatted_amount(function, amount, currency)
-      safe_amount = amount || 0
-
-      case function.to_s
-      when 'count'
-        safe_amount
+    def formatted_amount(amount = amount)
+      amount ||= 0
+      if function == "count"
+        amount
       else
-        Money.new(safe_amount, currency)
+        Money.new(amount, currency)
       end
     end
 
@@ -44,10 +39,6 @@ module DoubleEntry
     def retrieve
       aggregate = LineAggregate.where(field_hash).first
       aggregate.amount if aggregate
-    end
-
-    def currency
-      DoubleEntry::Account.currency(account)
     end
 
     def clear_old_aggregates
@@ -75,28 +66,26 @@ module DoubleEntry
       # otherwise they will get excruciatingly slow to calculate
       # as the year progresses.  (I am thinking mainly of the 'current' year.)
       # Combining monthly aggregates will mean that the figure will be partially memoized
-      case function.to_s
-      when 'average'
+      if function == "average"
         calculate_yearly_average
       else
-        zero = Aggregate.formatted_amount(function, 0, currency)
-
+        zero = formatted_amount(0)
         result = (1..12).inject(zero) do |total, month|
-          total += Reporting.aggregate(function, account, code,
-                                      :range => MonthRange.new(:year => range.year, :month => month), :filter => filter)
+          total += Reporting.aggregate(
+            function, account, code,
+            :range => MonthRange.new(:year => range.year, :month => month),
+            :filter => filter,
+          )
         end
-
-        result = result.cents if result.class == Money
-        result
+        result.is_a?(Money) ? result.cents : result
       end
     end
 
     def calculate_yearly_average
       # need this seperate function, because an average of averages is not the correct average
-      sum = Reporting.aggregate(:sum, account, code,
-                               :range => YearRange.new(:year => range.year), :filter => filter)
-      count = Reporting.aggregate(:count, account, code,
-                                 :range => YearRange.new(:year => range.year), :filter => filter)
+      year_range = YearRange.new(:year => range.year)
+      sum = Reporting.aggregate(:sum, account, code, :range => year_range, :filter => filter)
+      count = Reporting.aggregate(:count, account, code, :range => year_range, :filter => filter)
       (count == 0) ? 0 : (sum / count).cents
     end
 
