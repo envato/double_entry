@@ -3,11 +3,16 @@ module DoubleEntry
   class Transfer
 
     class << self
-      attr_writer :transfers
+      attr_writer :transfers, :code_max_length
 
       # @api private
       def transfers
         @transfers ||= Set.new
+      end
+
+      # @api private
+      def code_max_length
+        @code_max_length ||= 47
       end
 
       # @api private
@@ -60,9 +65,10 @@ module DoubleEntry
       @code = attributes[:code]
       @from = attributes[:from]
       @to = attributes[:to]
-      max_length = 47
-      if code.length > max_length
-        raise TransferCodeTooLongError.new "transfer code '#{code}' is too long. Please limit it to #{max_length} characters."
+      if code.length > Transfer.code_max_length
+        raise TransferCodeTooLongError.new(
+          "transfer code '#{code}' is too long. Please limit it to #{Transfer.code_max_length} characters."
+        )
       end
     end
 

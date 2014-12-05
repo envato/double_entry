@@ -3,11 +3,21 @@ module DoubleEntry
   class Account
 
     class << self
-      attr_writer :accounts
+      attr_writer :accounts, :scope_identifier_max_length, :account_identifier_max_length
 
       # @api private
       def accounts
         @accounts ||= Set.new
+      end
+
+      # @api private
+      def scope_identifier_max_length
+        @scope_identifier_max_length ||= 23
+      end
+
+      # @api private
+      def account_identifier_max_length
+        @account_identifier_max_length ||= 31
       end
 
       # @api private
@@ -129,9 +139,10 @@ module DoubleEntry
 
       def ensure_scope_is_valid
         identity = scope_identity
-        max_length = 23
-        if identity && identity.length > max_length
-          raise ScopeIdentifierTooLongError.new "scope identifier '#{identity}' is too long. Please limit it to #{max_length} characters."
+        if identity && identity.length > Account.scope_identifier_max_length
+          raise ScopeIdentifierTooLongError.new(
+            "scope identifier '#{identity}' is too long. Please limit it to #{Account.scope_identifier_max_length} characters."
+          )
         end
       end
     end
@@ -143,9 +154,10 @@ module DoubleEntry
       @scope_identifier = args[:scope_identifier]
       @positive_only = args[:positive_only]
       @currency = args[:currency] || Money.default_currency
-      max_length = 31
-      if identifier.length > max_length
-        raise AccountIdentifierTooLongError.new "account identifier '#{identifier}' is too long. Please limit it to #{max_length} characters."
+      if identifier.length > Account.account_identifier_max_length
+        raise AccountIdentifierTooLongError.new(
+          "account identifier '#{identifier}' is too long. Please limit it to #{Account.account_identifier_max_length} characters."
+        )
       end
     end
 
