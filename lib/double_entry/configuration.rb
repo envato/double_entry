@@ -3,8 +3,24 @@ module DoubleEntry
   include Configurable
 
   class Configuration
-    delegate :accounts, :accounts=, :to => "DoubleEntry::Account"
-    delegate :transfers, :transfers=, :to => "DoubleEntry::Transfer"
+
+    delegate(
+      :accounts,
+      :accounts=,
+      :scope_identifier_max_length,
+      :scope_identifier_max_length=,
+      :account_identifier_max_length,
+      :account_identifier_max_length=,
+      :to => "DoubleEntry::Account",
+    )
+
+    delegate(
+      :transfers,
+      :transfers=,
+      :code_max_length,
+      :code_max_length=,
+      :to => "DoubleEntry::Transfer",
+    )
 
     def define_accounts
       yield accounts
