@@ -4,21 +4,54 @@ module DoubleEntry
   describe Account do
     let(:identity_scope) { ->(value) { value } }
 
-    it "instances should be sortable" do
-      account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)
-      a = Account::Instance.new(:account => account, :scope => "123")
-      b = Account::Instance.new(:account => account, :scope => "456")
-      expect([b, a].sort).to eq [a, b]
+    describe "::new" do
+      context "given an identifier 31 characters in length" do
+        let(:identifier) { "xxxxxxxx 31 characters xxxxxxxx" }
+        specify do
+          expect { Account.new(:identifier => identifier) }.to_not raise_error
+        end
+      end
+
+      context "given an identifier 32 characters in length" do
+        let(:identifier) { "xxxxxxxx 32 characters xxxxxxxxx" }
+        specify do
+          expect { Account.new(:identifier => identifier) }.to raise_error AccountIdentifierTooLongError, /'#{identifier}'/
+        end
+      end
     end
 
-    it "instances should be hashable" do
-      account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)
-      a1 = Account::Instance.new(:account => account, :scope => "123")
-      a2 = Account::Instance.new(:account => account, :scope => "123")
-      b  = Account::Instance.new(:account => account, :scope => "456")
+    describe Account::Instance do
+      it "is sortable" do
+        account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)
+        a = Account::Instance.new(:account => account, :scope => "123")
+        b = Account::Instance.new(:account => account, :scope => "456")
+        expect([b, a].sort).to eq [a, b]
+      end
 
-      expect(a1.hash).to eq a2.hash
-      expect(a1.hash).to_not eq b.hash
+      it "is hashable" do
+        account = Account.new(:identifier => "savings", :scope_identifier => identity_scope)
+        a1 = Account::Instance.new(:account => account, :scope => "123")
+        a2 = Account::Instance.new(:account => account, :scope => "123")
+        b  = Account::Instance.new(:account => account, :scope => "456")
+
+        expect(a1.hash).to eq a2.hash
+        expect(a1.hash).to_not eq b.hash
+      end
+
+      describe "::new" do
+        let(:account) { Account.new(:identifier => "x", :scope_identifier => identity_scope) }
+        subject(:initialize_account_instance) { Account::Instance.new(:account => account, :scope => scope) }
+
+        context "given a scope identifier 23 characters in length" do
+          let(:scope) { "xxxx 23 characters xxxx" }
+          specify { expect { initialize_account_instance }.to_not raise_error }
+        end
+
+        context "given a scope identifier 24 characters in length" do
+          let(:scope) { "xxxx 24 characters xxxxx" }
+          specify { expect { initialize_account_instance }.to raise_error ScopeIdentifierTooLongError, /'#{scope}'/ }
+        end
+      end
     end
 
     describe "currency" do
@@ -32,27 +65,27 @@ module DoubleEntry
         expect(DoubleEntry::Account::Instance.new(:account => account).currency).to eq("AUD")
       end
     end
-  end
 
-  describe Account::Set do
-    describe "#define" do
-      context "given a 'savings' account is defined" do
-        before { subject.define(:identifier => "savings") }
-        its(:first) { should be_a Account }
-        its("first.identifier") { should eq "savings" }
+    describe Account::Set do
+      describe "#define" do
+        context "given a 'savings' account is defined" do
+          before { subject.define(:identifier => "savings") }
+          its(:first) { should be_an Account }
+          its("first.identifier") { should eq "savings" }
+        end
       end
-    end
 
-    describe "#active_record_scope_identifier" do
-      subject(:scope) { Account::Set.new.active_record_scope_identifier(ar_class) }
+      describe "#active_record_scope_identifier" do
+        subject(:scope) { Account::Set.new.active_record_scope_identifier(ar_class) }
 
-      context "given ActiveRecordScopeFactory is stubbed" do
-        let(:scope_identifier) { double(:scope_identifier) }
-        let(:scope_factory) { double(:scope_factory, :scope_identifier => scope_identifier) }
-        let(:ar_class) { double(:ar_class) }
-        before { allow(Account::ActiveRecordScopeFactory).to receive(:new).with(ar_class).and_return(scope_factory) }
+        context "given ActiveRecordScopeFactory is stubbed" do
+          let(:scope_identifier) { double(:scope_identifier) }
+          let(:scope_factory) { double(:scope_factory, :scope_identifier => scope_identifier) }
+          let(:ar_class) { double(:ar_class) }
+          before { allow(Account::ActiveRecordScopeFactory).to receive(:new).with(ar_class).and_return(scope_factory) }
 
-        it { should eq scope_identifier }
+          it { should eq scope_identifier }
+        end
       end
     end
   end

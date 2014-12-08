@@ -6,7 +6,7 @@ describe DoubleEntry::Line do
   end
 
   describe "persistance" do
-    let(:persisted_line) {
+    let(:line_to_persist) {
       DoubleEntry::Line.new(
         :amount => Money.new(10_00),
         :balance => Money.zero,
@@ -18,11 +18,13 @@ describe DoubleEntry::Line do
     let(:account) { DoubleEntry.account(:test, :scope => "17") }
     let(:partner_account) { DoubleEntry.account(:test, :scope => "72") }
     let(:code) { :test_code }
-    subject { DoubleEntry::Line.last }
+
+    subject(:persisted_line) do
+      line_to_persist.save!
+      line_to_persist.reload
+    end
 
     describe "attributes" do
-      before { persisted_line.save! }
-
       context "given code = :the_code" do
         let(:code) { :the_code }
         its(:code) { should eq :the_code }
@@ -30,7 +32,7 @@ describe DoubleEntry::Line do
 
       context "given code = nil" do
         let(:code) { nil }
-        its(:code) { should eq nil }
+        specify { expect { line_to_persist.save! }.to raise_error }
       end
 
       context "given account = :test, 54 " do
@@ -52,22 +54,20 @@ describe DoubleEntry::Line do
       end
     end
 
-    describe '#save' do
-      context 'when balance is sent negative' do
-        let(:account) {
-          DoubleEntry.account(:savings, :scope => '17', :positive_only => true)
-        }
+    context 'when balance is sent negative' do
+      let(:account) {
+        DoubleEntry.account(:savings, :scope => '17', :positive_only => true)
+      }
 
-        let(:line) {
-          DoubleEntry::Line.new(
-            :balance => Money.new(-1),
-            :account => account,
-          )
-        }
+      let(:line) {
+        DoubleEntry::Line.new(
+          :balance => Money.new(-1),
+          :account => account,
+        )
+      }
 
-        it 'raises AccountWouldBeSentNegative exception' do
-          expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
-        end
+      it 'raises AccountWouldBeSentNegative exception' do
+        expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
       end
     end
 
