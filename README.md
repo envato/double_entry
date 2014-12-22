@@ -26,6 +26,7 @@ Ruby
 Rails
  * 3.2.x
  * 4.1.x
+ * 4.2.x
 
 Databases
  * MySQL
