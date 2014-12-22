@@ -5,7 +5,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string     "account", :limit => 31, :null => false
       t.string     "scope",   :limit => 23
       t.integer    "balance",               :null => false
-      t.timestamps
+      t.timestamps                          :null => false
     end
 
     add_index "double_entry_account_balances", ["account"],          :name => "index_account_balances_on_account"
@@ -22,7 +22,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.string     "partner_scope",   :limit => 23
       t.integer    "detail_id"
       t.string     "detail_type"
-      t.timestamps
+      t.timestamps                                  :null => false
     end
 
     add_index "double_entry_lines", ["account", "code", "created_at"],  :name => "lines_account_code_created_at_idx"
@@ -43,7 +43,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.integer    "amount",                   :null => false
       t.string     "filter"
       t.string     "range_type", :limit => 15, :null => false
-      t.timestamps
+      t.timestamps                             :null => false
     end
 
     add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
@@ -52,7 +52,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.integer    "last_line_id", :null => false
       t.boolean    "errors_found", :null => false
       t.text       "log"
-      t.timestamps
+      t.timestamps                             :null => false
     end
 
   end
