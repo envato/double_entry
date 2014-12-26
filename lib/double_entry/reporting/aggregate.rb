@@ -25,12 +25,12 @@ module DoubleEntry
       end
     end
 
-    def formatted_amount(amount = amount)
-      amount ||= 0
+    def formatted_amount(value = amount)
+      value ||= 0
       if function == "count"
-        amount
+        value
       else
-        Money.new(amount, currency)
+        Money.new(value, currency)
       end
     end
 
