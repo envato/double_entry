@@ -156,7 +156,7 @@ module DoubleEntry
         raise AccountWouldBeSentNegative.new(account)
       end
       if account.negative_only && balance > Money.zero
-        raise AccountWouldBeSentPositive.new(account)
+        raise AccountWouldBeSentPositiveError.new(account)
       end
     end
   end
