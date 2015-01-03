@@ -10,6 +10,9 @@ DoubleEntry.configure do |config|
     accounts.define(:identifier => :test,        :scope_identifier => user_scope)
     accounts.define(:identifier => :btc_test,    :scope_identifier => user_scope, :currency => "BTC")
     accounts.define(:identifier => :btc_savings, :scope_identifier => user_scope, :currency => "BTC")
+
+    accounts.define(:identifier => :a_positive_only_acc, :scope_identifier => user_scope, :positive_only => true)
+    accounts.define(:identifier => :a_negative_only_acc, :scope_identifier => user_scope, :negative_only => true)
   end
 
   # A set of allowed transfers between accounts
