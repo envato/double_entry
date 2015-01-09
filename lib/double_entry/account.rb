@@ -80,7 +80,7 @@ module DoubleEntry
 
     class Instance
       attr_reader :account, :scope
-      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :currency, :to => :account
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :negative_only, :currency, :to => :account
 
       def initialize(args)
         @account = args[:account]
@@ -147,12 +147,13 @@ module DoubleEntry
       end
     end
 
-    attr_reader :identifier, :scope_identifier, :positive_only, :currency
+    attr_reader :identifier, :scope_identifier, :positive_only, :negative_only, :currency
 
     def initialize(args)
       @identifier = args[:identifier]
       @scope_identifier = args[:scope_identifier]
       @positive_only = args[:positive_only]
+      @negative_only = args[:negative_only]
       @currency = args[:currency] || Money.default_currency
       if identifier.length > Account.account_identifier_max_length
         raise AccountIdentifierTooLongError.new(
