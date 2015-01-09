@@ -68,7 +68,7 @@ end
 def clean_out_database
   puts "Cleaning out the database..."
 
-  DatabaseCleaner.clean_with(:deletion)
+  DatabaseCleaner.clean_with(:truncation)
 end
 
 def create_accounts_and_transfers
