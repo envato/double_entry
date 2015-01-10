@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-describe ActiveRecord::LockingExtensions do
+RSpec.describe ActiveRecord::LockingExtensions do
   PG_DEADLOCK    = ActiveRecord::StatementInvalid.new("PG::Error: ERROR:  deadlock detected")
   MYSQL_DEADLOCK = ActiveRecord::StatementInvalid.new("Mysql::Error: Deadlock found when trying to get lock")
   SQLITE3_LOCK   = ActiveRecord::StatementInvalid.new("SQLite3::BusyException: database is locked: UPDATE...")

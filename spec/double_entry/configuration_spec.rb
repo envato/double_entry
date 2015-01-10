@@ -1,5 +1,5 @@
 # encoding: utf-8
-describe DoubleEntry::Configuration do
+RSpec.describe DoubleEntry::Configuration do
 
   its(:accounts) { should be_a DoubleEntry::Account::Set }
   its(:transfers) { should be_a DoubleEntry::Transfer::Set }

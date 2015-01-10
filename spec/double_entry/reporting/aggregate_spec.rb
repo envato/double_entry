@@ -1,7 +1,7 @@
 # encoding: utf-8
 module DoubleEntry
   module Reporting
-    describe Aggregate do
+    RSpec.describe Aggregate do
 
       let(:user) { User.make! }
       let(:expected_weekly_average) do
@@ -202,7 +202,7 @@ module DoubleEntry
         end
       end
     end
-    describe Aggregate, "currencies" do
+    RSpec.describe Aggregate, "currencies" do
       let(:user) { User.make! }
       before do
         perform_btc_deposit(user, 100_000_000)

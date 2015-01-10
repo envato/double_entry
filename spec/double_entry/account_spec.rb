@@ -1,6 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
-  describe Account do
+  RSpec.describe Account do
     let(:identity_scope) { ->(value) { value } }
 
     describe "::new" do
@@ -89,7 +89,7 @@ module DoubleEntry
     end
   end
 
-  describe Account::ActiveRecordScopeFactory do
+  RSpec.describe Account::ActiveRecordScopeFactory do
     context "given the class User" do
       subject(:factory) { Account::ActiveRecordScopeFactory.new(User) }
 

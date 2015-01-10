@@ -1,5 +1,5 @@
 # encoding: utf-8
-describe DoubleEntry do
+RSpec.describe DoubleEntry do
 
   # these specs blat the DoubleEntry configuration, so take
   # a copy and clean up after ourselves

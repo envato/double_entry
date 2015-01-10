@@ -1,6 +1,6 @@
 # encoding: utf-8
 module DoubleEntry::Validation
- describe LineCheck do
+ RSpec.describe LineCheck do
 
   describe '#last' do
 

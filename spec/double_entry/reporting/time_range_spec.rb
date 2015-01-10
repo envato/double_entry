@@ -1,6 +1,6 @@
 # encoding: utf-8
 module DoubleEntry::Reporting
- describe TimeRange do
+ RSpec.describe TimeRange do
   it 'should correctly calculate a month range' do
     ar = TimeRange.make(:year => 2009, :month => 10)
     expect(ar.start.to_s).to eq Time.mktime(2009, 10, 1, 0, 0, 0).to_s

@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-describe DoubleEntry::BalanceCalculator do
+RSpec.describe DoubleEntry::BalanceCalculator do
 
   describe '#calculate' do
     let(:account) { DoubleEntry::account(:test, :scope => scope) }
