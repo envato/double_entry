@@ -76,12 +76,12 @@ module DoubleEntry
     end
 
     def save(*)
-      check_balance_will_not_be_sent_negative
+      check_balance_will_remain_valid
       super
     end
 
     def save!(*)
-      check_balance_will_not_be_sent_negative
+      check_balance_will_remain_valid
       super
     end
 
@@ -151,9 +151,12 @@ module DoubleEntry
 
     private
 
-    def check_balance_will_not_be_sent_negative
-      if self.account.positive_only and self.balance < Money.new(0)
+    def check_balance_will_remain_valid
+      if account.positive_only && balance < Money.zero
         raise AccountWouldBeSentNegative.new(account)
+      end
+      if account.negative_only && balance > Money.zero
+        raise AccountWouldBeSentPositiveError.new(account)
       end
     end
   end
