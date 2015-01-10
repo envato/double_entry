@@ -24,3 +24,6 @@ matrix:
     - rvm: 2.1.5
       gemfile: spec/support/gemfiles/Gemfile.rails-3.2.x
       env: DB=mysql
+  exclude:
+    - rvm: 2.0.0
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
