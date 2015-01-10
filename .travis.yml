@@ -1,11 +1,4 @@
 language: ruby
-rvm:
-  - 2.1.5
-env:
-  - DB=mysql
-gemfile:
-  - spec/support/gemfiles/Gemfile.rails-4.1.x
-  - spec/support/gemfiles/Gemfile.rails-4.2.x
 before_script:
   - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'
@@ -19,6 +12,12 @@ matrix:
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
     - rvm: 2.0.0
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
+      env: DB=mysql
+    - rvm: 2.1.5
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.1.x
+      env: DB=mysql
+    - rvm: 2.1.5
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
     - rvm: 2.1.5
