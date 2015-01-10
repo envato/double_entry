@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'spec_helper'
 describe DoubleEntry::AccountBalance do
 
   it "has a table name prefixed with double_entry_" do

@@ -1,5 +1,4 @@
 # encoding: utf-8
-require "spec_helper"
 describe DoubleEntry::Reporting do
 
   describe "::configure" do

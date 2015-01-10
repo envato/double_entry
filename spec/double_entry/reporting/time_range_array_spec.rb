@@ -1,4 +1,3 @@
-require 'spec_helper'
 module DoubleEntry::Reporting
  describe TimeRangeArray do
   describe '.make' do

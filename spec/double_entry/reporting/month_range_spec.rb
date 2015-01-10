@@ -1,5 +1,4 @@
 # encoding: utf-8
-require "spec_helper"
 module DoubleEntry::Reporting
   describe MonthRange do
 

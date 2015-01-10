@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'spec_helper'
 describe DoubleEntry do
 
   # these specs blat the DoubleEntry configuration, so take

@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'spec_helper'
 describe DoubleEntry::Configuration do
 
   its(:accounts) { should be_a DoubleEntry::Account::Set }

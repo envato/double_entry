@@ -1,4 +1,3 @@
-require 'spec_helper'
 module DoubleEntry
   module Reporting
     describe AggregateArray do

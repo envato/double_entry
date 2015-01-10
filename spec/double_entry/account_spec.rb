@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'spec_helper'
 module DoubleEntry
   describe Account do
     let(:identity_scope) { ->(value) { value } }

@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'spec_helper'
 
 describe ActiveRecord::LockingExtensions do
   PG_DEADLOCK    = ActiveRecord::StatementInvalid.new("PG::Error: ERROR:  deadlock detected")
