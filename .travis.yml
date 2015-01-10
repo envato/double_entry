@@ -1,11 +1,13 @@
 language: ruby
 rvm:
   - 1.9.3
-  - 2.0.0
   - 2.1.5
 env:
   - DB=mysql
   - DB=postgres
+gemfile:
+  - spec/support/gemfiles/Gemfile.rails-4.1.x
+  - spec/support/gemfiles/Gemfile.rails-4.2.x
 before_script:
   - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'
@@ -13,17 +15,14 @@ before_script:
 script:
   - rake spec
   - ruby script/jack_hammer -t 2000
-gemfile:
-  - spec/support/gemfiles/Gemfile.rails-4.1.x
-  - spec/support/gemfiles/Gemfile.rails-4.2.x
 matrix:
   include:
+    - rvm: 2.0.0
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
+      env: DB=mysql
     - rvm: 2.1.5
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=sqlite
     - rvm: 2.1.5
       gemfile: spec/support/gemfiles/Gemfile.rails-3.2.x
       env: DB=mysql
-  exclude:
-    - rvm: 2.0.0
-      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
