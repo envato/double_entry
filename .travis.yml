@@ -14,7 +14,6 @@ script:
   - rake spec
   - ruby script/jack_hammer -t 2000
 gemfile:
-  - spec/support/gemfiles/Gemfile.rails-3.2.x
   - spec/support/gemfiles/Gemfile.rails-4.1.x
   - spec/support/gemfiles/Gemfile.rails-4.2.x
 matrix:
@@ -22,3 +21,6 @@ matrix:
     - rvm: 2.1.5
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=sqlite
+    - rvm: 2.1.5
+      gemfile: spec/support/gemfiles/Gemfile.rails-3.2.x
+      env: DB=mysql
