@@ -1,6 +1,5 @@
 # encoding: utf-8
-require "spec_helper"
-describe DoubleEntry::Line do
+RSpec.describe DoubleEntry::Line do
   it "has a table name prefixed with double_entry_" do
     expect(DoubleEntry::Line.table_name).to eq "double_entry_lines"
   end

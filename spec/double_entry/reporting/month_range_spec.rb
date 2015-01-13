@@ -1,7 +1,6 @@
 # encoding: utf-8
-require "spec_helper"
 module DoubleEntry::Reporting
-  describe MonthRange do
+  RSpec.describe MonthRange do
 
   describe "::from_time" do
     subject(:from_time) { MonthRange.from_time(given_time) }

@@ -1,6 +1,5 @@
-require 'spec_helper'
 module DoubleEntry::Reporting
- describe TimeRangeArray do
+ RSpec.describe TimeRangeArray do
   describe '.make' do
     subject(:time_range_array) { TimeRangeArray.make(range_type, start, finish) }
 

@@ -1,7 +1,6 @@
 # encoding: utf-8
-require 'spec_helper'
 module DoubleEntry
-  describe Transfer do
+  RSpec.describe Transfer do
 
     describe "::new" do
       context "given a code 47 characters in length" do

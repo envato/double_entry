@@ -1,7 +1,6 @@
 # encoding: utf-8
-require 'spec_helper'
 module DoubleEntry::Reporting
-describe WeekRange do
+RSpec.describe WeekRange do
 
   it "should start week 1 of a year in the first week that has any day in the year" do
     range = WeekRange.new(:year => 2011, :week => 1)

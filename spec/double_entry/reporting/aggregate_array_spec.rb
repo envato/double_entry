@@ -1,7 +1,6 @@
-require 'spec_helper'
 module DoubleEntry
   module Reporting
-    describe AggregateArray do
+    RSpec.describe AggregateArray do
 
       let(:user) { User.make! }
       let(:start) { nil }

@@ -1,6 +1,5 @@
 # encoding: utf-8
-require "spec_helper"
-describe DoubleEntry::Reporting do
+RSpec.describe DoubleEntry::Reporting do
 
   describe "::configure" do
     describe "start_of_business" do

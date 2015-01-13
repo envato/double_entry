@@ -1,7 +1,6 @@
 # encoding: utf-8
-require 'spec_helper'
 
-describe DoubleEntry::Locking do
+RSpec.describe DoubleEntry::Locking do
 
   before do
     @config_accounts = DoubleEntry.configuration.accounts

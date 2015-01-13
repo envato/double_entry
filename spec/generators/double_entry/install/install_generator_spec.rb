@@ -1,10 +1,8 @@
-require 'spec_helper'
 require 'action_controller'
 require 'generator_spec/test_case'
 require 'generators/double_entry/install/install_generator'
 
-
-describe DoubleEntry::Generators::InstallGenerator do
+RSpec.describe DoubleEntry::Generators::InstallGenerator do
   include GeneratorSpec::TestCase
 
   destination File.expand_path("../../../../../tmp", __FILE__)
