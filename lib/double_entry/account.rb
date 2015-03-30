@@ -39,11 +39,11 @@ module DoubleEntry
       end
 
       def find(identifier, scoped)
-        account = detect do |account|
+        found_account = detect do |account|
           account.identifier == identifier && account.scoped? == scoped
         end
-        raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless account
-        return account
+        raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless found_account
+        return found_account
       end
 
       def <<(account)

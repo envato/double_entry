@@ -10,7 +10,7 @@ FileUtils.mkdir_p 'log'
 FileUtils.rm 'log/test.log', :force => true
 
 database_config_file = File.expand_path("../support/database.yml", __FILE__)
-if File.exists?(database_config_file)
+if File.exist?(database_config_file)
   ActiveRecord::Base.establish_connection YAML.load_file(database_config_file)[db_engine]
 else
   puts "Please configure your spec/support/database.yml file."
@@ -28,12 +28,16 @@ end
 
 I18n.config.enforce_available_locales = false
 
+silence_warnings do
+  require 'rspec'
+  require 'rspec/its'
+  require 'database_cleaner'
+  require 'machinist/active_record'
+  require 'timecop'
+  require 'money'
+end
+
 require 'double_entry'
-require 'rspec'
-require 'rspec/its'
-require 'database_cleaner'
-require 'machinist/active_record'
-require 'timecop'
 
 Dir[File.expand_path("../support/**/*.rb", __FILE__)].each { |f| require f }
 

@@ -55,7 +55,7 @@ module DoubleEntry
       # on the query to fail in some circumstances, resulting in an old balance being
       # returned. This was biting us intermittently in spec runs.
       # See http://bugs.mysql.com/bug.php?id=51431
-      force_index = if Line.connection.adapter_name.match /mysql/i
+      force_index = if Line.connection.adapter_name.match(/mysql/i)
                       "FORCE INDEX (lines_scope_account_id_idx)"
                     else
                       ""

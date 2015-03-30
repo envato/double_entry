@@ -57,7 +57,7 @@ module DoubleEntry::Validation
         before { DoubleEntry::Line.order(:id).limit(1).update_all('balance = balance + 1') }
 
         its(:errors_found) { should be true }
-        its(:log) { should match /Error on line/ }
+        its(:log) { should match(/Error on line/) }
 
         it 'should correct the running balance' do
           expect {

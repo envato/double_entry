@@ -5,6 +5,7 @@ require "rubocop/rake_task"
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.verbose = false
+  t.ruby_opts = '-w'
 end
 
 RuboCop::RakeTask.new(:rubocop)
