@@ -18,12 +18,15 @@ RSpec.describe ActiveRecord::LockingExtensions do
   context "#with_restart_on_deadlock" do
     shared_examples "abstract adapter" do
       it "raises a ActiveRecord::RestartTransaction error if a deadlock occurs" do
-        expect { User.with_restart_on_deadlock { raise exception } }.to raise_error(ActiveRecord::RestartTransaction)
+        expect { User.with_restart_on_deadlock { fail exception } }.
+          to raise_error(ActiveRecord::RestartTransaction)
       end
 
       it "publishes a notification" do
-        expect(ActiveSupport::Notifications).to receive(:publish).with("deadlock_restart.active_record", hash_including(:exception => exception))
-        expect { User.with_restart_on_deadlock { raise exception } }.to raise_error
+        expect(ActiveSupport::Notifications).
+          to receive(:publish).
+          with("deadlock_restart.active_record", hash_including(:exception => exception))
+        expect { User.with_restart_on_deadlock { fail exception } }.to raise_error
       end
     end
 
@@ -57,7 +60,9 @@ RSpec.describe ActiveRecord::LockingExtensions do
     it "publishes a notification when a duplicate is encountered" do
       User.make! :username => "keith"
 
-      expect(ActiveSupport::Notifications).to receive(:publish).with("duplicate_ignore.active_record", hash_including(:exception => kind_of(ActiveRecord::RecordNotUnique)))
+      expect(ActiveSupport::Notifications).
+        to receive(:publish).
+        with("duplicate_ignore.active_record", hash_including(:exception => kind_of(ActiveRecord::RecordNotUnique)))
 
       expect { User.create_ignoring_duplicates! :username => "keith" }.to_not raise_error
     end
@@ -75,7 +80,10 @@ RSpec.describe ActiveRecord::LockingExtensions do
         expect(User).to receive(:create!).ordered.and_raise(exception)
         expect(User).to receive(:create!).ordered.and_return(true)
 
-        expect(ActiveSupport::Notifications).to receive(:publish).with("deadlock_retry.active_record", hash_including(:exception => exception)).twice
+        expect(ActiveSupport::Notifications).
+          to receive(:publish).
+          with("deadlock_retry.active_record", hash_including(:exception => exception)).
+          twice
 
         expect { User.create_ignoring_duplicates! }.to_not raise_error
       end

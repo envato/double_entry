@@ -1,7 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
   RSpec.describe Transfer do
-
     describe "::new" do
       context "given a code 47 characters in length" do
         let(:code) { "xxxxxxxxxxxxxxxx 47 characters xxxxxxxxxxxxxxxx" }

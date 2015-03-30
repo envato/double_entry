@@ -1,9 +1,11 @@
 # encoding: utf-8
-module DoubleEntry::Reporting
-  RSpec.describe LineAggregate do
-
-    it "has a table name prefixed with double_entry_" do
-      expect(LineAggregate.table_name).to eq "double_entry_line_aggregates"
+module DoubleEntry
+  module Reporting
+    RSpec.describe LineAggregate do
+      describe ".table_name" do
+        subject { LineAggregate.table_name }
+        it { should eq("double_entry_line_aggregates") }
+      end
     end
   end
 end

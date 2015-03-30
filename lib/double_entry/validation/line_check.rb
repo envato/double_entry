@@ -62,7 +62,14 @@ module DoubleEntry
 
         # yes, it needs to be find_by_sql, because any other find will be affected
         # by the find_each call in perform!
-        previous_line = Line.find_by_sql(["SELECT * FROM #{Line.quoted_table_name} #{force_index} WHERE account = ? AND scope = ? AND id < ? ORDER BY id DESC LIMIT 1", line.account.identifier.to_s, line.scope, line.id])
+        previous_line = Line.find_by_sql([<<-SQL, line.account.identifier.to_s, line.scope, line.id])
+          SELECT * FROM #{Line.quoted_table_name} #{force_index}
+          WHERE account = ?
+          AND scope = ?
+          AND id < ?
+          ORDER BY id DESC
+          LIMIT 1
+        SQL
 
         previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.zero(line.account.currency)
 
@@ -106,7 +113,7 @@ module DoubleEntry
       def lines_for_account(account)
         Line.where(
           :account => account.identifier.to_s,
-          :scope   => account.scope_identity.to_s
+          :scope   => account.scope_identity.to_s,
         ).order(:id)
       end
 

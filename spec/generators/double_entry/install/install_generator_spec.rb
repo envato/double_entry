@@ -13,7 +13,7 @@ RSpec.describe DoubleEntry::Generators::InstallGenerator do
   end
 
   specify do
-    expect(destination_root).to have_structure {
+    expect(destination_root).to have_structure do
       directory "db" do
         directory "migrate" do
           migration "create_double_entry_tables" do
@@ -25,7 +25,6 @@ RSpec.describe DoubleEntry::Generators::InstallGenerator do
           end
         end
       end
-    }
+    end
   end
-
 end

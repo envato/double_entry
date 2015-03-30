@@ -44,7 +44,6 @@ module DoubleEntry
         fail ArgumentError, "Invalid range type '#{range_type}'" unless factory
         factory.make(start, finish)
       end
-
     end
   end
 end

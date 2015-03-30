@@ -1,6 +1,5 @@
 # encoding: utf-8
 RSpec.describe DoubleEntry::Reporting do
-
   describe "::configure" do
     describe "start_of_business" do
       subject(:start_of_business) { DoubleEntry::Reporting.configuration.start_of_business }
@@ -43,6 +42,4 @@ RSpec.describe DoubleEntry::Reporting do
       end
     end
   end
-
-
 end

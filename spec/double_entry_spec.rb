@@ -1,6 +1,5 @@
 # encoding: utf-8
 RSpec.describe DoubleEntry do
-
   # these specs blat the DoubleEntry configuration, so take
   # a copy and clean up after ourselves
   before do
@@ -17,25 +16,25 @@ RSpec.describe DoubleEntry do
 
   describe 'configuration' do
     it 'checks for duplicates of accounts' do
-      expect {
+      expect do
         DoubleEntry.configure do |config|
           config.define_accounts do |accounts|
             accounts.define(:identifier => :gah!)
             accounts.define(:identifier => :gah!)
           end
         end
-      }.to raise_error DoubleEntry::DuplicateAccount
+      end.to raise_error DoubleEntry::DuplicateAccount
     end
 
     it 'checks for duplicates of transfers' do
-      expect {
+      expect do
         DoubleEntry.configure do |config|
           config.define_transfers do |transfers|
             transfers.define(:from => :savings, :to => :cash, :code => :xfer)
             transfers.define(:from => :savings, :to => :cash, :code => :xfer)
           end
         end
-      }.to raise_error DoubleEntry::DuplicateTransfer
+      end.to raise_error DoubleEntry::DuplicateTransfer
     end
   end
 
@@ -121,46 +120,46 @@ RSpec.describe DoubleEntry do
     end
 
     it 'raises an exception when the transfer is not allowed (wrong direction)' do
-      expect {
+      expect do
         DoubleEntry.transfer(
           Money.new(100_00),
           :from => cash,
           :to   => savings,
           :code => :xfer,
         )
-      }.to raise_error DoubleEntry::TransferNotAllowed
+      end.to raise_error DoubleEntry::TransferNotAllowed
     end
 
     it 'raises an exception when the transfer is not allowed (wrong code)' do
-      expect {
+      expect do
         DoubleEntry.transfer(
           Money.new(100_00),
           :from => savings,
           :to   => cash,
           :code => :yfer,
         )
-      }.to raise_error DoubleEntry::TransferNotAllowed
+      end.to raise_error DoubleEntry::TransferNotAllowed
     end
 
     it 'raises an exception when the transfer is not allowed (does not exist, at all)' do
-      expect {
+      expect do
         DoubleEntry.transfer(
           Money.new(100_00),
           :from => cash,
           :to   => trash,
         )
-      }.to raise_error DoubleEntry::TransferNotAllowed
+      end.to raise_error DoubleEntry::TransferNotAllowed
     end
 
     it 'raises an exception when the transfer is not allowed (mismatched currencies)' do
-      expect {
+      expect do
         DoubleEntry.transfer(
           Money.new(100_00),
           :from => trash,
           :to   => bitbucket,
-          :code => :mismatch_xfer
+          :code => :mismatch_xfer,
         )
-      }.to raise_error DoubleEntry::MismatchedCurrencies
+      end.to raise_error DoubleEntry::MismatchedCurrencies
     end
   end
 
@@ -219,8 +218,8 @@ RSpec.describe DoubleEntry do
     end
 
     it 'can ask for its pair (credit always coming first)' do
-      expect(credit_line.pair).to eq([ credit_line, debit_line ])
-      expect(debit_line.pair).to eq([ credit_line, debit_line ])
+      expect(credit_line.pair).to eq([credit_line, debit_line])
+      expect(debit_line.pair).to eq([credit_line, debit_line])
     end
 
     it 'can ask for the account (and get an instance)' do
@@ -230,7 +229,6 @@ RSpec.describe DoubleEntry do
   end
 
   describe 'balances' do
-
     let(:work)       { DoubleEntry.account(:work) }
     let(:savings)    { DoubleEntry.account(:savings) }
     let(:cash)       { DoubleEntry.account(:cash) }
@@ -260,14 +258,14 @@ RSpec.describe DoubleEntry do
         end
       end
 
-      Timecop.freeze 3.weeks.ago+1.day do
+      Timecop.freeze 3.weeks.ago + 1.day do
         # got paid from work
         DoubleEntry.transfer(Money.new(1_000_00), :from => work, :code => :salary, :to => cash)
         # transfer half salary into savings
         DoubleEntry.transfer(Money.new(500_00), :from => cash, :code => :xfer, :to => savings)
       end
 
-      Timecop.freeze 2.weeks.ago+1.day do
+      Timecop.freeze 2.weeks.ago + 1.day do
         # got myself a darth vader helmet
         DoubleEntry.transfer(Money.new(200_00), :from => cash, :code => :purchase, :to => store)
         # paid off some of my darth vader suit layby (to go with the helmet)
@@ -276,7 +274,7 @@ RSpec.describe DoubleEntry do
         DoubleEntry.transfer(Money.new(100_00), :from => cash, :code => :deposit, :to => store)
       end
 
-      Timecop.freeze 1.week.ago+1.day do
+      Timecop.freeze 1.week.ago + 1.day do
         # transfer 200 out of savings
         DoubleEntry.transfer(Money.new(200_00), :from => savings, :code => :xfer, :to => cash)
         # pay the remaining balance on the darth vader voice changer module
@@ -402,13 +400,13 @@ RSpec.describe DoubleEntry do
     it 'raises an exception if you try to scope with an object instance of differing class to that defined on the account' do
       not_a_user = double(:id => 7)
 
-      expect {
+      expect do
         DoubleEntry.account(:savings, :scope => not_a_user)
-      }.to raise_error DoubleEntry::AccountScopeMismatchError
+      end.to raise_error DoubleEntry::AccountScopeMismatchError
 
-      expect {
+      expect do
         DoubleEntry.balance(:savings, :scope => not_a_user)
-      }.to raise_error DoubleEntry::AccountScopeMismatchError
+      end.to raise_error DoubleEntry::AccountScopeMismatchError
     end
 
     it 'raises exception if you try to transfer between the same account, despite it being scoped' do

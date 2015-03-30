@@ -5,7 +5,7 @@ RSpec.describe DoubleEntry::Line do
   end
 
   describe "persistance" do
-    let(:line_to_persist) {
+    let(:line_to_persist) do
       DoubleEntry::Line.new(
         :amount => Money.new(10_00),
         :balance => Money.zero,
@@ -13,7 +13,7 @@ RSpec.describe DoubleEntry::Line do
         :partner_account => partner_account,
         :code => code,
       )
-    }
+    end
     let(:account) { DoubleEntry.account(:test, :scope => "17") }
     let(:partner_account) { DoubleEntry.account(:test, :scope => "72") }
     let(:code) { :test_code }

@@ -1,7 +1,6 @@
 module DoubleEntry
   module Reporting
     RSpec.describe AggregateArray do
-
       let(:user) { User.make! }
       let(:start) { nil }
       let(:finish) { nil }
@@ -9,7 +8,7 @@ module DoubleEntry
       let(:function) { :sum }
       let(:account) { :savings }
       let(:transfer_code) { :bonus }
-      subject(:aggregate_array) {
+      subject(:aggregate_array) do
         Reporting.aggregate_array(
           function,
           account,
@@ -18,7 +17,7 @@ module DoubleEntry
           :start => start,
           :finish => finish,
         )
-      }
+      end
 
       context 'given a deposit was made in 2007 and 2008' do
         before do
@@ -36,7 +35,7 @@ module DoubleEntry
           context 'when called with range type of "year"' do
             let(:range_type) { 'year' }
             let(:start) { '2006-08-03' }
-            it { should eq [ Money.new(0), Money.new(10_00), Money.new(20_00), Money.new(0) ] }
+            it { should eq [Money.zero, Money.new(10_00), Money.new(20_00), Money.zero] }
           end
         end
       end
@@ -55,7 +54,7 @@ module DoubleEntry
           let(:range_type) { 'month' }
           let(:start) { '2006-09-01' }
           let(:finish) { '2007-01-02' }
-          it { should eq [ Money.new(0), Money.new(10_00), Money.new(0), Money.new(20_00), Money.new(0), ] }
+          it { should eq [Money.zero, Money.new(10_00), Money.zero, Money.new(20_00), Money.zero] }
         end
 
         context 'given the date is 2007-02-02' do
@@ -64,7 +63,7 @@ module DoubleEntry
           context 'when called with range type of "month"' do
             let(:range_type) { 'month' }
             let(:start) { '2006-08-03' }
-            it { should eq [ Money.new(0), Money.new(0), Money.new(10_00), Money.new(0), Money.new(20_00), Money.new(0), Money.new(0) ] }
+            it { should eq [Money.zero, Money.zero, Money.new(10_00), Money.zero, Money.new(20_00), Money.zero, Money.zero] }
           end
         end
       end
@@ -80,7 +79,7 @@ module DoubleEntry
           perform_btc_deposit(user, 100_000_000)
         end
 
-        it { should eq [ Money.new(200_000_000, :btc) ] }
+        it { should eq [Money.new(200_000_000, :btc)] }
       end
 
       context 'when called with range type of "invalid_and_should_not_work"' do
@@ -95,7 +94,7 @@ module DoubleEntry
         let(:start) { '2006-08-03' }
         let(:function) { :invalid_function }
         it 'raises an AggregateFunctionNotSupported error' do
-          expect{ aggregate_array }.to raise_error AggregateFunctionNotSupported
+          expect { aggregate_array }.to raise_error AggregateFunctionNotSupported
         end
       end
     end
