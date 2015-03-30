@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 module DoubleEntry
-
   # This is the table to end all tables!
   #
   # Every financial transaction gets two entries in here: one for the source
@@ -56,7 +55,6 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-
     belongs_to :detail, :polymorphic => true
 
     def amount
@@ -94,11 +92,11 @@ module DoubleEntry
       self[:code].try(:to_sym)
     end
 
-    def account=(_account)
-      self[:account] = _account.identifier.to_s
-      self.scope = _account.scope_identity
-      raise "Missing Account" unless account
-      _account
+    def account=(account)
+      self[:account] = account.identifier.to_s
+      self.scope = account.scope_identity
+      fail "Missing Account" unless self.account
+      account
     end
 
     def account
@@ -109,11 +107,11 @@ module DoubleEntry
       account.currency if self[:account]
     end
 
-    def partner_account=(_partner_account)
-      self[:partner_account] = _partner_account.identifier.to_s
-      self.partner_scope = _partner_account.scope_identity
-      raise "Missing Partner Account" unless partner_account
-      _partner_account
+    def partner_account=(partner_account)
+      self[:partner_account] = partner_account.identifier.to_s
+      self.partner_scope = partner_account.scope_identity
+      fail "Missing Partner Account" unless self.partner_account
+      partner_account
     end
 
     def partner_account
@@ -153,12 +151,11 @@ module DoubleEntry
 
     def check_balance_will_remain_valid
       if account.positive_only && balance < Money.zero
-        raise AccountWouldBeSentNegative.new(account)
+        fail AccountWouldBeSentNegative.new(account)
       end
       if account.negative_only && balance > Money.zero
-        raise AccountWouldBeSentPositiveError.new(account)
+        fail AccountWouldBeSentPositiveError.new(account)
       end
     end
   end
-
 end

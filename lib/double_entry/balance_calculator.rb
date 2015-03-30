@@ -24,10 +24,10 @@ module DoubleEntry
       else
         # all other lookups can be performed with running balances
         result = lines.
-          from(lines_table_name(options)).
-          order('id DESC').
-          limit(1).
-          pluck(:balance)
+                 from(lines_table_name(options)).
+                 order('id DESC').
+                 limit(1).
+                 pluck(:balance)
         result.empty? ? Money.zero(account.currency) : Money.new(result.first, account.currency)
       end
     end
@@ -94,6 +94,5 @@ module DoubleEntry
         lines
       end
     end
-
   end
 end

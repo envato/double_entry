@@ -3,7 +3,6 @@ module DoubleEntry
   include Configurable
 
   class Configuration
-
     delegate(
       :accounts,
       :accounts=,

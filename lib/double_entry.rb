@@ -23,9 +23,7 @@ require 'double_entry/validation'
 # This module provides the public interfaces for everything to do with
 # transferring money around the system.
 module DoubleEntry
-
   class << self
-
     # Get the particular account instance with the provided identifier and
     # scope.
     #

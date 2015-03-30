@@ -11,6 +11,6 @@ module DoubleEntry
   class AccountWouldBeSentNegative < RuntimeError; end
   class AccountWouldBeSentPositiveError < RuntimeError; end
   class MismatchedCurrencies < RuntimeError; end
-  class MissingAccountError < RuntimeError; end;
-  class AccountScopeMismatchError < RuntimeError; end;
+  class MissingAccountError < RuntimeError; end
+  class AccountScopeMismatchError < RuntimeError; end
 end

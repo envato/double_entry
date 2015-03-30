@@ -1,7 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
   class Account
-
     class << self
       attr_writer :accounts, :scope_identifier_max_length, :account_identifier_max_length
 
@@ -42,15 +41,15 @@ module DoubleEntry
         found_account = detect do |account|
           account.identifier == identifier && account.scoped? == scoped
         end
-        raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless found_account
-        return found_account
+        fail UnknownAccount, "account: #{identifier} scoped?: #{scoped}" unless found_account
+        found_account
       end
 
       def <<(account)
         if any? { |a| a.identifier == account.identifier }
-          raise DuplicateAccount.new
+          fail DuplicateAccount
         else
-          super(account)
+          super
         end
       end
 
@@ -72,7 +71,7 @@ module DoubleEntry
           when String, Fixnum
             value
           else
-            raise AccountScopeMismatchError.new("Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`")
+            fail AccountScopeMismatchError, "Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`"
           end
         end
       end
@@ -115,8 +114,8 @@ module DoubleEntry
         self == other
       end
 
-      def <=>(account)
-        [scope_identity.to_s, identifier.to_s] <=> [account.scope_identity.to_s, account.identifier.to_s]
+      def <=>(other)
+        [scope_identity.to_s, identifier.to_s] <=> [other.scope_identity.to_s, other.identifier.to_s]
       end
 
       def hash
@@ -140,9 +139,8 @@ module DoubleEntry
       def ensure_scope_is_valid
         identity = scope_identity
         if identity && identity.length > Account.scope_identifier_max_length
-          raise ScopeIdentifierTooLongError.new(
-            "scope identifier '#{identity}' is too long. Please limit it to #{Account.scope_identifier_max_length} characters."
-          )
+          fail ScopeIdentifierTooLongError,
+               "scope identifier '#{identity}' is too long. Please limit it to #{Account.scope_identifier_max_length} characters."
         end
       end
     end
@@ -156,9 +154,8 @@ module DoubleEntry
       @negative_only = args[:negative_only]
       @currency = args[:currency] || Money.default_currency
       if identifier.length > Account.account_identifier_max_length
-        raise AccountIdentifierTooLongError.new(
-          "account identifier '#{identifier}' is too long. Please limit it to #{Account.account_identifier_max_length} characters."
-        )
+        fail AccountIdentifierTooLongError,
+             "account identifier '#{identifier}' is too long. Please limit it to #{Account.account_identifier_max_length} characters."
       end
     end
 

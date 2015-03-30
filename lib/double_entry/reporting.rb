@@ -11,7 +11,6 @@ require 'double_entry/reporting/line_aggregate'
 require 'double_entry/reporting/time_range_array'
 
 module DoubleEntry
-
   # @api private
   module Reporting
     include Configurable
@@ -131,11 +130,11 @@ module DoubleEntry
     #   ) # might return the user ids: [ 1423, 12232, 34729 ]
     # @param [Money] minimum_balance Minimum account balance a scope must have
     #   to be included in the result set.
-    # @param [Symbol] account_identifier 
+    # @param [Symbol] account_identifier
     # @return [Array<Fixnum>] Scopes
     #
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
-      select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map {|scope| scope.to_i }
+      select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map(&:to_i)
         SELECT scope
           FROM #{AccountBalance.table_name}
          WHERE account = ?
