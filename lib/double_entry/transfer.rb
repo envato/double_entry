@@ -1,7 +1,6 @@
 # encoding: utf-8
 module DoubleEntry
   class Transfer
-
     class << self
       attr_writer :transfers, :code_max_length
 
@@ -17,7 +16,7 @@ module DoubleEntry
 
       # @api private
       def transfer(amount, options = {})
-        raise TransferIsNegative if amount < Money.zero
+        fail TransferIsNegative if amount < Money.zero
         from = options[:from]
         to = options[:to]
         code = options[:code]
@@ -37,14 +36,14 @@ module DoubleEntry
       end
 
       def find!(from, to, code)
-        transfer = find(from, to, code)
-        raise TransferNotAllowed.new([from.identifier, to.identifier, code].inspect) unless transfer
-        return transfer
+        find(from, to, code).tap do |transfer|
+          fail TransferNotAllowed, [from.identifier, to.identifier, code].inspect unless transfer
+        end
       end
 
       def <<(transfer)
         if _find(transfer.from, transfer.to, transfer.code)
-          raise DuplicateTransfer.new
+          fail DuplicateTransfer
         else
           super(transfer)
         end
@@ -54,7 +53,9 @@ module DoubleEntry
 
       def _find(from, to, code)
         detect do |transfer|
-          transfer.from == from and transfer.to == to and transfer.code == code
+          transfer.from == from &&
+            transfer.to == to &&
+            transfer.code == code
         end
       end
     end
@@ -66,18 +67,17 @@ module DoubleEntry
       @from = attributes[:from]
       @to = attributes[:to]
       if code.length > Transfer.code_max_length
-        raise TransferCodeTooLongError.new(
-          "transfer code '#{code}' is too long. Please limit it to #{Transfer.code_max_length} characters."
-        )
+        fail TransferCodeTooLongError,
+             "transfer code '#{code}' is too long. Please limit it to #{Transfer.code_max_length} characters."
       end
     end
 
     def process(amount, from, to, code, detail)
-      if from.scope_identity == to.scope_identity and from.identifier == to.identifier
-        raise TransferNotAllowed.new("from and to are identical")
+      if from.scope_identity == to.scope_identity && from.identifier == to.identifier
+        fail TransferNotAllowed, "from and to are identical"
       end
       if to.currency != from.currency
-        raise MismatchedCurrencies.new("Missmatched currency (#{to.currency} <> #{from.currency})")
+        fail MismatchedCurrencies, "Missmatched currency (#{to.currency} <> #{from.currency})"
       end
       Locking.lock_accounts(from, to) do
         credit, debit = Line.new, Line.new
@@ -86,7 +86,7 @@ module DoubleEntry
         debit_balance  = Locking.balance_for_locked_account(to)
 
         credit_balance.update_attribute :balance, credit_balance.balance - amount
-        debit_balance.update_attribute  :balance, debit_balance.balance  + amount
+        debit_balance.update_attribute :balance, debit_balance.balance + amount
 
         credit.amount,  debit.amount  = -amount, amount
         credit.account, debit.account = from, to
@@ -102,6 +102,5 @@ module DoubleEntry
         credit.update_attribute :partner_id, debit.id
       end
     end
-
   end
 end
