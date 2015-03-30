@@ -28,12 +28,16 @@ end
 
 I18n.config.enforce_available_locales = false
 
+silence_warnings do
+  require 'rspec'
+  require 'rspec/its'
+  require 'database_cleaner'
+  require 'machinist/active_record'
+  require 'timecop'
+  require 'money'
+end
+
 require 'double_entry'
-require 'rspec'
-require 'rspec/its'
-require 'database_cleaner'
-require 'machinist/active_record'
-require 'timecop'
 
 Dir[File.expand_path("../support/**/*.rb", __FILE__)].each { |f| require f }
 
