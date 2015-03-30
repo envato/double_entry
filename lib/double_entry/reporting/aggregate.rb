@@ -34,7 +34,7 @@ module DoubleEntry
       end
     end
 
-    private
+  private
 
     def retrieve
       aggregate = LineAggregate.where(field_hash).first

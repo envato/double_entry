@@ -42,7 +42,7 @@ module ActiveRecord
       end
     end
 
-    private
+  private
 
     def ignoring_duplicates
       # Error examples:

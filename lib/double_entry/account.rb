@@ -135,7 +135,7 @@ module DoubleEntry
         to_s
       end
 
-      private
+    private
 
       def ensure_scope_is_valid
         identity = scope_identity

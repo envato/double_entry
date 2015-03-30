@@ -149,7 +149,7 @@ module DoubleEntry
       SQL
     end
 
-    private
+  private
 
     def check_balance_will_remain_valid
       if account.positive_only && balance < Money.zero

@@ -92,7 +92,6 @@ RSpec.configure do |config|
   # particularly slow.
   config.profile_examples = 5
 
-
   config.include DoubleEntrySpecHelper
 
   config.before(:suite) do

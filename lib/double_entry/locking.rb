@@ -88,7 +88,7 @@ module DoubleEntry
         locks[account]
       end
 
-      private
+    private
 
       def locks
         @@locks[Thread.current.object_id]

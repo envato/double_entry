@@ -26,7 +26,7 @@ module DoubleEntry
       populate_self
     end
 
-    private
+  private
 
     def populate_self
       all_periods.each do |period|
