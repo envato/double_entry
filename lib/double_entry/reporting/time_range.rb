@@ -43,6 +43,7 @@ module DoubleEntry
     def initialize(options)
       @year = options[:year]
       @range_type = options[:range_type] || :normal
+      @month = @week = @day = @hour = nil
     end
 
     def key

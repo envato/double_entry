@@ -3,6 +3,7 @@ require "bundler/gem_tasks"
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.verbose = false
+  t.ruby_opts = '-w'
 end
 
 task :default do
