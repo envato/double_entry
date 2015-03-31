@@ -75,7 +75,9 @@ module DoubleEntry
 
       def ensure_locked!
         @accounts.each do |account|
-          fail LockNotHeld.new(account) unless lock?(account)
+          unless lock?(account)
+            fail LockNotHeld, "No lock held for account: #{account.identifier}, scope #{account.scope}"
+          end
         end
       end
 
@@ -144,8 +146,8 @@ module DoubleEntry
 
         if account_balances.any?(&:nil?)
           @accounts_without_balances =  @accounts.zip(account_balances).
-                                        select { |account, account_balance| account_balance.nil? }.
-                                        collect { |account, account_balance| account }
+                                        select { |_account, account_balance| account_balance.nil? }.
+                                        collect { |account, _account_balance| account }
           false
         else
           self.locks = Hash[*@accounts.zip(account_balances).flatten]
@@ -170,9 +172,6 @@ module DoubleEntry
 
     # Raised when attempting a transfer on an account that's not locked.
     class LockNotHeld < RuntimeError
-      def initialize(account)
-        super "No lock held for account: #{account.identifier}, scope #{account.scope}"
-      end
     end
 
     # Raised if things go horribly, horribly wrong. This should never happen.

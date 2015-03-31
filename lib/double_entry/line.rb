@@ -151,10 +151,10 @@ module DoubleEntry
 
     def check_balance_will_remain_valid
       if account.positive_only && balance < Money.zero
-        fail AccountWouldBeSentNegative.new(account)
+        fail AccountWouldBeSentNegative, account
       end
       if account.negative_only && balance > Money.zero
-        fail AccountWouldBeSentPositiveError.new(account)
+        fail AccountWouldBeSentPositiveError, account
       end
     end
   end
