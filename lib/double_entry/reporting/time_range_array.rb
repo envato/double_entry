@@ -32,11 +32,11 @@ module DoubleEntry
       end
 
       FACTORIES = {
-        'hour'  => new(:type => HourRange,  :require_start => true),
-        'day'   => new(:type => DayRange,   :require_start => true),
-        'week'  => new(:type => WeekRange,  :require_start => true),
-        'month' => new(:type => MonthRange, :require_start => false),
-        'year'  => new(:type => YearRange,  :require_start => false),
+        "hour"  => new(:type => HourRange,  :require_start => true),
+        "day"   => new(:type => DayRange,   :require_start => true),
+        "week"  => new(:type => WeekRange,  :require_start => true),
+        "month" => new(:type => MonthRange, :require_start => false),
+        "year"  => new(:type => YearRange,  :require_start => false),
       }
 
       def self.make(range_type, start = nil, finish = nil)

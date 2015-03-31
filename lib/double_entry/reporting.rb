@@ -1,14 +1,14 @@
 # encoding: utf-8
-require 'double_entry/reporting/aggregate'
-require 'double_entry/reporting/aggregate_array'
-require 'double_entry/reporting/time_range'
-require 'double_entry/reporting/day_range'
-require 'double_entry/reporting/hour_range'
-require 'double_entry/reporting/week_range'
-require 'double_entry/reporting/month_range'
-require 'double_entry/reporting/year_range'
-require 'double_entry/reporting/line_aggregate'
-require 'double_entry/reporting/time_range_array'
+require "double_entry/reporting/aggregate"
+require "double_entry/reporting/aggregate_array"
+require "double_entry/reporting/time_range"
+require "double_entry/reporting/day_range"
+require "double_entry/reporting/hour_range"
+require "double_entry/reporting/week_range"
+require "double_entry/reporting/month_range"
+require "double_entry/reporting/year_range"
+require "double_entry/reporting/line_aggregate"
+require "double_entry/reporting/time_range_array"
 
 module DoubleEntry
   # @api private

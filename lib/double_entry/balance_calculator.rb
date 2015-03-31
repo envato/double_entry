@@ -25,7 +25,7 @@ module DoubleEntry
         # all other lookups can be performed with running balances
         result = lines.
                  from(lines_table_name(options)).
-                 order('id DESC').
+                 order("id DESC").
                  limit(1).
                  pluck(:balance)
         result.empty? ? Money.zero(account.currency) : Money.new(result.first, account.currency)
@@ -87,7 +87,7 @@ module DoubleEntry
 
       def build
         lines = Line.where(:account => account)
-        lines = lines.where('created_at <= ?', at) if at?
+        lines = lines.where("created_at <= ?", at) if at?
         lines = lines.where(:created_at => from..to) if between?
         lines = lines.where(:code => codes) if code?
         lines = lines.where(:scope => scope) if scope?

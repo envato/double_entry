@@ -149,7 +149,7 @@ RSpec.describe DoubleEntry::Locking do
   end
 
   # sqlite cannot handle these cases so they don't run when DB=sqlite
-  describe "concurrent locking", :unless => ENV['DB'] == 'sqlite' do
+  describe "concurrent locking", :unless => ENV["DB"] == "sqlite" do
     it "allows multiple threads to lock at the same time" do
       expect do
         threads = []

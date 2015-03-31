@@ -1,13 +1,13 @@
 # encoding: utf-8
-require 'bundler/setup'
-require 'active_record'
-require 'active_support'
+require "bundler/setup"
+require "active_record"
+require "active_support"
 
-db_engine = ENV['DB'] || 'mysql'
+db_engine = ENV["DB"] || "mysql"
 
-FileUtils.mkdir_p 'tmp'
-FileUtils.mkdir_p 'log'
-FileUtils.rm 'log/test.log', :force => true
+FileUtils.mkdir_p "tmp"
+FileUtils.mkdir_p "log"
+FileUtils.rm "log/test.log", :force => true
 
 database_config_file = File.expand_path("../support/database.yml", __FILE__)
 if File.exist?(database_config_file)
@@ -21,23 +21,23 @@ end
 # Buffered Logger was deprecated in ActiveSupport 4.0.0 and was removed in 4.1.0
 # Logger was added in ActiveSupport 4.0.0
 if defined? ActiveSupport::Logger
-  ActiveRecord::Base.logger = ActiveSupport::Logger.new('log/test.log')
+  ActiveRecord::Base.logger = ActiveSupport::Logger.new("log/test.log")
 else
-  ActiveRecord::Base.logger = ActiveSupport::BufferedLogger.new('log/test.log')
+  ActiveRecord::Base.logger = ActiveSupport::BufferedLogger.new("log/test.log")
 end
 
 I18n.config.enforce_available_locales = false
 
 silence_warnings do
-  require 'rspec'
-  require 'rspec/its'
-  require 'database_cleaner'
-  require 'machinist/active_record'
-  require 'timecop'
-  require 'money'
+  require "rspec"
+  require "rspec/its"
+  require "database_cleaner"
+  require "machinist/active_record"
+  require "timecop"
+  require "money"
 end
 
-require 'double_entry'
+require "double_entry"
 
 Dir[File.expand_path("../support/**/*.rb", __FILE__)].each { |f| require f }
 
@@ -86,9 +86,9 @@ RSpec.configure do |config|
     # Use the documentation formatter for detailed output,
     # unless a formatter has already been configured
     # (e.g. via a command-line flag).
-    config.default_formatter = 'doc'
+    config.default_formatter = "doc"
   else
-    config.default_formatter = 'RSpec::Instafail'
+    config.default_formatter = "RSpec::Instafail"
   end
 
   # Print the 5 slowest examples and example groups at the

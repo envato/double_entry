@@ -1,17 +1,17 @@
 # encoding: utf-8
-require 'set'
+require "set"
 
 module DoubleEntry
   module Validation
     class LineCheck < ActiveRecord::Base
-      default_scope -> { order('created_at') }
+      default_scope -> { order("created_at") }
 
       def self.perform!
         new.perform
       end
 
       def perform
-        log = ''
+        log = ""
         current_line_id = nil
 
         active_accounts    = Set.new
@@ -46,7 +46,7 @@ module DoubleEntry
       end
 
       def new_lines_since_last_run
-        Line.where('id > ?', last_run_line_id)
+        Line.where("id > ?", last_run_line_id)
       end
 
       def running_balance_correct?(line, log)

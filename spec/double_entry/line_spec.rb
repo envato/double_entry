@@ -53,22 +53,22 @@ RSpec.describe DoubleEntry::Line do
       end
     end
 
-    context 'when balance is sent negative' do
+    context "when balance is sent negative" do
       before { DoubleEntry::Account.accounts.define(:identifier => :a_positive_only_acc, :positive_only => true) }
       let(:account) { DoubleEntry.account(:a_positive_only_acc) }
       let(:line) { DoubleEntry::Line.new(:balance => Money.new(-1), :account => account) }
 
-      it 'raises AccountWouldBeSentNegative error' do
+      it "raises AccountWouldBeSentNegative error" do
         expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
       end
     end
 
-    context 'when balance is sent positive' do
+    context "when balance is sent positive" do
       before { DoubleEntry::Account.accounts.define(:identifier => :a_negative_only_acc, :negative_only => true) }
       let(:account) { DoubleEntry.account(:a_negative_only_acc) }
       let(:line) { DoubleEntry::Line.new(:balance => Money.new(1), :account => account) }
 
-      it 'raises AccountWouldBeSentPositiveError' do
+      it "raises AccountWouldBeSentPositiveError" do
         expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentPositiveError
       end
     end

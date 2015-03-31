@@ -1,5 +1,5 @@
 # encoding: utf-8
-require_relative 'blueprints'
+require_relative "blueprints"
 DoubleEntry.configure do |config|
   # A set of accounts to test with
   config.define_accounts do |accounts|

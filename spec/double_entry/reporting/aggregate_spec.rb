@@ -32,19 +32,19 @@ module DoubleEntry
         end
       end
 
-      it 'should store the aggregate for quick retrieval' do
+      it "should store the aggregate for quick retrieval" do
         Reporting.aggregate(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 10))
         expect(LineAggregate.count).to eq 1
       end
 
-      it 'should only store the aggregate once if it is requested more than once' do
+      it "should only store the aggregate once if it is requested more than once" do
         Reporting.aggregate(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 9))
         Reporting.aggregate(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 9))
         Reporting.aggregate(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 10))
         expect(LineAggregate.count).to eq 2
       end
 
-      it 'should calculate the complete year correctly' do
+      it "should calculate the complete year correctly" do
         expect(
           Reporting.aggregate(
             :sum, :savings, :bonus,
@@ -53,7 +53,7 @@ module DoubleEntry
         ).to eq Money.new(200_00)
       end
 
-      it 'should calculate seperate months correctly' do
+      it "should calculate seperate months correctly" do
         expect(
           Reporting.aggregate(
             :sum, :savings, :bonus,
@@ -68,7 +68,7 @@ module DoubleEntry
         ).to eq Money.new(90_00)
       end
 
-      it 'should calculate seperate weeks correctly' do
+      it "should calculate seperate weeks correctly" do
         # Week 40 - Mon Sep 28, 2009 to Sun Oct 4 2009
         expect(
           Reporting.aggregate(
@@ -78,7 +78,7 @@ module DoubleEntry
         ).to eq Money.new(60_00)
       end
 
-      it 'should calculate seperate days correctly' do
+      it "should calculate seperate days correctly" do
         # 1 Nov 2009
         expect(
           Reporting.aggregate(
@@ -88,7 +88,7 @@ module DoubleEntry
         ).to eq Money.new(90_00)
       end
 
-      it 'should calculate seperate hours correctly' do
+      it "should calculate seperate hours correctly" do
         # 1 Nov 2009
         expect(
           Reporting.aggregate(
@@ -104,7 +104,7 @@ module DoubleEntry
         ).to eq Money.new(50_00)
       end
 
-      it 'should calculate, but not store aggregates when the time range is still current' do
+      it "should calculate, but not store aggregates when the time range is still current" do
         Timecop.freeze Time.local(2009, 11, 21) do
           expect(
             Reporting.aggregate(
@@ -116,7 +116,7 @@ module DoubleEntry
         end
       end
 
-      it 'should calculate, but not store aggregates when the time range is in the future' do
+      it "should calculate, but not store aggregates when the time range is in the future" do
         Timecop.freeze Time.local(2009, 11, 21) do
           expect(
             Reporting.aggregate(
@@ -128,7 +128,7 @@ module DoubleEntry
         end
       end
 
-      it 'should calculate monthly all_time ranges correctly' do
+      it "should calculate monthly all_time ranges correctly" do
         expect(
           Reporting.aggregate(
             :sum, :savings, :bonus,
@@ -137,7 +137,7 @@ module DoubleEntry
         ).to eq Money.new(200_00)
       end
 
-      it 'calculates the average monthly all_time ranges correctly' do
+      it "calculates the average monthly all_time ranges correctly" do
         expect(
           Reporting.aggregate(
             :average, :savings, :bonus,
@@ -146,7 +146,7 @@ module DoubleEntry
         ).to eq expected_monthly_average
       end
 
-      it 'returns the correct count for weekly all_time ranges correctly' do
+      it "returns the correct count for weekly all_time ranges correctly" do
         expect(
           Reporting.aggregate(
             :count, :savings, :bonus,
@@ -155,7 +155,7 @@ module DoubleEntry
         ).to eq 5
       end
 
-      it 'should calculate weekly all_time ranges correctly' do
+      it "should calculate weekly all_time ranges correctly" do
         expect(
           Reporting.aggregate(
             :sum, :savings, :bonus,
@@ -164,7 +164,7 @@ module DoubleEntry
         ).to eq Money.new(110_00)
       end
 
-      it 'calculates the average weekly all_time ranges correctly' do
+      it "calculates the average weekly all_time ranges correctly" do
         expect(
           Reporting.aggregate(
             :average, :savings, :bonus,
@@ -173,7 +173,7 @@ module DoubleEntry
         ).to eq expected_weekly_average
       end
 
-      it 'returns the correct count for weekly all_time ranges correctly' do
+      it "returns the correct count for weekly all_time ranges correctly" do
         expect(
           Reporting.aggregate(
             :count, :savings, :bonus,
@@ -191,7 +191,7 @@ module DoubleEntry
         end.to raise_error(AggregateFunctionNotSupported)
       end
 
-      context 'filters' do
+      context "filters" do
         let(:range) { TimeRange.make(:year => 2011, :month => 10) }
 
         DoubleEntry::Line.class_eval do
@@ -208,27 +208,27 @@ module DoubleEntry
           end
         end
 
-        it 'saves filtered aggregations' do
+        it "saves filtered aggregations" do
           expect do
             Reporting.aggregate(:sum, :savings, :bonus, :range => range, :filter => [:test_filter])
           end.to change { LineAggregate.count }.by 1
         end
 
-        it 'saves filtered aggregation only once for a range' do
+        it "saves filtered aggregation only once for a range" do
           expect do
             Reporting.aggregate(:sum, :savings, :bonus, :range => range, :filter => [:test_filter])
             Reporting.aggregate(:sum, :savings, :bonus, :range => range, :filter => [:test_filter])
           end.to change { LineAggregate.count }.by 1
         end
 
-        it 'saves filtered aggregations and non filtered aggregations separately' do
+        it "saves filtered aggregations and non filtered aggregations separately" do
           expect do
             Reporting.aggregate(:sum, :savings, :bonus, :range => range, :filter => [:test_filter])
             Reporting.aggregate(:sum, :savings, :bonus, :range => range)
           end.to change { LineAggregate.count }.by 2
         end
 
-        it 'loads the correct saved aggregation' do
+        it "loads the correct saved aggregation" do
           # cache the results for filtered and unfiltered aggregations
           Reporting.aggregate(:sum, :savings, :bonus, :range => range, :filter => [:test_filter])
           Reporting.aggregate(:sum, :savings, :bonus, :range => range)
@@ -250,7 +250,7 @@ module DoubleEntry
         perform_btc_deposit(user, 200_000_000)
       end
 
-      it 'should calculate the sum in the correct currency' do
+      it "should calculate the sum in the correct currency" do
         expect(
           Reporting.aggregate(:sum, :btc_savings, :btc_test_transfer, :range => TimeRange.make(:year => Time.now.year)),
         ).to eq(Money.new(300_000_000, :btc))

@@ -15,8 +15,8 @@ module DoubleEntry
       end
 
       it "handles daylight savings time properly" do
-        Time.use_zone('America/Los_Angeles') do
-          time = Time.zone.parse('Mon, 10 Mar 2014')
+        Time.use_zone("America/Los_Angeles") do
+          time = Time.zone.parse("Mon, 10 Mar 2014")
           range = WeekRange.from_time time
           expect(range.start.day).to eq 10
         end

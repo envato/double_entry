@@ -1,1 +1,1 @@
-require 'double_entry/validation/line_check'
+require "double_entry/validation/line_check"
