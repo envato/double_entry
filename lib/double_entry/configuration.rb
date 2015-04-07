@@ -3,7 +3,6 @@ module DoubleEntry
   include Configurable
 
   class Configuration
-
     delegate(
       :accounts,
       :accounts=,
@@ -11,7 +10,7 @@ module DoubleEntry
       :scope_identifier_max_length=,
       :account_identifier_max_length,
       :account_identifier_max_length=,
-      :to => "DoubleEntry::Account",
+      :to => 'DoubleEntry::Account',
     )
 
     delegate(
@@ -19,7 +18,7 @@ module DoubleEntry
       :transfers=,
       :code_max_length,
       :code_max_length=,
-      :to => "DoubleEntry::Transfer",
+      :to => 'DoubleEntry::Transfer',
     )
 
     def define_accounts

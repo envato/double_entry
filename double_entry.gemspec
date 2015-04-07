@@ -1,5 +1,4 @@
 # encoding: utf-8
-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
@@ -10,12 +9,11 @@ Gem::Specification.new do |gem|
   gem.version       = DoubleEntry::VERSION
   gem.authors       = ['Anthony Sellitti', 'Keith Pitt', 'Martin Jagusch', 'Martin Spickermann', 'Mark Turnley', 'Orien Madgwick', 'Pete Yandall', 'Stephanie Staub']
   gem.email         = ['anthony.sellitti@envato.com', 'me@keithpitt.com', '_@mj.io', 'spickemann@gmail.com', 'mark@envato.com', '_@orien.io', 'pete@envato.com', 'staub.steph@gmail.com']
-  # gem.description   = %q{}
   gem.summary       = 'Tools to build your double entry financial ledger'
   gem.homepage      = 'https://github.com/envato/double_entry'
 
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.executables   = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']
 
@@ -36,4 +34,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'generator_spec'
   gem.add_development_dependency 'machinist'
   gem.add_development_dependency 'timecop'
+  gem.add_development_dependency 'rubocop'
 end

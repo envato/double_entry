@@ -1,6 +1,5 @@
 # encoding: utf-8
 module DoubleEntry
-
   # Lock financial accounts to ensure consistency.
   #
   # In order to ensure financial transactions always keep track of balances
@@ -51,7 +50,7 @@ module DoubleEntry
     end
 
     class Lock
-      @@locks = Hash.new
+      @@locks = {}
 
       def initialize(accounts)
         # Make sure we always lock in the same order, to avoid deadlocks.
@@ -65,9 +64,7 @@ module DoubleEntry
 
         unless lock_and_call(&block)
           create_missing_account_balances
-          unless lock_and_call(&block)
-            raise LockDisaster
-          end
+          fail LockDisaster unless lock_and_call(&block)
         end
       end
 
@@ -78,7 +75,9 @@ module DoubleEntry
 
       def ensure_locked!
         @accounts.each do |account|
-          raise LockNotHeld.new(account) unless have_lock?(account)
+          unless lock?(account)
+            fail LockNotHeld, "No lock held for account: #{account.identifier}, scope #{account.scope}"
+          end
         end
       end
 
@@ -88,7 +87,7 @@ module DoubleEntry
         locks[account]
       end
 
-      private
+    private
 
       def locks
         @@locks[Thread.current.object_id]
@@ -103,18 +102,17 @@ module DoubleEntry
       end
 
       # Return true if there's a lock on the given account.
-      def have_lock?(account)
-        in_a_locked_transaction? && locks.has_key?(account)
+      def lock?(account)
+        in_a_locked_transaction? && locks.key?(account)
       end
 
       # Raise an exception unless we're outside any transactions.
       def ensure_outermost_transaction!
         minimum_transaction_level = Locking.configuration.running_inside_transactional_fixtures ? 1 : 0
         unless AccountBalance.connection.open_transactions <= minimum_transaction_level
-          raise LockMustBeOutermostTransaction
+          fail LockMustBeOutermostTransaction
         end
       end
-
 
       # Start a transaction, grab locks on the given accounts, then call the block
       # from within the transaction.
@@ -144,12 +142,12 @@ module DoubleEntry
       # If one or more account balance records don't exist, set
       # accounts_with_balances to the corresponding accounts, and return false.
       def grab_locks
-        account_balances = @accounts.map {|account| AccountBalance.find_by_account(account, :lock => true) }
+        account_balances = @accounts.map { |account| AccountBalance.find_by_account(account, :lock => true) }
 
         if account_balances.any?(&:nil?)
-          @accounts_without_balances = @accounts.zip(account_balances).
-            select  {|account, account_balance| account_balance.nil? }.
-            collect {|account, account_balance| account }
+          @accounts_without_balances =  @accounts.zip(account_balances).
+                                        select { |_account, account_balance| account_balance.nil? }.
+                                        collect { |account, _account_balance| account }
           false
         else
           self.locks = Hash[*@accounts.zip(account_balances).flatten]
@@ -174,9 +172,6 @@ module DoubleEntry
 
     # Raised when attempting a transfer on an account that's not locked.
     class LockNotHeld < RuntimeError
-      def initialize(account)
-        super "No lock held for account: #{account.identifier}, scope #{account.scope}"
-      end
     end
 
     # Raised if things go horribly, horribly wrong. This should never happen.

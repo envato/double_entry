@@ -54,7 +54,6 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.text       "log"
       t.timestamps                             :null => false
     end
-
   end
 
   def self.down
@@ -63,5 +62,4 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
     drop_table "double_entry_lines"
     drop_table "double_entry_account_balances"
   end
-
 end

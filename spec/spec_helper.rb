@@ -9,12 +9,12 @@ FileUtils.mkdir_p 'tmp'
 FileUtils.mkdir_p 'log'
 FileUtils.rm 'log/test.log', :force => true
 
-database_config_file = File.expand_path("../support/database.yml", __FILE__)
+database_config_file = File.expand_path('../support/database.yml', __FILE__)
 if File.exist?(database_config_file)
   ActiveRecord::Base.establish_connection YAML.load_file(database_config_file)[db_engine]
 else
-  puts "Please configure your spec/support/database.yml file."
-  puts "See spec/support/database.example.yml"
+  puts 'Please configure your spec/support/database.yml file.'
+  puts 'See spec/support/database.example.yml'
   exit 1
 end
 
@@ -39,7 +39,7 @@ end
 
 require 'double_entry'
 
-Dir[File.expand_path("../support/**/*.rb", __FILE__)].each { |f| require f }
+Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |f| require f }
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
@@ -95,7 +95,6 @@ RSpec.configure do |config|
   # end of the spec run, to help surface which specs are running
   # particularly slow.
   config.profile_examples = 5
-
 
   config.include DoubleEntrySpecHelper
 
