@@ -19,7 +19,7 @@ module DoubleEntry
 
         new_lines_since_last_run.find_each do |line|
           incorrect_accounts << line.account unless running_balance_correct?(line, log)
-          active_accounts    << line.account
+          active_accounts << line.account
           current_line_id = line.id
         end
 
