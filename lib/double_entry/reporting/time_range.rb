@@ -25,13 +25,13 @@ module DoubleEntry
 
       def self.range_from_time_for_period(start_time, period_name)
         case period_name
-        when "month"
+        when 'month'
           YearRange.from_time(start_time)
-        when "week"
+        when 'week'
           YearRange.from_time(start_time)
-        when "day"
+        when 'day'
           MonthRange.from_time(start_time)
-        when "hour"
+        when 'hour'
           DayRange.from_time(start_time)
         end
       end
@@ -52,7 +52,7 @@ module DoubleEntry
       end
 
       def human_readable_name
-        self.class.name.gsub("DoubleEntry::Reporting::", "").gsub("Range", "")
+        self.class.name.gsub('DoubleEntry::Reporting::', '').gsub('Range', '')
       end
     end
   end

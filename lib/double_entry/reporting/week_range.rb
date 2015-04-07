@@ -14,7 +14,7 @@ module DoubleEntry
 
           if date.beginning_of_week.year != year
             week = 1
-          elsif date.beginning_of_year.cwday > Date::DAYNAMES.index("Thursday")
+          elsif date.beginning_of_year.cwday > Date::DAYNAMES.index('Thursday')
             week += 1
           end
 

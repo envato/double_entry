@@ -87,7 +87,7 @@ module DoubleEntry
       end
 
       def to_s
-        start.strftime("%Y, %b")
+        start.strftime('%Y, %b')
       end
     end
   end

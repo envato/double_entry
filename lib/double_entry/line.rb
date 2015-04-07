@@ -95,7 +95,7 @@ module DoubleEntry
     def account=(account)
       self[:account] = account.identifier.to_s
       self.scope = account.scope_identity
-      fail "Missing Account" unless self.account
+      fail 'Missing Account' unless self.account
       account
     end
 
@@ -110,7 +110,7 @@ module DoubleEntry
     def partner_account=(partner_account)
       self[:partner_account] = partner_account.identifier.to_s
       self.partner_scope = partner_account.scope_identity
-      fail "Missing Partner Account" unless self.partner_account
+      fail 'Missing Partner Account' unless self.partner_account
       partner_account
     end
 

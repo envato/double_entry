@@ -49,7 +49,7 @@ module DoubleEntry
         fail ArgumentError, "Invalid range type '#{range_type}'" unless %w(year month week day hour).include? range_type
         @aggregates = LineAggregate.
                       where(:function => function).
-                      where(:range_type => "normal").
+                      where(:range_type => 'normal').
                       where(:account => account.to_s).
                       where(:code => code.to_s).
                       where(:filter => filter.inspect).
@@ -65,7 +65,7 @@ module DoubleEntry
 
       def formatted_amount(amount)
         amount ||= 0
-        if function == "count"
+        if function == 'count'
           amount
         else
           Money.new(amount, currency)

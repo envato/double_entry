@@ -35,7 +35,7 @@ module DoubleEntry
       end
 
       def to_s
-        start.strftime("%Y, %a %b %d")
+        start.strftime('%Y, %a %b %d')
       end
     end
   end

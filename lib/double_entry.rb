@@ -1,22 +1,22 @@
 # encoding: utf-8
-require "active_record"
-require "active_record/locking_extensions"
-require "active_record/locking_extensions/log_subscriber"
-require "active_support/all"
-require "money"
+require 'active_record'
+require 'active_record/locking_extensions'
+require 'active_record/locking_extensions/log_subscriber'
+require 'active_support/all'
+require 'money'
 
-require "double_entry/version"
-require "double_entry/errors"
-require "double_entry/configurable"
-require "double_entry/configuration"
-require "double_entry/account"
-require "double_entry/account_balance"
-require "double_entry/balance_calculator"
-require "double_entry/locking"
-require "double_entry/transfer"
-require "double_entry/line"
-require "double_entry/reporting"
-require "double_entry/validation"
+require 'double_entry/version'
+require 'double_entry/errors'
+require 'double_entry/configurable'
+require 'double_entry/configuration'
+require 'double_entry/account'
+require 'double_entry/account_balance'
+require 'double_entry/balance_calculator'
+require 'double_entry/locking'
+require 'double_entry/transfer'
+require 'double_entry/line'
+require 'double_entry/reporting'
+require 'double_entry/validation'
 
 # Keep track of all the monies!
 #
@@ -156,7 +156,7 @@ module DoubleEntry
 
     # @api private
     def table_name_prefix
-      "double_entry_"
+      'double_entry_'
     end
   end
 end

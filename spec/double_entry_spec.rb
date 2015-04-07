@@ -14,8 +14,8 @@ RSpec.describe DoubleEntry do
     DoubleEntry.configuration.transfers = @config_transfers
   end
 
-  describe "configuration" do
-    it "checks for duplicates of accounts" do
+  describe 'configuration' do
+    it 'checks for duplicates of accounts' do
       expect do
         DoubleEntry.configure do |config|
           config.define_accounts do |accounts|
@@ -26,7 +26,7 @@ RSpec.describe DoubleEntry do
       end.to raise_error DoubleEntry::DuplicateAccount
     end
 
-    it "checks for duplicates of transfers" do
+    it 'checks for duplicates of transfers' do
       expect do
         DoubleEntry.configure do |config|
           config.define_transfers do |transfers|
@@ -38,7 +38,7 @@ RSpec.describe DoubleEntry do
     end
   end
 
-  describe "accounts" do
+  describe 'accounts' do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
@@ -48,47 +48,47 @@ RSpec.describe DoubleEntry do
       end
     end
 
-    let(:scope) { double("a scope", :id => 1) }
+    let(:scope) { double('a scope', :id => 1) }
 
-    describe "fetching" do
-      it "can find an unscoped account by identifier" do
+    describe 'fetching' do
+      it 'can find an unscoped account by identifier' do
         expect(DoubleEntry.account(:unscoped)).to_not be_nil
       end
 
-      it "can find a scoped account by identifier" do
+      it 'can find a scoped account by identifier' do
         expect(DoubleEntry.account(:scoped, :scope => scope)).to_not be_nil
       end
 
-      it "raises an exception when it cannot find an account" do
+      it 'raises an exception when it cannot find an account' do
         expect { DoubleEntry.account(:invalid) }.to raise_error(DoubleEntry::UnknownAccount)
       end
 
-      it "raises exception when you ask for an unscoped account w/ scope" do
+      it 'raises exception when you ask for an unscoped account w/ scope' do
         expect { DoubleEntry.account(:unscoped, :scope => scope) }.to raise_error(DoubleEntry::UnknownAccount)
       end
 
-      it "raises exception when you ask for a scoped account w/ out scope" do
+      it 'raises exception when you ask for a scoped account w/ out scope' do
         expect { DoubleEntry.account(:scoped) }.to raise_error(DoubleEntry::UnknownAccount)
       end
     end
 
-    context "an unscoped account" do
+    context 'an unscoped account' do
       subject(:unscoped) { DoubleEntry.account(:unscoped) }
 
-      it "has an identifier" do
+      it 'has an identifier' do
         expect(unscoped.identifier).to eq :unscoped
       end
     end
-    context "a scoped account" do
+    context 'a scoped account' do
       subject(:scoped) { DoubleEntry.account(:scoped, :scope => scope) }
 
-      it "has an identifier" do
+      it 'has an identifier' do
         expect(scoped.identifier).to eq :scoped
       end
     end
   end
 
-  describe "transfers" do
+  describe 'transfers' do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
@@ -110,7 +110,7 @@ RSpec.describe DoubleEntry do
     let(:trash)     { DoubleEntry.account(:trash) }
     let(:bitbucket) { DoubleEntry.account(:bitbucket) }
 
-    it "can transfer from an account to an account, if the transfer is allowed" do
+    it 'can transfer from an account to an account, if the transfer is allowed' do
       DoubleEntry.transfer(
         Money.new(100_00),
         :from => savings,
@@ -119,7 +119,7 @@ RSpec.describe DoubleEntry do
       )
     end
 
-    it "raises an exception when the transfer is not allowed (wrong direction)" do
+    it 'raises an exception when the transfer is not allowed (wrong direction)' do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
@@ -130,7 +130,7 @@ RSpec.describe DoubleEntry do
       end.to raise_error DoubleEntry::TransferNotAllowed
     end
 
-    it "raises an exception when the transfer is not allowed (wrong code)" do
+    it 'raises an exception when the transfer is not allowed (wrong code)' do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
@@ -141,7 +141,7 @@ RSpec.describe DoubleEntry do
       end.to raise_error DoubleEntry::TransferNotAllowed
     end
 
-    it "raises an exception when the transfer is not allowed (does not exist, at all)" do
+    it 'raises an exception when the transfer is not allowed (does not exist, at all)' do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
@@ -151,7 +151,7 @@ RSpec.describe DoubleEntry do
       end.to raise_error DoubleEntry::TransferNotAllowed
     end
 
-    it "raises an exception when the transfer is not allowed (mismatched currencies)" do
+    it 'raises an exception when the transfer is not allowed (mismatched currencies)' do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
@@ -163,7 +163,7 @@ RSpec.describe DoubleEntry do
     end
   end
 
-  describe "lines" do
+  describe 'lines' do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
@@ -184,51 +184,51 @@ RSpec.describe DoubleEntry do
     let(:credit_line) { lines_for_account(account_a).first }
     let(:debit_line) { lines_for_account(account_b).first }
 
-    it "has an amount" do
+    it 'has an amount' do
       expect(credit_line.amount).to eq(Money.new(-10_00))
       expect(debit_line.amount).to eq(Money.new(10_00))
     end
 
-    it "has a code" do
+    it 'has a code' do
       expect(credit_line.code).to eq(:xfer)
       expect(debit_line.code).to eq(:xfer)
     end
 
-    it "auto-sets scope when assigning account (and partner_accout, is this implementation?)" do
-      expect(credit_line[:account]).to eq("a")
+    it 'auto-sets scope when assigning account (and partner_accout, is this implementation?)' do
+      expect(credit_line[:account]).to eq('a')
       expect(credit_line[:scope]).to be_nil
-      expect(credit_line[:partner_account]).to eq("b")
+      expect(credit_line[:partner_account]).to eq('b')
       expect(credit_line[:partner_scope]).to be_nil
     end
 
-    it "has a partner_account (or is this implementation?)" do
+    it 'has a partner_account (or is this implementation?)' do
       expect(credit_line.partner_account).to eq debit_line.account
     end
 
-    it "knows if it is an increase or decrease" do
+    it 'knows if it is an increase or decrease' do
       expect(credit_line).to be_decrease
       expect(debit_line).to be_increase
       expect(credit_line).to_not be_increase
       expect(debit_line).to_not be_decrease
     end
 
-    it "can reference its partner" do
+    it 'can reference its partner' do
       expect(credit_line.partner).to eq(debit_line)
       expect(debit_line.partner).to eq(credit_line)
     end
 
-    it "can ask for its pair (credit always coming first)" do
+    it 'can ask for its pair (credit always coming first)' do
       expect(credit_line.pair).to eq([credit_line, debit_line])
       expect(debit_line.pair).to eq([credit_line, debit_line])
     end
 
-    it "can ask for the account (and get an instance)" do
+    it 'can ask for the account (and get an instance)' do
       expect(credit_line.account).to eq(account_a)
       expect(debit_line.account).to eq(account_b)
     end
   end
 
-  describe "balances" do
+  describe 'balances' do
     let(:work)       { DoubleEntry.account(:work) }
     let(:savings)    { DoubleEntry.account(:savings) }
     let(:cash)       { DoubleEntry.account(:cash) }
@@ -243,8 +243,8 @@ RSpec.describe DoubleEntry do
           accounts.define(:identifier => :cash)
           accounts.define(:identifier => :savings)
           accounts.define(:identifier => :store)
-          accounts.define(:identifier => :btc_store, :currency => "BTC")
-          accounts.define(:identifier => :btc_wallet, :currency => "BTC")
+          accounts.define(:identifier => :btc_store, :currency => 'BTC')
+          accounts.define(:identifier => :btc_wallet, :currency => 'BTC')
         end
 
         config.define_transfers do |transfers|
@@ -283,29 +283,29 @@ RSpec.describe DoubleEntry do
 
       Timecop.freeze 1.week.from_now do
         # it's the future, man
-        DoubleEntry.transfer(Money.new(200_00, "BTC"), :from => btc_store, :code => :btc_ex, :to => btc_wallet)
+        DoubleEntry.transfer(Money.new(200_00, 'BTC'), :from => btc_store, :code => :btc_ex, :to => btc_wallet)
       end
     end
 
-    it "has the initial balances that we expect" do
+    it 'has the initial balances that we expect' do
       expect(work.balance).to eq(Money.new(-1_000_00))
       expect(cash.balance).to eq(Money.new(100_00))
       expect(savings.balance).to eq(Money.new(300_00))
       expect(store.balance).to eq(Money.new(600_00))
-      expect(btc_wallet.balance).to eq(Money.new(200_00, "BTC"))
+      expect(btc_wallet.balance).to eq(Money.new(200_00, 'BTC'))
     end
 
-    it "should have correct account balance records" do
+    it 'should have correct account balance records' do
       [work, cash, savings, store, btc_wallet].each do |account|
         expect(DoubleEntry::AccountBalance.find_by_account(account).balance).to eq(account.balance)
       end
     end
 
-    it "should have correct account balance currencies" do
-      expect(DoubleEntry::AccountBalance.find_by_account(btc_wallet).balance.currency).to eq("BTC")
+    it 'should have correct account balance currencies' do
+      expect(DoubleEntry::AccountBalance.find_by_account(btc_wallet).balance.currency).to eq('BTC')
     end
 
-    it "affects origin/destination balance after transfer" do
+    it 'affects origin/destination balance after transfer' do
       savings_balance = savings.balance
       cash_balance = cash.balance
       amount = Money.new(10_00)
@@ -316,27 +316,27 @@ RSpec.describe DoubleEntry do
       expect(cash.balance).to eq(cash_balance + amount)
     end
 
-    it "can be queried at a given point in time" do
+    it 'can be queried at a given point in time' do
       expect(cash.balance(:at => 1.week.ago)).to eq(Money.new(100_00))
     end
 
-    it "can be queries between two points in time" do
+    it 'can be queries between two points in time' do
       expect(cash.balance(:from => 3.weeks.ago, :to => 2.weeks.ago)).to eq(Money.new(500_00))
     end
 
-    it "can be queried between two points in time, even in the future" do
-      expect(btc_wallet.balance(:from => Time.now, :to => 2.weeks.from_now)).to eq(Money.new(200_00, "BTC"))
+    it 'can be queried between two points in time, even in the future' do
+      expect(btc_wallet.balance(:from => Time.now, :to => 2.weeks.from_now)).to eq(Money.new(200_00, 'BTC'))
     end
 
-    it "can report on balances, scoped by code" do
+    it 'can report on balances, scoped by code' do
       expect(cash.balance(:code => :salary)).to eq Money.new(1_000_00)
     end
 
-    it "can report on balances, scoped by many codes" do
+    it 'can report on balances, scoped by many codes' do
       expect(store.balance(:codes => [:layby, :deposit])).to eq(Money.new(200_00))
     end
 
-    it "has running balances for each line" do
+    it 'has running balances for each line' do
       lines = lines_for_account(cash)
       expect(lines[0].balance).to eq(Money.new(1_000_00)) # salary
       expect(lines[1].balance).to eq(Money.new(500_00)) # savings
@@ -348,7 +348,7 @@ RSpec.describe DoubleEntry do
     end
   end
 
-  describe "scoping of accounts" do
+  describe 'scoping of accounts' do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
@@ -378,26 +378,26 @@ RSpec.describe DoubleEntry do
     let(:ryans_cash) { DoubleEntry.account(:cash, :scope => ryan) }
     let(:ryans_savings) { DoubleEntry.account(:savings, :scope => ryan) }
 
-    it "treats each separately scoped account having their own separate balances" do
+    it 'treats each separately scoped account having their own separate balances' do
       DoubleEntry.transfer(Money.new(20_00), :from => bank, :to => johns_cash, :code => :xfer)
       DoubleEntry.transfer(Money.new(10_00), :from => bank, :to => ryans_cash, :code => :xfer)
       expect(johns_cash.balance).to eq(Money.new(20_00))
       expect(ryans_cash.balance).to eq(Money.new(10_00))
     end
 
-    it "allows transfer between two separately scoped accounts" do
+    it 'allows transfer between two separately scoped accounts' do
       DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => johns_cash, :code => :xfer)
       expect(ryans_cash.balance).to eq(Money.new(-10_00))
       expect(johns_cash.balance).to eq(Money.new(10_00))
     end
 
-    it "reports balance correctly if called from either account or finances object" do
+    it 'reports balance correctly if called from either account or finances object' do
       DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => johns_cash, :code => :xfer)
       expect(ryans_cash.balance).to eq(Money.new(-10_00))
       expect(DoubleEntry.balance(:cash, :scope => ryan)).to eq(Money.new(-10_00))
     end
 
-    it "raises an exception if you try to scope with an object instance of differing class to that defined on the account" do
+    it 'raises an exception if you try to scope with an object instance of differing class to that defined on the account' do
       not_a_user = double(:id => 7)
 
       expect do
@@ -409,19 +409,19 @@ RSpec.describe DoubleEntry do
       end.to raise_error DoubleEntry::AccountScopeMismatchError
     end
 
-    it "raises exception if you try to transfer between the same account, despite it being scoped" do
+    it 'raises exception if you try to transfer between the same account, despite it being scoped' do
       expect do
         DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => ryans_cash, :code => :xfer)
       end.to raise_error(DoubleEntry::TransferNotAllowed)
     end
 
-    it "allows transfer from one persons account to the same persons other kind of account" do
+    it 'allows transfer from one persons account to the same persons other kind of account' do
       DoubleEntry.transfer(Money.new(100_00), :from => ryans_cash, :to => ryans_savings, :code => :xfer)
       expect(ryans_cash.balance).to eq(Money.new(-100_00))
       expect(ryans_savings.balance).to eq(Money.new(100_00))
     end
 
-    it "disallows you to report on scoped accounts globally" do
+    it 'disallows you to report on scoped accounts globally' do
       expect { DoubleEntry.balance(:cash) }.to raise_error DoubleEntry::UnknownAccount
     end
   end

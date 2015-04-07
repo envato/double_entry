@@ -22,9 +22,6 @@ Style/HashSyntax:
 Style/SpecialGlobalVars:
   Enabled: false
 
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-
 Style/TrailingComma:
   EnforcedStyleForMultiline: comma
 

@@ -74,7 +74,7 @@ module DoubleEntry
 
     def process(amount, from, to, code, detail)
       if from.scope_identity == to.scope_identity && from.identifier == to.identifier
-        fail TransferNotAllowed, "from and to are identical"
+        fail TransferNotAllowed, 'from and to are identical'
       end
       if to.currency != from.currency
         fail MismatchedCurrencies, "Missmatched currency (#{to.currency} <> #{from.currency})"
