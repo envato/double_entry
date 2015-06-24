@@ -25,7 +25,7 @@ module DoubleEntry
         end
       end
 
-      def formatted_amount(value = amount)
+      def formatted_amount(value = amount())
         value ||= 0
         if function == 'count'
           value
