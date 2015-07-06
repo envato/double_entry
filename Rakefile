@@ -7,7 +7,9 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.ruby_opts = '-w'
 end
 
-RuboCop::RakeTask.new(:rubocop)
+RuboCop::RakeTask.new(:rubocop) do |t|
+  t.fail_on_error = true
+end
 
 task :default do
   %w(mysql postgres sqlite).each do |db|
