@@ -53,7 +53,7 @@ module DoubleEntry
 
                   expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[2])
                   expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[3])
-                  subject
+                  aggregate_array
                 end
               end
             end
