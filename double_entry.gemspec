@@ -35,5 +35,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'machinist'
   gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'rubocop'
-  gem.add_development_dependency 'pry-byebug'
 end
