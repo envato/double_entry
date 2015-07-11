@@ -39,6 +39,9 @@ Style/DoubleNegation:
 Style/ModuleFunction:
   Enabled: false
 
+Style/ParallelAssignment:
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 47 #15
 
@@ -50,6 +53,9 @@ Metrics/LineLength:
 
 Metrics/MethodLength:
   Max: 30 # 10
+
+Metrics/ModuleLength:
+  Max: 221 #100
 
 Metrics/PerceivedComplexity:
   Max: 13 #7
