@@ -36,6 +36,27 @@ module DoubleEntry
             let(:range_type) { 'year' }
             let(:start) { '2006-08-03' }
             it { should eq [Money.zero, Money.new(10_00), Money.new(20_00), Money.zero] }
+
+            describe 'reuse of aggregates' do
+              let(:years) { TimeRangeArray.make(range_type, start, finish) }
+
+              context 'and some aggregates were created previously' do
+                before do
+                  Reporting.aggregate(function.to_s, account, transfer_code, :filter => nil, :range => years[0])
+                  Reporting.aggregate(function.to_s, account, transfer_code, :filter => nil, :range => years[1])
+                  allow(Reporting).to receive(:aggregate)
+                end
+
+                it 'only asks Reporting for the non-existent ones' do
+                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[0])
+                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[1])
+
+                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[2])
+                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[3])
+                  aggregate_array
+                end
+              end
+            end
           end
         end
       end

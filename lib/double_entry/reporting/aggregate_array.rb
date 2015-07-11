@@ -47,16 +47,16 @@ module DoubleEntry
       # get any previously calculated aggregates
       def retrieve_aggregates
         fail ArgumentError, "Invalid range type '#{range_type}'" unless %w(year month week day hour).include? range_type
-        @aggregates = LineAggregate.
-                      where(:function => function).
-                      where(:range_type => 'normal').
-                      where(:account => account.to_s).
-                      where(:code => code.to_s).
-                      where(:filter => filter.inspect).
-                      where(LineAggregate.arel_table[range_type].not_eq(nil)).
-                      each_with_object({}) do |hash, result|
-                        hash[result.key] = formatted_amount(result.amount)
-                      end
+        scope = LineAggregate.
+          where(:function => function).
+          where(:range_type => 'normal').
+          where(:account => account.to_s).
+          where(:code => code.to_s).
+          where(:filter => filter.inspect).
+          where(LineAggregate.arel_table[range_type].not_eq(nil))
+        @aggregates = scope.each_with_object({}) do |result, hash|
+          hash[result.key] = formatted_amount(result.amount)
+        end
       end
 
       def all_periods
