@@ -54,9 +54,20 @@ class CreateDoubleEntryTables < ActiveRecord::Migration
       t.text       "log"
       t.timestamps                             :null => false
     end
+
+    create_table "double_entry_line_metadata", :force => true do |t|
+      t.integer    "line_id",               :null => false
+      t.string     "key",     :limit => 48, :null => false
+      t.string     "value",   :limit => 64, :null => false
+      t.timestamps                          :null => false
+    end
+
+    add_index "double_entry_line_metadata", ["key"]   :name => "lines_meta_key_idx"
+    add_index "double_entry_line_metadata", ["value"] :name => "lines_meta_value_idx"
   end
 
   def self.down
+    drop_table "double_entry_line_metadata"
     drop_table "double_entry_line_checks"
     drop_table "double_entry_line_aggregates"
     drop_table "double_entry_lines"

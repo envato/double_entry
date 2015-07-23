@@ -55,6 +55,16 @@ ActiveRecord::Schema.define do
     t.timestamps                 :null => false
   end
 
+  create_table "double_entry_line_metadata", :force => true do |t|
+    t.integer    "line_id",               :null => false
+    t.string     "key",     :limit => 48, :null => false
+    t.string     "value",   :limit => 64, :null => false
+    t.timestamps                          :null => false
+  end
+
+  add_index "double_entry_line_metadata", ["key"]   :name => "lines_meta_key_idx"
+  add_index "double_entry_line_metadata", ["value"] :name => "lines_meta_value_idx"
+
   # test table only
   create_table "users", :force => true do |t|
     t.string     "username", :null => false
