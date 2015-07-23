@@ -62,8 +62,8 @@ ActiveRecord::Schema.define do
     t.timestamps                          :null => false
   end
 
-  add_index "double_entry_line_metadata", ["key"]   :name => "lines_meta_key_idx"
-  add_index "double_entry_line_metadata", ["value"] :name => "lines_meta_value_idx"
+  add_index "double_entry_line_metadata", ["key"],   :name => "lines_meta_key_idx"
+  add_index "double_entry_line_metadata", ["value"], :name => "lines_meta_value_idx"
 
   # test table only
   create_table "users", :force => true do |t|
