@@ -148,9 +148,7 @@ RSpec.describe DoubleEntry::Locking do
     end.to_not raise_error
   end
 
-
   context 'handling ActiveRecord::StatementInvalid errors' do
-
     context 'non lock wait timeout errors' do
       let(:error) { ActiveRecord::StatementInvalid.new('some other error') }
       before do

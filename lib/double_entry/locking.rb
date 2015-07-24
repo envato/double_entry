@@ -44,7 +44,7 @@ module DoubleEntry
 
     rescue ActiveRecord::StatementInvalid => exception
       if exception.message =~ /lock wait timeout/i
-        fail LockWaitTimeout
+        raise LockWaitTimeout
       else
         raise
       end
