@@ -31,6 +31,8 @@ Please note the following changes in DoubleEntry version 10.4:
           t.string     "value",   :limit => 64, :null => false
           t.timestamps                          :null => false
         end
+
+        add_index "#{DoubleEntry.table_name_prefix}line_metadata", ["line_id", "key", "value"], :name => "lines_meta_line_id_key_value_idx"
       end
 
       def self.down
