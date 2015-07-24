@@ -19,9 +19,9 @@ Gem::Specification.new do |gem|
 
   gem.post_install_message = <<-'POSTINSTALLMESSAGE'
 Please note the following changes in DoubleEntry:
- - New table `double_entry_line_metadata` has been introduced and is required for
-   aggregate reporting filtering. Existing applications will have to manually
-   manage this change via a migration similar to the following:
+ - New table `double_entry_line_metadata` has been introduced and is *required* for
+   aggregate reporting filtering to work. Existing applications must manually manage
+   this change via a migration similar to the following:
 
     class CreateDoubleEntryLineMetadata < ActiveRecord::Migration
       def self.up
@@ -32,7 +32,9 @@ Please note the following changes in DoubleEntry:
           t.timestamps                          :null => false
         end
 
-        add_index "#{DoubleEntry.table_name_prefix}line_metadata", ["line_id", "key", "value"], :name => "lines_meta_line_id_key_value_idx"
+        add_index "#{DoubleEntry.table_name_prefix}line_metadata",
+                  ["line_id", "key", "value"],
+                  :name => "lines_meta_line_id_key_value_idx"
       end
 
       def self.down
@@ -40,7 +42,7 @@ Please note the following changes in DoubleEntry:
       end
     end
 
-  Please update your database accordingly.
+  Please ensure that you update your database accordingly.
 POSTINSTALLMESSAGE
 
   gem.add_dependency 'money',                 '>= 6.0.0'
