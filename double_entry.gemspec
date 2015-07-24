@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.post_install_message = <<-'POSTINSTALLMESSAGE'
-Please note the following changes in DoubleEntry version 10.4:
+Please note the following changes in DoubleEntry:
  - New table `double_entry_line_metadata` has been introduced and is required for
    aggregate reporting filtering. Existing applications will have to manually
    manage this change via a migration similar to the following:
