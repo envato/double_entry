@@ -43,7 +43,6 @@ Please note the following changes in DoubleEntry version 10.4:
   Please update your database accordingly.
 POSTINSTALLMESSAGE
 
-
   gem.add_dependency 'money',                 '>= 6.0.0'
   gem.add_dependency 'activerecord',          '>= 3.2.0'
   gem.add_dependency 'activesupport',         '>= 3.2.0'
