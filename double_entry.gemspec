@@ -17,6 +17,31 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']
 
+  gem.post_install_message = <<-'POSTINSTALLMESSAGE'
+Please note the following changes in DoubleEntry version 10.4:
+ - New table `double_entry_line_metadata` has been introduced and is required for
+   aggregate reporting filtering. Existing applications will have to manually
+   manage this change via a migration similar to the following:
+
+    class CreateDoubleEntryLineMetadata < ActiveRecord::Migration
+      def self.up
+        create_table "#{DoubleEntry.table_name_prefix}line_metadata", :force => true do |t|
+          t.integer    "line_id",               :null => false
+          t.string     "key",     :limit => 48, :null => false
+          t.string     "value",   :limit => 64, :null => false
+          t.timestamps                          :null => false
+        end
+      end
+
+      def self.down
+        drop_table "#{DoubleEntry.table_name_prefix}line_metadata"
+      end
+    end
+
+  Please update your database accordingly.
+POSTINSTALLMESSAGE
+
+
   gem.add_dependency 'money',                 '>= 6.0.0'
   gem.add_dependency 'activerecord',          '>= 3.2.0'
   gem.add_dependency 'activesupport',         '>= 3.2.0'
