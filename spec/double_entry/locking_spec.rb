@@ -148,6 +148,35 @@ RSpec.describe DoubleEntry::Locking do
     end.to_not raise_error
   end
 
+  context 'handling ActiveRecord::StatementInvalid errors' do
+    context 'non lock wait timeout errors' do
+      let(:error) { ActiveRecord::StatementInvalid.new('some other error') }
+      before do
+        allow(DoubleEntry::AccountBalance).to receive(:with_restart_on_deadlock).
+          and_raise(error)
+      end
+
+      it 're-raises the ActiveRecord::StatementInvalid error' do
+        expect do
+          DoubleEntry::Locking.lock_accounts(@account_d, @account_e) {}
+        end.to raise_error(error)
+      end
+    end
+
+    context 'lock wait timeout errors' do
+      before do
+        allow(DoubleEntry::AccountBalance).to receive(:with_restart_on_deadlock).
+          and_raise(ActiveRecord::StatementInvalid, 'lock wait timeout')
+      end
+
+      it 'raises a LockWaitTimeout error' do
+        expect do
+          DoubleEntry::Locking.lock_accounts(@account_d, @account_e) {}
+        end.to raise_error(DoubleEntry::Locking::LockWaitTimeout)
+      end
+    end
+  end
+
   # sqlite cannot handle these cases so they don't run when DB=sqlite
   describe 'concurrent locking', :unless => ENV['DB'] == 'sqlite' do
     it 'allows multiple threads to lock at the same time' do

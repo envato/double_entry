@@ -41,6 +41,13 @@ module DoubleEntry
       else
         lock.perform_lock(&Proc.new)
       end
+
+    rescue ActiveRecord::StatementInvalid => exception
+      if exception.message =~ /lock wait timeout/i
+        raise LockWaitTimeout
+      else
+        raise
+      end
     end
 
     # Return the account balance record for the given account name if there's a
@@ -176,6 +183,10 @@ module DoubleEntry
 
     # Raised if things go horribly, horribly wrong. This should never happen.
     class LockDisaster < RuntimeError
+    end
+
+    # Raised if waiting for locks times out.
+    class LockWaitTimeout < RuntimeError
     end
   end
 end
