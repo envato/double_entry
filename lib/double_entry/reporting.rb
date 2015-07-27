@@ -8,6 +8,7 @@ require 'double_entry/reporting/week_range'
 require 'double_entry/reporting/month_range'
 require 'double_entry/reporting/year_range'
 require 'double_entry/reporting/line_aggregate'
+require 'double_entry/reporting/line_aggregate_filter'
 require 'double_entry/reporting/time_range_array'
 
 module DoubleEntry

@@ -1,0 +1,46 @@
+# encoding: utf-8
+module DoubleEntry
+  module Reporting
+    class LineAggregateFilter
+
+      def initialize(account, code, range, named_scopes)
+        @account = account
+        @code = code
+        @range = range
+        @named_scopes = named_scopes
+      end
+
+      def aggregate
+        collection = aggregate_collection.
+                     where(:account => account).
+                     where(:created_at => range.start..range.finish)
+        collection = collection.where(:code => code) if code
+
+        collection
+      end
+
+    private
+
+      attr_reader :account, :code, :range, :named_scopes
+
+      # a lot of the trickier reports will use filters defined
+      # in named_scopes to bring in data from other tables.
+      def aggregate_collection
+        if named_scopes
+          collection = DoubleEntry::Line
+          named_scopes.each do |named_scope|
+            if named_scope.is_a?(Hash)
+              method_name = named_scope.keys[0]
+              collection = collection.send(method_name, named_scope[method_name])
+            else
+              collection = collection.send(named_scope)
+            end
+          end
+          collection
+        else
+          DoubleEntry::Line
+        end
+      end
+    end
+  end
+end
