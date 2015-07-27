@@ -3,8 +3,8 @@ module DoubleEntry
   module Reporting
     class LineAggregate < ActiveRecord::Base
       def self.aggregate(function, account, code, range, named_scopes)
-        filter = LineAggregateFilter.new(account, code, range, named_scopes)
-        collection = filter.aggregate
+        collection_filter = LineAggregateFilter.new(account, code, range, named_scopes)
+        collection = collection_filter.filter
         collection.send(function, :amount)
       end
 

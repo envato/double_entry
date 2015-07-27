@@ -1,6 +1,6 @@
 # encoding: utf-8
 RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
-  describe '.aggregate' do
+  describe '.filter' do
     let(:function) { :sum }
     let(:account) { :account }
     let(:code) { :transfer_code }
@@ -34,7 +34,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       allow(lines_scope).to receive(:monkey_patched_method).and_return(lines_scope)
       allow(lines_scope).to receive(:monkey_patched_method_with_param).and_return(lines_scope)
 
-      filter.aggregate
+      filter.filter
     end
 
     context 'with named scopes specified' do

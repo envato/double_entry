@@ -8,7 +8,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
   describe '#aggregate' do
     let(:filter) do
       instance_double(DoubleEntry::Reporting::LineAggregateFilter,
-        :aggregate => line_relation
+        :filter => line_relation
       )
     end
     let(:line_relation) do
@@ -37,7 +37,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
     it 'applies the specified filters' do
       expect(DoubleEntry::Reporting::LineAggregateFilter).to have_received(:new).
         with(account, code, range, named_scopes)
-      expect(filter).to have_received(:aggregate)
+      expect(filter).to have_received(:filter)
     end
 
     it 'performs the aggregation on the filtered lines' do

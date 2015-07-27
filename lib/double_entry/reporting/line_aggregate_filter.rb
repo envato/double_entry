@@ -10,8 +10,16 @@ module DoubleEntry
         @named_scopes = named_scopes
       end
 
-      def aggregate
-        collection = aggregate_collection.
+      def filter
+        @collection ||= apply_filters
+      end
+
+    private
+
+      attr_reader :account, :code, :range, :named_scopes
+
+      def apply_filters
+        collection = filter_collection.
                      where(:account => account).
                      where(:created_at => range.start..range.finish)
         collection = collection.where(:code => code) if code
@@ -19,13 +27,9 @@ module DoubleEntry
         collection
       end
 
-    private
-
-      attr_reader :account, :code, :range, :named_scopes
-
       # a lot of the trickier reports will use filters defined
       # in named_scopes to bring in data from other tables.
-      def aggregate_collection
+      def filter_collection
         if named_scopes
           collection = DoubleEntry::Line
           named_scopes.each do |named_scope|
