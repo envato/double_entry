@@ -35,17 +35,17 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     context 'with named scopes specified' do
       let(:filter_criteria) do
         [
-          # an example of calling a named scope called with parameters
+          # an example of calling a named scope called with arguments
           {
-            :named_scope => {
-              :method => :ten_dollar_purchases_by_category,
-              :parameters => [:cat_videos, :cat_pictures]
+            :scope => {
+              :name => :ten_dollar_purchases_by_category,
+              :arguments => [:cat_videos, :cat_pictures]
             }
           },
-          # an example of calling a named scope with no parameters
+          # an example of calling a named scope with no arguments
           {
-            :named_scope => {
-              :method => :ten_dollar_purchases
+            :scope => {
+              :name => :ten_dollar_purchases
             }
           },
           # an example of providing metadata criteria to filter on
