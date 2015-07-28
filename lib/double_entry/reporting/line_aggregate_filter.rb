@@ -54,20 +54,18 @@ module DoubleEntry
       #     }
       #   ]
       def filter_collection
-        if filter_criteria
-          collection = DoubleEntry::Line
-          filter_criteria.each do |named_scope|
-            if named_scope.is_a?(Hash)
-              method_name = named_scope.keys[0]
-              collection = collection.send(method_name, named_scope[method_name])
-            else
-              collection = collection.send(named_scope)
-            end
+        collection = DoubleEntry::Line
+        if filter_criteria.present?
+          filter_criteria.each do |filter|
+            collection = filter_by_scope(collection, filter[:scope]) if filter[:scope].present?
           end
-          collection
-        else
-          DoubleEntry::Line
         end
+
+        collection
+      end
+
+      def filter_by_scope(collection, scope)
+        collection.public_send(scope[:name], *scope[:arguments])
       end
     end
   end
