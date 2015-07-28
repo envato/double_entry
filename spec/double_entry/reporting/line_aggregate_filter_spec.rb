@@ -4,12 +4,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     let(:function) { :sum }
     let(:account) { :account }
     let(:code) { :transfer_code }
-    let(:named_scopes) do
-      [
-        :monkey_patched_method,
-        { :monkey_patched_method_with_param => :parameter }
-      ]
-    end
+    let(:filter_criteria) { nil }
     let(:start) { Time.parse('2014-07-27 10:55:44 +1000') }
     let(:finish) { Time.parse('2015-07-27 10:55:44 +1000') }
     let(:range) do
@@ -23,7 +18,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
 
     subject(:filter) do
       DoubleEntry::Reporting::LineAggregateFilter.new(
-        account, code, range, named_scopes
+        account, code, range, filter_criteria
       )
     end
 
@@ -31,23 +26,42 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       stub_const('DoubleEntry::Line', lines_scope)
 
       allow(lines_scope).to receive(:where).and_return(lines_scope)
-      allow(lines_scope).to receive(:monkey_patched_method).and_return(lines_scope)
-      allow(lines_scope).to receive(:monkey_patched_method_with_param).and_return(lines_scope)
+      allow(lines_scope).to receive(:ten_dollar_purchases).and_return(lines_scope)
+      allow(lines_scope).to receive(:ten_dollar_purchases_by_category).and_return(lines_scope)
 
       filter.filter
     end
 
     context 'with named scopes specified' do
-      let(:named_scopes) do
+      let(:filter_criteria) do
         [
-          :monkey_patched_method,
-          { :monkey_patched_method_with_param => :parameter }
+          # an example of calling a named scope called with parameters
+          {
+            :named_scope => {
+              :method => :ten_dollar_purchases_by_category,
+              :parameters => [:cat_videos, :cat_pictures]
+            }
+          },
+          # an example of calling a named scope with no parameters
+          {
+            :named_scope => {
+              :method => :ten_dollar_purchases
+            }
+          },
+          # an example of providing metadata criteria to filter on
+          {
+            :metadata => {
+              :meme => :business_cat,
+              :meme => :grumpy_cat
+            }
+          }
         ]
       end
 
       it 'filters by all the named scopes provided' do
-        expect(DoubleEntry::Line).to have_received(:monkey_patched_method)
-        expect(DoubleEntry::Line).to have_received(:monkey_patched_method_with_param).with(:parameter)
+        expect(DoubleEntry::Line).to have_received(:ten_dollar_purchases)
+        expect(DoubleEntry::Line).to have_received(:ten_dollar_purchases_by_category).
+          with(:cat_videos, :cat_pictures)
       end
     end
 

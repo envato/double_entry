@@ -3,11 +3,11 @@ module DoubleEntry
   module Reporting
     class LineAggregateFilter
 
-      def initialize(account, code, range, named_scopes)
-        @account = account
-        @code = code
-        @range = range
-        @named_scopes = named_scopes
+      def initialize(account, code, range, filter_criteria)
+        @account         = account
+        @code            = code
+        @range           = range
+        @filter_criteria = filter_criteria
       end
 
       def filter
@@ -16,7 +16,7 @@ module DoubleEntry
 
     private
 
-      attr_reader :account, :code, :range, :named_scopes
+      attr_reader :account, :code, :range, :filter_criteria
 
       def apply_filters
         collection = filter_collection.
@@ -28,11 +28,35 @@ module DoubleEntry
       end
 
       # a lot of the trickier reports will use filters defined
-      # in named_scopes to bring in data from other tables.
+      # in filter_criteria to bring in data from other tables.
+      # For example:
+      #
+      #   filter_criteria = [
+      #     # an example of calling a named scope called with parameters
+      #     {
+      #       :named_scope => {
+      #         :method => :ten_dollar_purchases_by_category,
+      #         :parameters => [:cat_videos, :cat_pictures]
+      #       }
+      #     },
+      #     # an example of calling a named scope with no parameters
+      #     {
+      #       :named_scope => {
+      #         :method => :ten_dollar_purchases
+      #       }
+      #     },
+      #     # an example of providing metadata criteria to filter on
+      #     {
+      #       :metadata => {
+      #         :meme => :business_cat,
+      #         :meme => :grumpy_cat
+      #       }
+      #     }
+      #   ]
       def filter_collection
-        if named_scopes
+        if filter_criteria
           collection = DoubleEntry::Line
-          named_scopes.each do |named_scope|
+          filter_criteria.each do |named_scope|
             if named_scope.is_a?(Hash)
               method_name = named_scope.keys[0]
               collection = collection.send(method_name, named_scope[method_name])
