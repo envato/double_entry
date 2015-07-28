@@ -19,7 +19,7 @@ module DoubleEntry
       attr_reader :account, :code, :range, :filter_criteria
 
       def apply_filters
-        collection = filter_collection.
+        collection = apply_filter_criteria.
                      where(:account => account).
                      where(:created_at => range.start..range.finish)
         collection = collection.where(:code => code) if code
@@ -53,11 +53,13 @@ module DoubleEntry
       #       }
       #     }
       #   ]
-      def filter_collection
+      def apply_filter_criteria
         collection = DoubleEntry::Line
+
         if filter_criteria.present?
           filter_criteria.each do |filter|
             collection = filter_by_scope(collection, filter[:scope]) if filter[:scope].present?
+            collection = filter_by_metadata(collection, filter[:metadata])  if filter[:metadata].present?
           end
         end
 
@@ -67,6 +69,17 @@ module DoubleEntry
       def filter_by_scope(collection, scope)
         collection.public_send(scope[:name], *scope[:arguments])
       end
+
+      def filter_by_metadata(collection, metadata)
+        collection = collection.joins(:metadata)
+
+        metadata.each do |key, value|
+          collection = collection.where(:key => key, :value => value)
+        end
+
+        collection
+      end
+
     end
   end
 end

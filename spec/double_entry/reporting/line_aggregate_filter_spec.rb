@@ -26,6 +26,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       stub_const('DoubleEntry::Line', lines_scope)
 
       allow(lines_scope).to receive(:where).and_return(lines_scope)
+      allow(lines_scope).to receive(:joins).and_return(lines_scope)
       allow(lines_scope).to receive(:ten_dollar_purchases).and_return(lines_scope)
       allow(lines_scope).to receive(:ten_dollar_purchases_by_category).and_return(lines_scope)
 
@@ -52,16 +53,24 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
           {
             :metadata => {
               :meme => :business_cat,
-              :meme => :grumpy_cat
+              :attire => :business
             }
           }
         ]
       end
 
-      it 'filters by all the named scopes provided' do
+      it 'filters by all the scopes provided' do
         expect(DoubleEntry::Line).to have_received(:ten_dollar_purchases)
         expect(DoubleEntry::Line).to have_received(:ten_dollar_purchases_by_category).
           with(:cat_videos, :cat_pictures)
+      end
+
+      it 'filters by all the metadata provided' do
+        expect(DoubleEntry::Line).to have_received(:joins).with(:metadata)
+        expect(DoubleEntry::Line).to have_received(:where).
+          with(:key => :meme, :value => :business_cat)
+        expect(DoubleEntry::Line).to have_received(:where).
+          with(:key => :attire, :value => :business)
       end
     end
 
