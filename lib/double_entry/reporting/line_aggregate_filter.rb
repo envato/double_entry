@@ -7,7 +7,7 @@ module DoubleEntry
         @account         = account
         @code            = code
         @range           = range
-        @filter_criteria = filter_criteria
+        @filter_criteria = filter_criteria || []
       end
 
       def filter
@@ -53,16 +53,15 @@ module DoubleEntry
       #     }
       #   ]
       def apply_filter_criteria
-        collection = DoubleEntry::Line
-
-        if filter_criteria.present?
-          filter_criteria.each do |filter|
-            collection = filter_by_scope(collection, filter[:scope]) if filter[:scope].present?
-            collection = filter_by_metadata(collection, filter[:metadata])  if filter[:metadata].present?
+        filter_criteria.reduce(DoubleEntry::Line) do |collection, filter|
+          if filter[:scope].present?
+            filter_by_scope(collection, filter[:scope])
+          elsif filter[:metadata].present?
+            filter_by_metadata(collection, filter[:metadata])
+          else
+            collection
           end
         end
-
-        collection
       end
 
       def filter_by_scope(collection, scope)
@@ -70,13 +69,9 @@ module DoubleEntry
       end
 
       def filter_by_metadata(collection, metadata)
-        collection = collection.joins(:metadata)
-
-        metadata.each do |key, value|
-          collection = collection.where(metadata_table => { :key => key, :value => value })
+        metadata.reduce(collection.joins(:metadata)) do |collection, (key, value)|
+          collection.where(metadata_table => { :key => key, :value => value })
         end
-
-        collection
       end
 
       def metadata_table
