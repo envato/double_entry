@@ -33,11 +33,11 @@ module DoubleEntry
     # The transfers included in the calculation can be limited by time range
     # and provided custom filters.
     #
-    # @example Find the sum for all $10 :save transfers in all :checking accounts in the current month (assume the date is January 30, 2014).
+    # @example Find the sum for all $10 :save transfers in all :checking accounts in the current month, made by Australian users (assume the date is January 30, 2014).
     #   time_range = DoubleEntry::Reporting::TimeRange.make(2014, 1)
     #
     #   DoubleEntry::Line.class_eval do
-    #     scope :ten_dollar_transfers, -> { where(:amount => 10_00) }
+    #     scope :specific_transfer_amount, ->(amount) { where(:amount => amount.fractional) }
     #   end
     #
     #   DoubleEntry::Reporting.aggregate(
@@ -45,7 +45,15 @@ module DoubleEntry
     #     :checking,
     #     :save,
     #     :range  => time_range,
-    #     :filter => [ :ten_dollar_transfers ],
+    #     :filter => [
+    #       :scope    => {
+    #         :name      => :specific_transfer_amount,
+    #         :arguments => [Money.new(10_00)]
+    #       },
+    #       :metadata => {
+    #         :user_location => 'AU'
+    #       },
+    #     ]
     #   )
     # @param [Symbol] function The function to perform on the set of transfers.
     #   Valid functions are :sum, :count, and :average
@@ -56,12 +64,15 @@ module DoubleEntry
     #   transfer configuration.
     # @option options :range [DoubleEntry::Reporting::TimeRange] Only include
     #   transfers in the given time range in the calculation.
-    # @option options :filter [Array<Symbol>, Array<Hash<Symbol, Object>>]
-    #   A custom filter to apply before performing the aggregate calculation.
-    #   Currently, filters must be monkey patched as scopes into the
-    #   DoubleEntry::Line class in order to be used as filters, as the example
-    #   shows. If the filter requires a parameter, it must be given in a Hash,
-    #   otherwise pass an array with the symbol names for the defined scopes.
+    # @option options :filter [Array<Hash<Symbol,Hash<Symbol,Object>>>]
+    #   An array of custom filter to apply before performing the aggregate
+    #   calculation. Filters can be either scope filters, where the name must be
+    #   specified, or they can be metadata filters, where the key/value pair to
+    #   match on must be specified.
+    #   Scope filters must be monkey patched as scopes into the DoubleEntry::Line
+    #   class, as the example above shows. Scope filters may also take a list of
+    #   arguments to pass into the monkey patched scope, and, if provided, must
+    #   be contained within an array.
     # @return [Money, Fixnum] Returns a Money object for :sum and :average
     #   calculations, or a Fixnum for :count calculations.
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
