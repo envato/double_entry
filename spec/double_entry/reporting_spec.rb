@@ -77,9 +77,9 @@ RSpec.describe DoubleEntry::Reporting do
       DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => cash,    :code => :spend)
       DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,    :code => :spend)
 
-      first_transfer         = DoubleEntry::Line.first
-      second_transfer        = DoubleEntry::Line.second
-      last_transfer          = DoubleEntry::Line.last
+      first_transfer         = DoubleEntry::Line.all[0]
+      second_transfer        = DoubleEntry::Line.all[2]
+      last_transfer          = DoubleEntry::Line.all[14]
       DoubleEntry::LineMetadata.create!(:line => first_transfer,          :key => :reason,   :value => :payday)
       DoubleEntry::LineMetadata.create!(:line => first_transfer.partner,  :key => :reason,   :value => :payday)
       DoubleEntry::LineMetadata.create!(:line => second_transfer,         :key => :reason,   :value => :payday)
