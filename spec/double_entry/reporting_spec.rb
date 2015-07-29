@@ -42,4 +42,163 @@ RSpec.describe DoubleEntry::Reporting do
       end
     end
   end
+
+  describe '::aggregate' do
+    before do
+      # get rid of "helpful" predefined config
+      @config_accounts = DoubleEntry.configuration.accounts
+      @config_transfers = DoubleEntry.configuration.transfers
+      DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
+      DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+
+      DoubleEntry.configure do |config|
+        config.define_accounts do |accounts|
+          accounts.define(:identifier => :savings)
+          accounts.define(:identifier => :cash)
+          accounts.define(:identifier => :credit)
+        end
+
+        config.define_transfers do |transfers|
+          transfers.define(:from => :savings, :to => :cash,    :code => :spend)
+          transfers.define(:from => :cash,    :to => :savings, :code => :save)
+          transfers.define(:from => :cash,    :to => :credit,  :code => :bill)
+        end
+      end
+
+      cash    = DoubleEntry.account(:cash)
+      savings = DoubleEntry.account(:savings)
+      credit  = DoubleEntry.account(:credit)
+      DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => savings, :code => :save)
+      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings, :code => :save)
+      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => credit,  :code => :bill)
+      DoubleEntry.transfer(Money.new(10_00), :from => savings, :to => cash,    :code => :spend)
+
+      first_transfer         = DoubleEntry::Line.first
+      first_transfer_partner = first_transfer.partner
+      last_transfer          = DoubleEntry::Line.last
+      last_transfer_partner  = last_transfer.partner
+      DoubleEntry::LineMetadata.create!(:line => first_transfer,         :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => first_transfer,         :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => last_transfer_partner,  :key => :category, :value => :entertainment)
+      DoubleEntry::LineMetadata.create!(:line => last_transfer_partner,  :key => :category, :value => :entertainment)
+    end
+
+    after do
+      # restore "helpful" predefined config
+      DoubleEntry.configuration.accounts = @config_accounts
+      DoubleEntry.configuration.transfers = @config_transfers
+    end
+
+    describe 'filter solely on transaction identifiers and time' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :save }
+      let(:range) { DoubleEntry::Reporting::YearRange.current }
+
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate(
+          function, account, code,
+          { :range => range }
+        )
+      end
+
+      specify 'Total attempted to save' do
+        expect(aggregate).to eq(Money.new(40_00))
+      end
+    end
+
+    describe 'filter by named scope that does not take arguments' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :save }
+      let(:range) { DoubleEntry::Reporting::YearRange.current }
+
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate(
+          function, account, code,
+          {
+            :range => range,
+            :filter => [
+              :scope => {
+                :name => :ten_dollar_transfers
+              }
+            ]
+          }
+        )
+      end
+
+      before do
+        DoubleEntry::Line.class_eval do
+          scope :ten_dollar_transfers, -> do
+            where(:amount => Money.new(10_00).fractional)
+          end
+        end
+      end
+
+      specify 'Total amount of $10 transfers attempted to save' do
+        expect(aggregate).to eq(Money.new(10_00))
+      end
+    end
+
+    describe 'filter by named scope that takes arguments' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :save }
+      let(:range) { DoubleEntry::Reporting::YearRange.current }
+
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate(
+          function, account, code,
+          {
+            :range => range,
+            :filter => [
+              :scope => {
+                :name => :specific_transfer_amount,
+                :arguments => [ Money.new(30_00) ]
+              }
+            ]
+          }
+        )
+      end
+
+      before do
+        DoubleEntry::Line.class_eval do
+          scope :specific_transfer_amount, ->(amount) do
+            where(:amount => amount.fractional)
+          end
+        end
+      end
+
+      specify 'Total amount of transfers of $30 attempted to save' do
+        expect(aggregate).to eq(Money.new(30_00))
+      end
+    end
+
+    describe 'filter by metadata' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :save }
+      let(:range) { DoubleEntry::Reporting::YearRange.current }
+
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate(
+          function, account, code,
+          {
+            :range => range,
+            :filter => [
+              :metadata => {
+                :key => :reason,
+                :value => :payday
+              }
+            ]
+          }
+        )
+      end
+
+      specify 'Total amount of transfers saved because payday' do
+        expect(aggregate).to eq(Money.new(30_00))
+      end
+    end
+
+  end
 end
