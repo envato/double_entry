@@ -68,17 +68,24 @@ RSpec.describe DoubleEntry::Reporting do
       cash    = DoubleEntry.account(:cash)
       savings = DoubleEntry.account(:savings)
       credit  = DoubleEntry.account(:credit)
-      DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => savings, :code => :save)
       DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings, :code => :save)
-      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => credit,  :code => :bill)
-      DoubleEntry.transfer(Money.new(10_00), :from => savings, :to => cash,    :code => :spend)
+      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings, :code => :save)
+      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings, :code => :save)
+      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings, :code => :save)
+      DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => credit,  :code => :bill)
+      DoubleEntry.transfer(Money.new(40_00), :from => cash,    :to => credit,  :code => :bill)
+      DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => cash,    :code => :spend)
+      DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,    :code => :spend)
 
       first_transfer         = DoubleEntry::Line.first
+      second_transfer        = DoubleEntry::Line.second
       last_transfer          = DoubleEntry::Line.last
-      DoubleEntry::LineMetadata.create!(:line => first_transfer,         :key => :reason,   :value => :payday)
-      DoubleEntry::LineMetadata.create!(:line => first_transfer.partner, :key => :reason,   :value => :payday)
-      DoubleEntry::LineMetadata.create!(:line => last_transfer,          :key => :category, :value => :entertainment)
-      DoubleEntry::LineMetadata.create!(:line => last_transfer.partner,  :key => :category, :value => :entertainment)
+      DoubleEntry::LineMetadata.create!(:line => first_transfer,          :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => first_transfer.partner,  :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => second_transfer,         :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => second_transfer.partner, :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => last_transfer,           :key => :category, :value => :entertainment)
+      DoubleEntry::LineMetadata.create!(:line => last_transfer.partner,   :key => :category, :value => :entertainment)
     end
 
     after do
@@ -98,7 +105,7 @@ RSpec.describe DoubleEntry::Reporting do
       end
 
       specify 'Total attempted to save' do
-        expect(aggregate).to eq(Money.new(40_00))
+        expect(aggregate).to eq(Money.new(60_00))
       end
     end
 
@@ -127,7 +134,7 @@ RSpec.describe DoubleEntry::Reporting do
       end
 
       specify 'Total amount of $10 transfers attempted to save' do
-        expect(aggregate).to eq(Money.new(10_00))
+        expect(aggregate).to eq(Money.new(20_00))
       end
     end
 
@@ -144,7 +151,7 @@ RSpec.describe DoubleEntry::Reporting do
           :filter => [
             :scope => {
               :name      => :specific_transfer_amount,
-              :arguments => [Money.new(30_00)],
+              :arguments => [Money.new(20_00)],
             },
           ]
         )
@@ -156,8 +163,8 @@ RSpec.describe DoubleEntry::Reporting do
         end
       end
 
-      specify 'Total amount of transfers of $30 attempted to save' do
-        expect(aggregate).to eq(Money.new(30_00))
+      specify 'Total amount of transfers of $20 attempted to save' do
+        expect(aggregate).to eq(Money.new(40_00))
       end
     end
 
@@ -180,7 +187,7 @@ RSpec.describe DoubleEntry::Reporting do
       end
 
       specify 'Total amount of transfers saved because payday' do
-        expect(aggregate).to eq(Money.new(30_00))
+        expect(aggregate).to eq(Money.new(20_00))
       end
     end
   end
