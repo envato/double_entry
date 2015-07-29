@@ -6,11 +6,9 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
   end
 
   describe '#aggregate' do
+    let(:line_relation) { spy }
     let(:filter) do
       instance_double(DoubleEntry::Reporting::LineAggregateFilter, :filter => line_relation)
-    end
-    let(:line_relation) do
-      instance_double(DoubleEntry::Line::ActiveRecord_Relation, :sum => spy)
     end
 
     let(:function) { :sum }
