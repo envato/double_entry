@@ -9,6 +9,13 @@ module DoubleEntry
       let(:expected_monthly_average) do
         (Money.new(20_00) + Money.new(40_00) + Money.new(50_00) + Money.new(40_00) + Money.new(50_00)) / 5
       end
+      let(:filter) do
+        [
+          :scope => {
+            :name => :test_filter
+          }
+        ]
+      end
 
       before do
         # Thursday
@@ -210,32 +217,32 @@ module DoubleEntry
 
         it 'saves filtered aggregations' do
           expect do
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => [:test_filter]).amount
+            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
           end.to change { LineAggregate.count }.by 1
         end
 
         it 'saves filtered aggregation only once for a range' do
           expect do
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => [:test_filter]).amount
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => [:test_filter]).amount
+            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
+            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
           end.to change { LineAggregate.count }.by 1
         end
 
         it 'saves filtered aggregations and non filtered aggregations separately' do
           expect do
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => [:test_filter]).amount
+            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
             Aggregate.new(:sum, :savings, :bonus, :range => range).amount
           end.to change { LineAggregate.count }.by 2
         end
 
         it 'loads the correct saved aggregation' do
           # cache the results for filtered and unfiltered aggregations
-          Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => [:test_filter]).amount
+          Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
           Aggregate.new(:sum, :savings, :bonus, :range => range).amount
 
           # ensure a second call loads the correct cached value
           expect(
-            Aggregate.new(:sum, :savings, :bonus, :range  => range, :filter => [:test_filter]).formatted_amount,
+            Aggregate.new(:sum, :savings, :bonus, :range  => range, :filter => filter).formatted_amount,
           ).to eq Money.new(10_00)
           expect(
             Aggregate.new(:sum, :savings, :bonus, :range  => range).formatted_amount,
