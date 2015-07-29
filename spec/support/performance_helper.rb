@@ -8,10 +8,10 @@ module PerformanceHelper
 
   def stop_profiling(profile_name = nil)
     result = RubyProf.stop
-    unless ENV.fetch("CI", false)
-      puts "Time: #{sprintf("%#.3g", total_time(result))}s"
+    unless ENV.fetch('CI', false)
+      puts "Time: #{format('%#.3g', total_time(result))}s"
       if profile_name
-        outdir = "./profiles"
+        outdir = './profiles'
         Dir.mkdir(outdir) unless Dir.exist?(outdir)
         printer = RubyProf::MultiPrinter.new(result)
         printer.print(:path => outdir, :profile => profile_name)

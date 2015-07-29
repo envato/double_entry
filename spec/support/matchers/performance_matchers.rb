@@ -13,7 +13,7 @@
 
 RSpec::Matchers.define :be_faster_than do |seconds_in_environments|
   match do |actual|
-    if ENV.fetch("CI", false)
+    if ENV.fetch('CI', false)
       @expected = seconds_in_environments[:ci]
     else
       @expected = seconds_in_environments[:local]
@@ -24,5 +24,4 @@ RSpec::Matchers.define :be_faster_than do |seconds_in_environments|
   failure_message do |actual|
     "expected time taken to be faster than #{@expected} seconds but was #{actual} seconds"
   end
-
 end

@@ -42,6 +42,9 @@ Style/ModuleFunction:
 Style/ParallelAssignment:
   Enabled: false
 
+Style/SingleLineBlockParams:
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 47 #15
 
