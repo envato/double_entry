@@ -63,4 +63,5 @@ POSTINSTALLMESSAGE
   gem.add_development_dependency 'machinist'
   gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'rubocop', '~> 0.32.0'
+  gem.add_development_dependency 'ruby-prof'
 end
