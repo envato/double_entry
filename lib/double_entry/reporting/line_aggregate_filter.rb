@@ -45,11 +45,10 @@ module DoubleEntry
       #         :name => :ten_dollar_purchases
       #       }
       #     },
-      #     # an example of providing metadata criteria to filter on
+      #     # an example of providing a single metadatum criteria to filter on
       #     {
       #       :metadata => {
-      #         :meme => :business_cat,
-      #         :meme => :grumpy_cat
+      #         :meme => :business_cat
       #       }
       #     }
       #   ]
@@ -74,12 +73,15 @@ module DoubleEntry
         collection = collection.joins(:metadata)
 
         metadata.each do |key, value|
-          collection = collection.where(:key => key, :value => value)
+          collection = collection.where(metadata_table => { :key => key, :value => value })
         end
 
         collection
       end
 
+      def metadata_table
+        DoubleEntry::LineMetadata.table_name.to_sym
+      end
     end
   end
 end

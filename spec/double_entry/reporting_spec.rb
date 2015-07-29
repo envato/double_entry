@@ -74,13 +74,11 @@ RSpec.describe DoubleEntry::Reporting do
       DoubleEntry.transfer(Money.new(10_00), :from => savings, :to => cash,    :code => :spend)
 
       first_transfer         = DoubleEntry::Line.first
-      first_transfer_partner = first_transfer.partner
       last_transfer          = DoubleEntry::Line.last
-      last_transfer_partner  = last_transfer.partner
       DoubleEntry::LineMetadata.create!(:line => first_transfer,         :key => :reason,   :value => :payday)
-      DoubleEntry::LineMetadata.create!(:line => first_transfer,         :key => :reason,   :value => :payday)
-      DoubleEntry::LineMetadata.create!(:line => last_transfer_partner,  :key => :category, :value => :entertainment)
-      DoubleEntry::LineMetadata.create!(:line => last_transfer_partner,  :key => :category, :value => :entertainment)
+      DoubleEntry::LineMetadata.create!(:line => first_transfer.partner, :key => :reason,   :value => :payday)
+      DoubleEntry::LineMetadata.create!(:line => last_transfer,          :key => :category, :value => :entertainment)
+      DoubleEntry::LineMetadata.create!(:line => last_transfer.partner,  :key => :category, :value => :entertainment)
     end
 
     after do
@@ -93,7 +91,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:function) { :sum }
       let(:account) { :savings }
       let(:code) { :save }
-      let(:range) { DoubleEntry::Reporting::YearRange.current }
+      let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
@@ -111,13 +109,13 @@ RSpec.describe DoubleEntry::Reporting do
       let(:function) { :sum }
       let(:account) { :savings }
       let(:code) { :save }
-      let(:range) { DoubleEntry::Reporting::YearRange.current }
+      let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
           function, account, code,
           {
-            :range => range,
+            :range  => range,
             :filter => [
               :scope => {
                 :name => :ten_dollar_transfers
@@ -144,16 +142,16 @@ RSpec.describe DoubleEntry::Reporting do
       let(:function) { :sum }
       let(:account) { :savings }
       let(:code) { :save }
-      let(:range) { DoubleEntry::Reporting::YearRange.current }
+      let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
           function, account, code,
           {
-            :range => range,
+            :range  => range,
             :filter => [
               :scope => {
-                :name => :specific_transfer_amount,
+                :name      => :specific_transfer_amount,
                 :arguments => [ Money.new(30_00) ]
               }
             ]
@@ -178,17 +176,16 @@ RSpec.describe DoubleEntry::Reporting do
       let(:function) { :sum }
       let(:account) { :savings }
       let(:code) { :save }
-      let(:range) { DoubleEntry::Reporting::YearRange.current }
+      let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
           function, account, code,
           {
-            :range => range,
+            :range  => range,
             :filter => [
               :metadata => {
-                :key => :reason,
-                :value => :payday
+                :reason => :payday
               }
             ]
           }

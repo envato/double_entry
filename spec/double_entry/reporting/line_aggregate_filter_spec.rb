@@ -25,6 +25,8 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     before do
       stub_const('DoubleEntry::Line', lines_scope)
 
+      allow(DoubleEntry::LineMetadata).to receive(:table_name).and_return("double_entry_line_metadata")
+
       allow(lines_scope).to receive(:where).and_return(lines_scope)
       allow(lines_scope).to receive(:joins).and_return(lines_scope)
       allow(lines_scope).to receive(:ten_dollar_purchases).and_return(lines_scope)
@@ -49,11 +51,10 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
               :name => :ten_dollar_purchases
             }
           },
-          # an example of providing metadata criteria to filter on
+          # an example of providing a single metadatum criteria to filter on
           {
             :metadata => {
-              :meme => :business_cat,
-              :attire => :business
+              :meme => :business_cat
             }
           }
         ]
@@ -68,9 +69,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       it 'filters by all the metadata provided' do
         expect(DoubleEntry::Line).to have_received(:joins).with(:metadata)
         expect(DoubleEntry::Line).to have_received(:where).
-          with(:key => :meme, :value => :business_cat)
-        expect(DoubleEntry::Line).to have_received(:where).
-          with(:key => :attire, :value => :business)
+          with(:double_entry_line_metadata => { :key => :meme, :value => :business_cat })
       end
     end
 
