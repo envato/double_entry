@@ -9,9 +9,6 @@
 /test/version_tmp/
 /tmp/
 
-## IDE
-/.idea/
-
 ## Performance profiling
 /profiles/
 

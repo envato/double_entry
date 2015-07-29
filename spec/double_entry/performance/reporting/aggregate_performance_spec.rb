@@ -4,44 +4,22 @@ module DoubleEntry
       include PerformanceHelper
       let(:user) { User.make! }
 
-      context '23,520 transfers spread out over 8 years' do
-        before do # setup takes about 191s
-          (2008..2015).each do |year|
-            (1..12).each do |month|
-              (1..28).each do |day|
-                Timecop.freeze Time.local(year, month, day) do
-                  10.times { perform_deposit user, 1_00 }
-                  # TODO: perform_deposit_with_metadata
-                end
-              end
-            end
-          end
-        end
-
-        it 'should calculate monthly all_time ranges quickly' do
-          start_profiling
-          (2008..2015).each do |year|
-            (1..12).each do |month|
-              Reporting.aggregate(
-                :sum, :savings, :bonus,
-                :range => TimeRange.make(:year => year, :month => month, :range_type => :all_time)
-              )
-            end
-          end
-          result = stop_profiling('aggregate')
-          expect(total_time(result)).to be_faster_than(:local => 2.5, :ci => 2.5)
-        end
-      end
-
-      context '23,520 transfers in a single day' do
-        before do # setup takes about 170s
+      context '1000 transfers in a single day' do
+        # Surprisingly, the number of transfers makes no difference to the time taken to aggregate them. Some sample results:
+        # 20,000 => 524ms
+        # 10,000 => 573ms
+        # 1,000  => 486ms
+        # 100    => 608ms
+        # 10     => 509ms
+        # 1      => 473ms
+        before do
           Timecop.freeze Time.local(2015, 06, 30) do
-            23_520.times { perform_deposit user, 1_00 }
+            1000.times { perform_deposit user, 1_00 }
             # TODO: perform_deposit_with_metadata
           end
         end
 
-        it 'should calculate monthly all_time ranges quickly' do
+        it 'calculates monthly all_time ranges quickly' do
           start_profiling
           # TODO: aggregate with metadata filter
           Reporting.aggregate(
@@ -49,7 +27,7 @@ module DoubleEntry
             :range => TimeRange.make(:year => 2015, :month => 06, :range_type => :all_time)
           )
           result = stop_profiling('aggregate')
-          expect(total_time(result)).to be_faster_than(:local => 0.1, :ci => 0.1)
+          expect(total_time(result)).to be_faster_than(:local => 0.067, :ci => 0)
         end
       end
     end
