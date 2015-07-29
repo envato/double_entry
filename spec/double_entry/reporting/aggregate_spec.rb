@@ -12,8 +12,8 @@ module DoubleEntry
       let(:filter) do
         [
           :scope => {
-            :name => :test_filter
-          }
+            :name => :test_filter,
+          },
         ]
       end
 

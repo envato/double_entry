@@ -2,7 +2,6 @@
 module DoubleEntry
   module Reporting
     class LineAggregateFilter
-
       def initialize(account, code, range, filter_criteria)
         @account         = account
         @code            = code
@@ -69,8 +68,8 @@ module DoubleEntry
       end
 
       def filter_by_metadata(collection, metadata)
-        metadata.reduce(collection.joins(:metadata)) do |collection, (key, value)|
-          collection.where(metadata_table => { :key => key, :value => value })
+        metadata.reduce(collection.joins(:metadata)) do |filtered_collection, (key, value)|
+          filtered_collection.where(metadata_table => { :key => key, :value => value })
         end
       end
 

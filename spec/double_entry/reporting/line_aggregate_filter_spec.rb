@@ -8,24 +8,19 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     let(:start) { Time.parse('2014-07-27 10:55:44 +1000') }
     let(:finish) { Time.parse('2015-07-27 10:55:44 +1000') }
     let(:range) do
-      instance_double(DoubleEntry::Reporting::MonthRange,
-        :start => start,
-        :finish => finish,
-      )
+      instance_double(DoubleEntry::Reporting::MonthRange, :start  => start, :finish => finish)
     end
 
     let(:lines_scope) { spy(DoubleEntry::Line) }
 
     subject(:filter) do
-      DoubleEntry::Reporting::LineAggregateFilter.new(
-        account, code, range, filter_criteria
-      )
+      DoubleEntry::Reporting::LineAggregateFilter.new(account, code, range, filter_criteria)
     end
 
     before do
       stub_const('DoubleEntry::Line', lines_scope)
 
-      allow(DoubleEntry::LineMetadata).to receive(:table_name).and_return("double_entry_line_metadata")
+      allow(DoubleEntry::LineMetadata).to receive(:table_name).and_return('double_entry_line_metadata')
 
       allow(lines_scope).to receive(:where).and_return(lines_scope)
       allow(lines_scope).to receive(:joins).and_return(lines_scope)
@@ -42,21 +37,21 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
           {
             :scope => {
               :name => :ten_dollar_purchases_by_category,
-              :arguments => [:cat_videos, :cat_pictures]
-            }
+              :arguments => [:cat_videos, :cat_pictures],
+            },
           },
           # an example of calling a named scope with no arguments
           {
             :scope => {
-              :name => :ten_dollar_purchases
-            }
+              :name => :ten_dollar_purchases,
+            },
           },
           # an example of providing a single metadatum criteria to filter on
           {
             :metadata => {
-              :meme => :business_cat
-            }
-          }
+              :meme => :business_cat,
+            },
+          },
         ]
       end
 
@@ -91,6 +86,5 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
         expect(DoubleEntry::Line).to have_received(:where).with(:created_at => start..finish)
       end
     end
-
   end
 end

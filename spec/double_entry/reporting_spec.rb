@@ -94,10 +94,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(
-          function, account, code,
-          { :range => range }
-        )
+        DoubleEntry::Reporting.aggregate(function, account, code, :range => range)
       end
 
       specify 'Total attempted to save' do
@@ -114,22 +111,18 @@ RSpec.describe DoubleEntry::Reporting do
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
           function, account, code,
-          {
-            :range  => range,
-            :filter => [
-              :scope => {
-                :name => :ten_dollar_transfers
-              }
-            ]
-          }
+          :range  => range,
+          :filter => [
+            :scope => {
+              :name => :ten_dollar_transfers,
+            },
+          ]
         )
       end
 
       before do
         DoubleEntry::Line.class_eval do
-          scope :ten_dollar_transfers, -> do
-            where(:amount => Money.new(10_00).fractional)
-          end
+          scope :ten_dollar_transfers, -> { where(:amount => Money.new(10_00).fractional) }
         end
       end
 
@@ -147,23 +140,19 @@ RSpec.describe DoubleEntry::Reporting do
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
           function, account, code,
-          {
-            :range  => range,
-            :filter => [
-              :scope => {
-                :name      => :specific_transfer_amount,
-                :arguments => [ Money.new(30_00) ]
-              }
-            ]
-          }
+          :range  => range,
+          :filter => [
+            :scope => {
+              :name      => :specific_transfer_amount,
+              :arguments => [Money.new(30_00)],
+            },
+          ]
         )
       end
 
       before do
         DoubleEntry::Line.class_eval do
-          scope :specific_transfer_amount, ->(amount) do
-            where(:amount => amount.fractional)
-          end
+          scope :specific_transfer_amount, ->(amount) { where(:amount => amount.fractional) }
         end
       end
 
@@ -181,14 +170,12 @@ RSpec.describe DoubleEntry::Reporting do
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
           function, account, code,
-          {
-            :range  => range,
-            :filter => [
-              :metadata => {
-                :reason => :payday
-              }
-            ]
-          }
+          :range  => range,
+          :filter => [
+            :metadata => {
+              :reason => :payday,
+            },
+          ]
         )
       end
 
@@ -196,6 +183,5 @@ RSpec.describe DoubleEntry::Reporting do
         expect(aggregate).to eq(Money.new(30_00))
       end
     end
-
   end
 end
