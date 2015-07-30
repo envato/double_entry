@@ -22,6 +22,6 @@ RSpec::Matchers.define :be_faster_than do |seconds_in_environments|
   end
 
   failure_message do |actual|
-    "expected time taken to be faster than #{format('%#.3g',@expected)} seconds but was #{format('%#.3g',actual)} seconds"
+    "expected time taken to be faster than #{format('%#.3g', @expected)} seconds but was #{format('%#.3g', actual)} seconds"
   end
 end
