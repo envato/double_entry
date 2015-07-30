@@ -9,6 +9,9 @@
 /test/version_tmp/
 /tmp/
 
+## Performance profiling
+/profiles/
+
 ## Documentation cache and generated files:
 /.yardoc/
 /_yardoc/

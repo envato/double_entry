@@ -69,4 +69,5 @@ POSTINSTALLMESSAGE
   gem.add_development_dependency 'pry-byebug'         if RUBY_VERSION >= '2.0.0'
   gem.add_development_dependency 'pry-stack_explorer'
   gem.add_development_dependency 'awesome_print'
+  gem.add_development_dependency 'ruby-prof'
 end
