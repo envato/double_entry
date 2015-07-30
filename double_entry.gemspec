@@ -63,4 +63,10 @@ POSTINSTALLMESSAGE
   gem.add_development_dependency 'machinist'
   gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'rubocop', '~> 0.32.0'
+
+  gem.add_development_dependency 'pry'
+  gem.add_development_dependency 'pry-doc'
+  gem.add_development_dependency 'pry-byebug'         if RUBY_VERSION >= '2.0.0'
+  gem.add_development_dependency 'pry-stack_explorer'
+  gem.add_development_dependency 'awesome_print'
 end
