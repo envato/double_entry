@@ -56,6 +56,7 @@ module DoubleEntry
   #
   class Line < ActiveRecord::Base
     belongs_to :detail, :polymorphic => true
+    has_many :metadata, :class_name => 'DoubleEntry::LineMetadata'
 
     def amount
       self[:amount] && Money.new(self[:amount], currency)

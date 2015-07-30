@@ -15,6 +15,7 @@ require 'double_entry/balance_calculator'
 require 'double_entry/locking'
 require 'double_entry/transfer'
 require 'double_entry/line'
+require 'double_entry/line_metadata'
 require 'double_entry/reporting'
 require 'double_entry/validation'
 
