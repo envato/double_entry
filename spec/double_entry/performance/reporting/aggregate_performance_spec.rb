@@ -27,7 +27,7 @@ module DoubleEntry
             :range => TimeRange.make(:year => 2015, :month => 06, :range_type => :all_time)
           )
           result = stop_profiling('aggregate')
-          expect(total_time(result)).to be_faster_than(:local => 0.067, :ci => 0)
+          expect(total_time(result)).to be_faster_than(:local => 0.610, :ci => 0.800)
         end
       end
     end
