@@ -58,7 +58,8 @@ Metrics/MethodLength:
   Max: 30 # 10
 
 Metrics/ModuleLength:
-  Max: 221 #100
+  Exclude:
+    - spec/**/*
 
 Metrics/PerceivedComplexity:
   Max: 13 #7
