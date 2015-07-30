@@ -9,7 +9,7 @@ module DoubleEntry
         # TODO: transfers with metadata
         1000.times { perform_deposit user, 1_00 }
         result = stop_profiling('transfers')
-        expect(total_time(result)).to be_faster_than(:local => 60, :ci => 90)
+        expect(total_time(result)).to be_faster_than(:local => 60, :ci => 100)
       end
     end
   end
