@@ -70,13 +70,13 @@ module DoubleEntry
         else
           zero = formatted_amount(0)
           result = (1..12).inject(zero) do |total, month|
-            total + Reporting.aggregate(
+            total + Aggregate.new(
               function,
               account,
               code,
               MonthRange.new(:year => range.year, :month => month),
               :filter => filter,
-            )
+            ).formatted_amount
           end
           result.is_a?(Money) ? result.cents : result
         end
@@ -85,8 +85,8 @@ module DoubleEntry
       def calculate_yearly_average
         # need this seperate function, because an average of averages is not the correct average
         year_range = YearRange.new(:year => range.year)
-        sum = Reporting.aggregate(:sum, account, code, year_range, :filter => filter)
-        count = Reporting.aggregate(:count, account, code, year_range, :filter => filter)
+        sum = Aggregate.new(:sum, account, code, year_range, :filter => filter).formatted_amount
+        count = Aggregate.new(:count, account, code, year_range, :filter => filter).formatted_amount
         (count == 0) ? 0 : (sum / count).cents
       end
 
