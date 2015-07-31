@@ -20,9 +20,7 @@ module DoubleEntry
         from_acct = options[:from]
         to_acct = options[:to]
         code = options[:code]
-        detail = options[:detail]
-        metadata = options[:metadata]
-        transfers.find!(from_acct, to_acct, code).process(amount, from_acct, to_acct, code, detail, metadata)
+        transfers.find!(from_acct, to_acct, code).process(amount, options)
       end
     end
 
@@ -73,7 +71,12 @@ module DoubleEntry
       end
     end
 
-    def process(amount, from_acct, to_acct, code, detail, metadata)
+    def process(amount, options)
+      from_acct = options[:from]
+      to_acct = options[:to]
+      code = options[:code]
+      detail = options[:detail]
+      metadata = options[:metadata]
       if from_acct.scope_identity == to_acct.scope_identity && from_acct.identifier == to_acct.identifier
         fail TransferNotAllowed, 'from_acct and to_acct are identical'
       end
@@ -107,7 +110,7 @@ module DoubleEntry
       debit.partner_id = credit.id
       debit.save!
       credit.update_attribute :partner_id, debit.id
-      return credit, debit
+      return credit, debit # rubocop:disable Style/RedundantReturn
     end
 
     def create_line_metadata(credit, debit, metadata)
