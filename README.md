@@ -124,6 +124,34 @@ The possible transfers, and their codes, should be defined in the configuration.
 
 See **DoubleEntry::Transfer** for more info.
 
+### Metadata
+
+You may associate arbitrary metadata with transfers, for example:
+
+```ruby
+DoubleEntry.transfer(
+  Money.new(20_00),
+  :from => one_account,
+  :to   => another_account,
+  :code => :a_business_code_for_this_type_of_transfer,
+  :metadata => {:key1 => 'value 1', :key2 => 'value 2'},
+)
+```
+
+Metadata may be used for filtering lines for aggregation, for example:
+
+```ruby
+range = DoubleEntry::Reporting::MonthRange.new(:year => 2014, :month => 7)
+DoubleEntry::Reporting.aggregate(
+  :sum, one_account, :a_business_code_for_this_type_of_transfer,
+  :range  => range,
+  :filter => [
+    :metadata => {
+      :key1 => 'value 1',
+    },
+  ]
+)
+```
 
 ### Locking
 
@@ -159,6 +187,9 @@ See **DoubleEntry::Line** for more info.
 
 AccountBalance records cache the current balance for each Account, and are used
 to perform database level locking.
+
+Transfer metadata is stored as key/value pairs associated with both the source and destination lines of the transfer.
+See **DoubleEntry::LineMetadata** for more info.
 
 ## Configuration
 

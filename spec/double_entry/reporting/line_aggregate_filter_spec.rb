@@ -49,7 +49,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
           # an example of providing a single metadatum criteria to filter on
           {
             :metadata => {
-              :meme => :business_cat,
+              :meme => 'business_cat',
             },
           },
         ]
@@ -64,7 +64,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       it 'filters by all the metadata provided' do
         expect(DoubleEntry::Line).to have_received(:joins).with(:metadata)
         expect(DoubleEntry::Line).to have_received(:where).
-          with(:double_entry_line_metadata => { :key => :meme, :value => :business_cat })
+          with(:double_entry_line_metadata => { :key => :meme, :value => 'business_cat' })
       end
     end
 
