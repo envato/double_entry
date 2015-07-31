@@ -17,12 +17,12 @@ module DoubleEntry
       # @api private
       def transfer(amount, options = {})
         fail TransferIsNegative if amount < Money.zero
-        from = options[:from]
-        to = options[:to]
+        from_acct = options[:from]
+        to_acct = options[:to]
         code = options[:code]
         detail = options[:detail]
         metadata = options[:metadata]
-        transfers.find!(from, to, code).process(amount, from, to, code, detail, metadata)
+        transfers.find!(from_acct, to_acct, code).process(amount, from_acct, to_acct, code, detail, metadata)
       end
     end
 
@@ -73,35 +73,35 @@ module DoubleEntry
       end
     end
 
-    def process(amount, from, to, code, detail, metadata)
-      if from.scope_identity == to.scope_identity && from.identifier == to.identifier
-        fail TransferNotAllowed, 'from and to are identical'
+    def process(amount, from_acct, to_acct, code, detail, metadata)
+      if from_acct.scope_identity == to_acct.scope_identity && from_acct.identifier == to_acct.identifier
+        fail TransferNotAllowed, 'from_acct and to_acct are identical'
       end
-      if to.currency != from.currency
-        fail MismatchedCurrencies, "Mismatched currency (#{to.currency} <> #{from.currency})"
+      if to_acct.currency != from_acct.currency
+        fail MismatchedCurrencies, "Mismatched currency (#{to_acct.currency} <> #{from_acct.currency})"
       end
-      Locking.lock_accounts(from, to) do
-        credit, debit = create_lines(amount, code, detail, from, to)
+      Locking.lock_accounts(from_acct, to_acct) do
+        credit, debit = create_lines(amount, code, detail, from_acct, to_acct)
         create_line_metadata(credit, debit, metadata) if metadata
       end
     end
 
-    def create_lines(amount, code, detail, from, to)
+    def create_lines(amount, code, detail, from_acct, to_acct)
       credit, debit = Line.new, Line.new
 
-      credit_balance = Locking.balance_for_locked_account(from)
-      debit_balance  = Locking.balance_for_locked_account(to)
+      credit_balance = Locking.balance_for_locked_account(from_acct)
+      debit_balance  = Locking.balance_for_locked_account(to_acct)
 
       credit_balance.update_attribute :balance, credit_balance.balance - amount
       debit_balance.update_attribute :balance, debit_balance.balance + amount
 
       credit.amount, debit.amount   = -amount, amount
-      credit.account, debit.account = from, to
+      credit.account, debit.account = from_acct, to_acct
       credit.code, debit.code       = code, code
       credit.detail, debit.detail   = detail, detail
       credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
 
-      credit.partner_account, debit.partner_account = to, from
+      credit.partner_account, debit.partner_account = to_acct, from_acct
 
       credit.save!
       debit.partner_id = credit.id
@@ -111,8 +111,10 @@ module DoubleEntry
     end
 
     def create_line_metadata(credit, debit, metadata)
-      LineMetadata.create!(:line => credit, :key => :reason, :value => :payday)
-      LineMetadata.create!(:line => debit, :key => :reason, :value => :payday)
+      metadata.each_pair do |key, value|
+        LineMetadata.create!(:line => credit, :key => key, :value => value)
+        LineMetadata.create!(:line => debit, :key => key, :value => value)
+      end
     end
   end
 end

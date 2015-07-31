@@ -27,26 +27,43 @@ module DoubleEntry
       subject(:transfer) { Transfer.transfer(amount, options) }
 
       context 'without metadata' do
-        let(:options) { {:from => test, :to => savings, :code => :bonus} }
+        let(:options) { { :from => test, :to => savings, :code => :bonus } }
+
         it 'creates lines' do
           expect { transfer }.to change { Line.count }.by 2
         end
+
         it 'does not create metadata lines' do
           expect { transfer }.not_to change { LineMetadata.count }
         end
       end
 
-      context 'with one metadatum' do
-        let(:options) { {:from => test, :to => savings, :code => :bonus, :metadata => {:reason => :because}} }
-        let(:new_metadata) { LineMetadata.all[-2..-1] }
+      context 'with metadata' do
+        let(:options) { { :from => test, :to => savings, :code => :bonus, :metadata => { :country => 'AU', :tax => 'GST' } } }
+        let(:new_metadata) { LineMetadata.all[-4..-1] }
 
         it 'creates metadata lines' do
-          expect { transfer }.to change { LineMetadata.count }.by 2
+          expect { transfer }.to change { LineMetadata.count }.by 4
         end
+
         it 'associates the metadata lines with the transfer lines' do
           transfer
-          expect(new_metadata.first.line).to eq new_lines.first
-          expect(new_metadata.last.line).to eq new_lines.last
+          expect(new_metadata[0].line).to eq new_lines.first
+          expect(new_metadata[1].line).to eq new_lines.last
+          expect(new_metadata[2].line).to eq new_lines.first
+          expect(new_metadata[3].line).to eq new_lines.last
+        end
+
+        it 'stores the correct metadata' do
+          transfer
+          new_metadata[0..1].each do |metadatum|
+            expect(metadatum.key).to be :country
+            expect(metadatum.value).to eq 'AU'
+          end
+          new_metadata[2..3].each do |metadatum|
+            expect(metadatum.key).to be :tax
+            expect(metadatum.value).to eq 'GST'
+          end
         end
       end
     end
