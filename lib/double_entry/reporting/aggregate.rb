@@ -69,14 +69,9 @@ module DoubleEntry
           calculate_yearly_average
         else
           zero = formatted_amount(0)
+          range = MonthRange.new(:year => range.year, :month => month)
           result = (1..12).inject(zero) do |total, month|
-            total + Aggregate.new(
-              function,
-              account,
-              code,
-              MonthRange.new(:year => range.year, :month => month),
-              :filter => filter,
-            ).formatted_amount
+            total + Aggregate.new(function, account, code, range, :filter => filter).formatted_amount
           end
           result.is_a?(Money) ? result.cents : result
         end
