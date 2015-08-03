@@ -46,9 +46,9 @@ RSpec.describe DoubleEntry::Reporting do
   describe '::aggregate' do
     before do
       # get rid of "helpful" predefined config
-      @config_accounts = DoubleEntry.configuration.accounts
+      @config_accounts  = DoubleEntry.configuration.accounts
       @config_transfers = DoubleEntry.configuration.transfers
-      DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
+      DoubleEntry.configuration.accounts  = DoubleEntry::Account::Set.new
       DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
 
       DoubleEntry.configure do |config|
@@ -77,9 +77,9 @@ RSpec.describe DoubleEntry::Reporting do
       DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => cash,    :code => :spend)
       DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,    :code => :spend)
 
-      first_transfer         = DoubleEntry::Line.all[0]
-      second_transfer        = DoubleEntry::Line.all[2]
-      last_transfer          = DoubleEntry::Line.all[14]
+      first_transfer  = DoubleEntry::Line.all[0]
+      second_transfer = DoubleEntry::Line.all[2]
+      last_transfer   = DoubleEntry::Line.all[14]
       DoubleEntry::LineMetadata.create!(:line => first_transfer,          :key => :reason,   :value => :payday)
       DoubleEntry::LineMetadata.create!(:line => first_transfer.partner,  :key => :reason,   :value => :payday)
       DoubleEntry::LineMetadata.create!(:line => second_transfer,         :key => :reason,   :value => :payday)
@@ -90,7 +90,7 @@ RSpec.describe DoubleEntry::Reporting do
 
     after do
       # restore "helpful" predefined config
-      DoubleEntry.configuration.accounts = @config_accounts
+      DoubleEntry.configuration.accounts  = @config_accounts
       DoubleEntry.configuration.transfers = @config_transfers
     end
 
@@ -101,7 +101,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(function, account, code, :range => range)
+        DoubleEntry::Reporting.aggregate(function, account, code, range)
       end
 
       specify 'Total attempted to save' do
@@ -117,8 +117,7 @@ RSpec.describe DoubleEntry::Reporting do
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
-          function, account, code,
-          :range  => range,
+          function, account, code, range,
           :filter => [
             :scope => {
               :name => :ten_dollar_transfers,
@@ -146,8 +145,7 @@ RSpec.describe DoubleEntry::Reporting do
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
-          function, account, code,
-          :range  => range,
+          function, account, code, range,
           :filter => [
             :scope => {
               :name      => :specific_transfer_amount,
@@ -176,8 +174,7 @@ RSpec.describe DoubleEntry::Reporting do
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
-          function, account, code,
-          :range  => range,
+          function, account, code, range,
           :filter => [
             :metadata => {
               :reason => :payday,

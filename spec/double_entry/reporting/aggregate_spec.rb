@@ -9,13 +9,6 @@ module DoubleEntry
       let(:expected_monthly_average) do
         (Money.new(20_00) + Money.new(40_00) + Money.new(50_00) + Money.new(40_00) + Money.new(50_00)) / 5
       end
-      let(:filter) do
-        [
-          :scope => {
-            :name => :test_filter,
-          },
-        ]
-      end
 
       before do
         # Thursday
@@ -40,166 +33,113 @@ module DoubleEntry
       end
 
       it 'should store the aggregate for quick retrieval' do
-        Aggregate.new(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 10)).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
         expect(LineAggregate.count).to eq 1
       end
 
       it 'should only store the aggregate once if it is requested more than once' do
-        Aggregate.new(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 9)).amount
-        Aggregate.new(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 9)).amount
-        Aggregate.new(:sum, :savings, :bonus, :range => TimeRange.make(:year => 2009, :month => 10)).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
         expect(LineAggregate.count).to eq 2
       end
 
       it 'should calculate the complete year correctly' do
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009)
-          ).formatted_amount,
-        ).to eq Money.new(200_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009)).formatted_amount
+        expect(amount).to eq Money.new(200_00)
       end
 
       it 'should calculate seperate months correctly' do
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :month => 10)
-          ).formatted_amount,
-        ).to eq Money.new(110_00)
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :month => 11)
-          ).formatted_amount,
-        ).to eq Money.new(90_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).formatted_amount
+        expect(amount).to eq Money.new(110_00)
+
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 11)).formatted_amount
+        expect(amount).to eq Money.new(90_00)
       end
 
       it 'should calculate seperate weeks correctly' do
         # Week 40 - Mon Sep 28, 2009 to Sun Oct 4 2009
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 40)
-          ).formatted_amount,
-        ).to eq Money.new(60_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 40)).formatted_amount
+        expect(amount).to eq Money.new(60_00)
       end
 
       it 'should calculate seperate days correctly' do
         # 1 Nov 2009
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 44, :day => 7)
-          ).formatted_amount,
-        ).to eq Money.new(90_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 44, :day => 7)).formatted_amount
+        expect(amount).to eq Money.new(90_00)
       end
 
       it 'should calculate seperate hours correctly' do
         # 1 Nov 2009
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 44, :day => 7, :hour => 0)
-          ).formatted_amount,
-        ).to eq Money.new(40_00)
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 44, :day => 7, :hour => 1)
-          ).formatted_amount,
-        ).to eq Money.new(50_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 44, :day => 7, :hour => 0)).formatted_amount
+        expect(amount).to eq Money.new(40_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 44, :day => 7, :hour => 1)).formatted_amount
+        expect(amount).to eq Money.new(50_00)
       end
 
       it 'should calculate, but not store aggregates when the time range is still current' do
         Timecop.freeze Time.local(2009, 11, 21) do
-          expect(
-            Aggregate.new(
-              :sum, :savings, :bonus,
-              :range => TimeRange.make(:year => 2009, :month => 11)
-            ).formatted_amount,
-          ).to eq Money.new(90_00)
+          amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 11)).formatted_amount
+          expect(amount).to eq Money.new(90_00)
           expect(LineAggregate.count).to eq 0
         end
       end
 
       it 'should calculate, but not store aggregates when the time range is in the future' do
         Timecop.freeze Time.local(2009, 11, 21) do
-          expect(
-            Aggregate.new(
-              :sum, :savings, :bonus,
-              :range => TimeRange.make(:year => 2009, :month => 12)
-            ).formatted_amount,
-          ).to eq Money.new(0)
+          amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 12)).formatted_amount
+          expect(amount).to eq Money.new(0)
           expect(LineAggregate.count).to eq 0
         end
       end
 
       it 'should calculate monthly all_time ranges correctly' do
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)
-          ).formatted_amount,
-        ).to eq Money.new(200_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)).formatted_amount
+        expect(amount).to eq Money.new(200_00)
       end
 
       it 'calculates the average monthly all_time ranges correctly' do
-        expect(
-          Aggregate.new(
-            :average, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)
-          ).formatted_amount,
-        ).to eq expected_monthly_average
+        amount = Aggregate.new(:average, :savings, :bonus, TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)).formatted_amount
+        expect(amount).to eq expected_monthly_average
       end
 
       it 'returns the correct count for weekly all_time ranges correctly' do
-        expect(
-          Aggregate.new(
-            :count, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)
-          ).formatted_amount,
-        ).to eq 5
+        amount = Aggregate.new(:count, :savings, :bonus, TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)).formatted_amount
+        expect(amount).to eq 5
       end
 
       it 'should calculate weekly all_time ranges correctly' do
-        expect(
-          Aggregate.new(
-            :sum, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)
-          ).formatted_amount,
-        ).to eq Money.new(110_00)
+        amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)).formatted_amount
+        expect(amount).to eq Money.new(110_00)
       end
 
       it 'calculates the average weekly all_time ranges correctly' do
-        expect(
-          Aggregate.new(
-            :average, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)
-          ).formatted_amount,
-        ).to eq expected_weekly_average
+        amount = Aggregate.new(:average, :savings, :bonus, TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)).formatted_amount
+        expect(amount).to eq expected_weekly_average
       end
 
       it 'returns the correct count for weekly all_time ranges correctly' do
-        expect(
-          Aggregate.new(
-            :count, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)
-          ).formatted_amount,
-        ).to eq 3
+        amount = Aggregate.new(:count, :savings, :bonus, TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)).formatted_amount
+        expect(amount).to eq 3
       end
 
       it 'raises an AggregateFunctionNotSupported exception' do
         expect do
           Aggregate.new(
-            :not_supported_calculation, :savings, :bonus,
-            :range => TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)
+            :not_supported_calculation, :savings, :bonus, TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)
           ).amount
         end.to raise_error(AggregateFunctionNotSupported)
       end
 
       context 'filters' do
         let(:range) { TimeRange.make(:year => 2011, :month => 10) }
+        let(:filter) do
+          [
+            :scope => {
+              :name => :test_filter,
+            },
+          ]
+        end
 
         DoubleEntry::Line.class_eval do
           scope :test_filter, -> { where(:amount => 10_00) }
@@ -217,36 +157,35 @@ module DoubleEntry
 
         it 'saves filtered aggregations' do
           expect do
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
+            Aggregate.new(:sum, :savings, :bonus, range, :filter => filter).amount
           end.to change { LineAggregate.count }.by 1
         end
 
         it 'saves filtered aggregation only once for a range' do
           expect do
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
+            Aggregate.new(:sum, :savings, :bonus, range, :filter => filter).amount
+            Aggregate.new(:sum, :savings, :bonus, range, :filter => filter).amount
           end.to change { LineAggregate.count }.by 1
         end
 
         it 'saves filtered aggregations and non filtered aggregations separately' do
           expect do
-            Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
-            Aggregate.new(:sum, :savings, :bonus, :range => range).amount
+            Aggregate.new(:sum, :savings, :bonus, range, :filter => filter).amount
+            Aggregate.new(:sum, :savings, :bonus, range).amount
           end.to change { LineAggregate.count }.by 2
         end
 
         it 'loads the correct saved aggregation' do
           # cache the results for filtered and unfiltered aggregations
-          Aggregate.new(:sum, :savings, :bonus, :range => range, :filter => filter).amount
-          Aggregate.new(:sum, :savings, :bonus, :range => range).amount
+          Aggregate.new(:sum, :savings, :bonus, range, :filter => filter).amount
+          Aggregate.new(:sum, :savings, :bonus, range).amount
 
           # ensure a second call loads the correct cached value
-          expect(
-            Aggregate.new(:sum, :savings, :bonus, :range  => range, :filter => filter).formatted_amount,
-          ).to eq Money.new(10_00)
-          expect(
-            Aggregate.new(:sum, :savings, :bonus, :range  => range).formatted_amount,
-          ).to eq Money.new(19_00)
+          amount = Aggregate.new(:sum, :savings, :bonus, range, :filter => filter).formatted_amount
+          expect(amount).to eq Money.new(10_00)
+
+          amount = Aggregate.new(:sum, :savings, :bonus, range).formatted_amount
+          expect(amount).to eq Money.new(19_00)
         end
       end
     end
@@ -258,11 +197,8 @@ module DoubleEntry
       end
 
       it 'should calculate the sum in the correct currency' do
-        expect(
-          Aggregate.new(
-            :sum, :btc_savings, :btc_test_transfer, :range => TimeRange.make(:year => Time.now.year)
-          ).formatted_amount,
-        ).to eq(Money.new(300_000_000, :btc))
+        amount = Aggregate.new(:sum, :btc_savings, :btc_test_transfer, TimeRange.make(:year => Time.now.year)).formatted_amount
+        expect(amount).to eq(Money.new(300_000_000, :btc))
       end
     end
   end

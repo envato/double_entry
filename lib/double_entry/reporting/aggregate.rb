@@ -2,16 +2,19 @@
 module DoubleEntry
   module Reporting
     class Aggregate
-      attr_reader :function, :account, :code, :range, :options, :filter, :currency
+      attr_reader :function, :account, :code, :range, :filter, :currency
 
-      def initialize(function, account, code, options)
+      def self.formatted_amount(function, account, code, range, options = {})
+        new(function, account, code, range, options).formatted_amount
+      end
+
+      def initialize(function, account, code, range, options = {})
         @function = function.to_s
         fail AggregateFunctionNotSupported unless %w(sum count average).include?(@function)
 
         @account = account
         @code = code ? code.to_s : nil
-        @options = options
-        @range = options[:range]
+        @range = range
         @filter = options[:filter]
         @currency = DoubleEntry::Account.currency(account)
       end
@@ -69,15 +72,8 @@ module DoubleEntry
         if function == 'average'
           calculate_yearly_average
         else
-          zero = formatted_amount(0)
-          result = (1..12).inject(zero) do |total, month|
-            total + Reporting.aggregate(
-              function,
-              account,
-              code,
-              :range => MonthRange.new(:year => range.year, :month => month),
-              :filter => filter,
-            )
+          result = (1..12).inject(formatted_amount(0)) do |total, month|
+            total + Aggregate.new(function, account, code, MonthRange.new(:year => range.year, :month => month), :filter => filter).formatted_amount
           end
           result.is_a?(Money) ? result.cents : result
         end
@@ -86,8 +82,8 @@ module DoubleEntry
       def calculate_yearly_average
         # need this seperate function, because an average of averages is not the correct average
         year_range = YearRange.new(:year => range.year)
-        sum = Reporting.aggregate(:sum, account, code, :range => year_range, :filter => filter)
-        count = Reporting.aggregate(:count, account, code, :range => year_range, :filter => filter)
+        sum = Aggregate.new(:sum, account, code, year_range, :filter => filter).formatted_amount
+        count = Aggregate.new(:count, account, code, year_range, :filter => filter).formatted_amount
         (count == 0) ? 0 : (sum / count).cents
       end
 
