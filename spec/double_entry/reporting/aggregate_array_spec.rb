@@ -42,17 +42,17 @@ module DoubleEntry
 
               context 'and some aggregates were created previously' do
                 before do
-                  Reporting.aggregate(function.to_s, account, transfer_code, :filter => nil, :range => years[0])
-                  Reporting.aggregate(function.to_s, account, transfer_code, :filter => nil, :range => years[1])
+                  Reporting.aggregate(function.to_s, account, transfer_code, years[0])
+                  Reporting.aggregate(function.to_s, account, transfer_code, years[1])
                   allow(Reporting).to receive(:aggregate)
                 end
 
                 it 'only asks Reporting for the non-existent ones' do
-                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[0])
-                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[1])
+                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, years[0], :filter => nil)
+                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, years[1], :filter => nil)
 
-                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[2])
-                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, :filter => nil, :range => years[3])
+                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, years[2], :filter => nil)
+                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, years[3], :filter => nil)
                   aggregate_array
                 end
               end

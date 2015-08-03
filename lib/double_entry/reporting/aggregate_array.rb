@@ -39,7 +39,7 @@ module DoubleEntry
         # (this includes aggregates for the still-running period)
         all_periods.each do |period|
           unless @aggregates[period.key]
-            @aggregates[period.key] = Reporting.aggregate(function, account, code, :filter => filter, :range => period)
+            @aggregates[period.key] = Reporting.aggregate(function, account, code, period, :filter => filter)
           end
         end
       end
