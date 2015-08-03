@@ -44,7 +44,7 @@ module DoubleEntry
     #     :sum,
     #     :checking,
     #     :save,
-    #     :range  => time_range,
+    #     time_range,
     #     :filter => [
     #       :scope    => {
     #         :name      => :specific_transfer_amount,
@@ -62,8 +62,8 @@ module DoubleEntry
     # @param [Symbol] code The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @option options :range [DoubleEntry::Reporting::TimeRange] Only include
-    #   transfers in the given time range in the calculation.
+    # @param [DoubleEntry::Reporting::TimeRange] Only include transfers in the
+    #   given time range in the calculation.
     # @option options :filter [Array<Hash<Symbol,Hash<Symbol,Object>>>]
     #   An array of custom filter to apply before performing the aggregate
     #   calculation. Filters can be either scope filters, where the name must be
@@ -78,8 +78,8 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate(function, account, code, options = {})
-      Aggregate.new(function, account, code, options).formatted_amount
+    def aggregate(function, account, code, range, options = {})
+      Aggregate.formatted_amount(function, account, code, range, options)
     end
 
     # Perform an aggregate calculation on a set of transfers for an account

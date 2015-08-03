@@ -25,14 +25,14 @@ module DoubleEntry
         end
 
         it 'calculates monthly all_time ranges quickly' do
-          metadata_time = profile_aggregation_with_filter([:metadata => { :country => 'AU' }])
-          clear_aggregate_cache # otherwise the second set has an unfair advantage
-          no_metadata_time = profile_aggregation_with_filter(nil)
-
-          metadata_speed_factor = metadata_time / no_metadata_time
-
-          expect(no_metadata_time).to be_faster_than(:local => 0.610, :ci => 0.800)
-          expect(metadata_speed_factor).to be < 1.1
+          start_profiling
+          # TODO: aggregate with metadata filter
+          Reporting.aggregate(
+            :sum, :savings, :bonus,
+            :range => TimeRange.make(:year => 2015, :month => 06, :range_type => :all_time)
+          )
+          result = stop_profiling('aggregate')
+          expect(total_time(result)).to be_faster_than(:local => 0.610, :ci => 0.800)
         end
       end
 
