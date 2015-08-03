@@ -48,19 +48,19 @@ module DoubleEntry
 
         it 'associates the metadata lines with the transfer lines' do
           transfer
-          expect(new_metadata.select { |meta| meta.line == new_lines.first }.size).to be 2
-          expect(new_metadata.select { |meta| meta.line == new_lines.last }.size).to be 2
+          expect(new_metadata.count { |meta| meta.line == new_lines.first }).to be 2
+          expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
         end
 
         it 'stores the correct metadata' do
           transfer
           countries = new_metadata.select { |meta| meta.key == :country }
           expect(countries.size).to be 2
-          expect(countries.select { |meta| meta.value == 'AU' }.size).to be 2
+          expect(countries.count { |meta| meta.value == 'AU' }).to be 2
           expect(countries.map(&:line).uniq.size).to be 2
-          taxes = new_metadata.select { |meta| meta.key == :tax}
+          taxes = new_metadata.select { |meta| meta.key == :tax }
           expect(taxes.size).to be 2
-          expect(taxes.select { |meta| meta.value == 'GST' }.size).to be 2
+          expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
           expect(taxes.map(&:line).uniq.size).to be 2
         end
       end
