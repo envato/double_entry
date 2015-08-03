@@ -5,11 +5,11 @@ module DoubleEntry
       let(:start) { nil }
       let(:finish) { nil }
       let(:range_type) { 'year' }
-      let(:function) { :sum }
+      let(:function) { 'sum' }
       let(:account) { :savings }
       let(:transfer_code) { :bonus }
       subject(:aggregate_array) do
-        Reporting.aggregate_array(
+        AggregateArray.new(
           function,
           account,
           transfer_code,
@@ -42,17 +42,17 @@ module DoubleEntry
 
               context 'and some aggregates were created previously' do
                 before do
-                  Reporting.aggregate(function.to_s, account, transfer_code, years[0])
-                  Reporting.aggregate(function.to_s, account, transfer_code, years[1])
-                  allow(Reporting).to receive(:aggregate)
+                  Aggregate.formatted_amount(function, account, transfer_code, years[0])
+                  Aggregate.formatted_amount(function, account, transfer_code, years[1])
+                  allow(Aggregate).to receive(:formatted_amount)
                 end
 
-                it 'only asks Reporting for the non-existent ones' do
-                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, years[0], :filter => nil)
-                  expect(Reporting).not_to receive(:aggregate).with(function.to_s, account, transfer_code, years[1], :filter => nil)
+                it 'only asks Aggregate for the non-existent ones' do
+                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[0], :filter => nil)
+                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[1], :filter => nil)
 
-                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, years[2], :filter => nil)
-                  expect(Reporting).to receive(:aggregate).with(function.to_s, account, transfer_code, years[3], :filter => nil)
+                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[2], :filter => nil)
+                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[3], :filter => nil)
                   aggregate_array
                 end
               end

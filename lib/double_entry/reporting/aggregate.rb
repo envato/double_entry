@@ -4,6 +4,10 @@ module DoubleEntry
     class Aggregate
       attr_reader :function, :account, :code, :range, :filter, :currency
 
+      def self.formatted_amount(function, account, code, range, options = {})
+        new(function, account, code, range, options).formatted_amount
+      end
+
       def initialize(function, account, code, range, options = {})
         @function = function.to_s
         fail AggregateFunctionNotSupported unless %w(sum count average).include?(@function)

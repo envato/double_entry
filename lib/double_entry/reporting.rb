@@ -79,7 +79,7 @@ module DoubleEntry
     #   is not supported.
     #
     def aggregate(function, account, code, range, options = {})
-      Aggregate.new(function, account, code, range, options).formatted_amount
+      Aggregate.formatted_amount(function, account, code, range, options)
     end
 
     # Perform an aggregate calculation on a set of transfers for an account
