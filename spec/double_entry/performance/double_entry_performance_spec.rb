@@ -7,17 +7,16 @@ module DoubleEntry
       let(:test) { DoubleEntry.account(:test, :scope => user) }
       let(:savings) { DoubleEntry.account(:savings, :scope => user) }
 
-      it 'creates a lot of transfers quickly' do
-        no_metadata_time = profile_transfers_with_metadata(nil)
+      it 'creates a lot of transfers quickly without metadata' do
+        profile_transfers_with_metadata(nil)
+        # local results: 6.44, 5.93, 5.94
+      end
+
+      it 'creates a lot of transfers quickly with metadata' do
         big_metadata = {}
-        num_pairs = 8
-        num_pairs.times { |i| big_metadata["key#{i}".to_sym] = "value#{i}" }
-        metadata_time = profile_transfers_with_metadata(big_metadata)
-
-        time_per_pair = (metadata_time - no_metadata_time) / num_pairs
-
-        expect(no_metadata_time).to be_faster_than(:local => 6.5, :ci => 11)
-        expect(time_per_pair).to be < 2
+        8.times { |i| big_metadata["key#{i}".to_sym] = "value#{i}" }
+        profile_transfers_with_metadata(big_metadata)
+        # local results: 21.2, 21.6, 20.9
       end
     end
 
@@ -27,7 +26,7 @@ module DoubleEntry
       options[:metadata] = metadata if metadata
       100.times { Transfer.transfer(amount, options) }
       profile_name = metadata ? 'transfer-with-metadata' : 'transfer'
-      total_time(stop_profiling(profile_name))
+      stop_profiling(profile_name)
     end
   end
 end

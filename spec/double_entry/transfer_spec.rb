@@ -52,16 +52,24 @@ module DoubleEntry
           expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
         end
 
-        it 'stores the correct metadata' do
+        it 'stores the first key/value pair' do
           transfer
           countries = new_metadata.select { |meta| meta.key == :country }
           expect(countries.size).to be 2
           expect(countries.count { |meta| meta.value == 'AU' }).to be 2
+        end
+
+        it 'associates the first key/value pair with both lines' do
+          transfer
+          countries = new_metadata.select { |meta| meta.key == :country }
           expect(countries.map(&:line).uniq.size).to be 2
+        end
+
+        it 'stores another key/value pair' do
+          transfer
           taxes = new_metadata.select { |meta| meta.key == :tax }
           expect(taxes.size).to be 2
           expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
-          expect(taxes.map(&:line).uniq.size).to be 2
         end
       end
     end
