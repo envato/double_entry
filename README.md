@@ -138,23 +138,6 @@ DoubleEntry.transfer(
 )
 ```
 
-Metadata may be used for filtering lines for aggregation, for example:
-
-```ruby
-range = DoubleEntry::Reporting::MonthRange.new(:year => 2014, :month => 7)
-DoubleEntry::Reporting.aggregate(
-  :sum, 
-  one_account, 
-  :a_business_code_for_this_type_of_transfer,
-  range,
-  :filter => [
-    :metadata => {
-      :key1 => 'value 1',
-    },
-  ]
-)
-```
-
 ### Locking
 
 If you're doing more than one transfer in a single financial transaction, or
