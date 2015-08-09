@@ -62,7 +62,6 @@ POSTINSTALLMESSAGE
   gem.add_development_dependency 'generator_spec'
   gem.add_development_dependency 'machinist'
   gem.add_development_dependency 'timecop'
-  gem.add_development_dependency 'rubocop', '~> 0.32.0'
 
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'pry-doc'
