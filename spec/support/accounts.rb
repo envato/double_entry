@@ -3,7 +3,7 @@ require_relative 'factories'
 DoubleEntry.configure do |config|
   # A set of accounts to test with
   config.define_accounts do |accounts|
-    user_scope = -> (user) { user.id }
+    user_scope = lambda{|user| user.id}
     accounts.define(:identifier => :savings,     :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :checking,    :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :test,        :scope_identifier => user_scope)
