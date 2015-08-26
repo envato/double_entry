@@ -97,11 +97,11 @@ module DoubleEntry
       self[:account] = account.identifier.to_s
       self.scope = account.scope_identity
       fail 'Missing Account' unless self.account
-      @_cached_account = account
+      account
     end
 
     def account
-      @_cached_account ||= DoubleEntry.account(self[:account].to_sym, :scope_identity => scope)
+      DoubleEntry.account(self[:account].to_sym, :scope_identity => scope)
     end
 
     def currency
@@ -112,11 +112,11 @@ module DoubleEntry
       self[:partner_account] = partner_account.identifier.to_s
       self.partner_scope = partner_account.scope_identity
       fail 'Missing Partner Account' unless self.partner_account
-      @_cached_partner_account = partner_account
+      partner_account
     end
 
     def partner_account
-      @_cached_partner_account ||= DoubleEntry.account(self[:partner_account].to_sym, :scope_identity => partner_scope)
+      DoubleEntry.account(self[:partner_account].to_sym, :scope_identity => partner_scope)
     end
 
     def partner

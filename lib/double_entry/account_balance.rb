@@ -21,11 +21,11 @@ module DoubleEntry
     def account=(account)
       self[:account] = account.identifier.to_s
       self[:scope] = account.scope_identity
-      @_cached_account = account
+      account
     end
 
     def account
-      @_cached_account ||= DoubleEntry.account(self[:account].to_sym, :scope_identity => self[:scope])
+      DoubleEntry.account(self[:account].to_sym, :scope_identity => self[:scope])
     end
 
     def self.find_by_account(account, options = {})
