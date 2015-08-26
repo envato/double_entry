@@ -14,8 +14,8 @@ RSpec.describe DoubleEntry::Line do
         :code => code,
       )
     end
-    let(:account) { DoubleEntry.account(:test, :scope => '17') }
-    let(:partner_account) { DoubleEntry.account(:test, :scope => '72') }
+    let(:account) { DoubleEntry.account(:test, :scope_identity => '17') }
+    let(:partner_account) { DoubleEntry.account(:test, :scope_identity => '72') }
     let(:code) { :test_code }
 
     subject(:persisted_line) do
@@ -35,20 +35,20 @@ RSpec.describe DoubleEntry::Line do
       end
 
       context 'given account = :test, 54 ' do
-        let(:account) { DoubleEntry.account(:test, :scope => '54') }
+        let(:account) { DoubleEntry.account(:test, :scope_identity => '54') }
         its('account.account.identifier') { should eq :test }
-        its('account.scope') { should eq '54' }
+        its('account.scope_identity') { should eq '54' }
       end
 
       context 'given partner_account = :test, 91 ' do
-        let(:partner_account) { DoubleEntry.account(:test, :scope => '91') }
+        let(:partner_account) { DoubleEntry.account(:test, :scope_identity => '91') }
         its('partner_account.account.identifier') { should eq :test }
-        its('partner_account.scope') { should eq '91' }
+        its('partner_account.scope_identity') { should eq '91' }
       end
 
       context 'currency' do
-        let(:account) { DoubleEntry.account(:btc_test, :scope => '17') }
-        let(:partner_account) { DoubleEntry.account(:btc_test, :scope => '72') }
+        let(:account) { DoubleEntry.account(:btc_test, :scope_identity => '17') }
+        let(:partner_account) { DoubleEntry.account(:btc_test, :scope_identity => '72') }
         its(:currency) { should eq 'BTC' }
       end
     end
