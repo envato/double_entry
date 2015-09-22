@@ -5,7 +5,7 @@
 # This spawns a bunch of processes, and does random transactions between a set
 # of accounts, then validates that all the numbers add up at the end.
 #
-# You can also tell out it to flush our the account balances table at regular
+# You can also tell it to flush our the account balances table at regular
 # intervals, to validate that new account balances records get created with the
 # correct balances from the lines table.
 #
