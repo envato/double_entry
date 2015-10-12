@@ -14,18 +14,18 @@ matrix:
     - rvm: 2.0.0
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.1.x
       env: DB=mysql
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=sqlite
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=postgres
-    - rvm: 2.1.6
+    - rvm: 2.1.7
       gemfile: spec/support/gemfiles/Gemfile.rails-3.2.x
       env: DB=mysql
