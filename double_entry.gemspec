@@ -51,7 +51,7 @@ POSTINSTALLMESSAGE
   gem.add_dependency 'railties',              '>= 3.2.0'
 
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'mysql2'
+  gem.add_development_dependency 'mysql2',    '~> 0.3.20'
   gem.add_development_dependency 'pg'
   gem.add_development_dependency 'sqlite3'
 
