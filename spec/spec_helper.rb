@@ -3,6 +3,11 @@ require 'bundler/setup'
 require 'active_record'
 require 'active_support'
 
+if ActiveRecord::VERSION::MAJOR < 4
+  require 'test-unit'
+  Test::Unit::AutoRunner.need_auto_run = false
+end
+
 db_engine = ENV['DB'] || 'mysql'
 
 FileUtils.mkdir_p 'tmp'
