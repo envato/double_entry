@@ -15,13 +15,11 @@ module DoubleEntry
 
     private
 
-      attr_reader :account, :code, :range, :filter_criteria
-
       def apply_filters
         collection = apply_filter_criteria.
-                     where(:account => account).
-                     where(:created_at => range.start..range.finish)
-        collection = collection.where(:code => code) if code
+                     where(:account => @account).
+                     where(:created_at => @range.start..@range.finish)
+        collection = collection.where(:code => @code) if @code
 
         collection
       end
@@ -52,7 +50,7 @@ module DoubleEntry
       #     }
       #   ]
       def apply_filter_criteria
-        filter_criteria.reduce(DoubleEntry::Line) do |collection, filter|
+        @filter_criteria.reduce(DoubleEntry::Line) do |collection, filter|
           if filter[:scope].present?
             filter_by_scope(collection, filter[:scope])
           elsif filter[:metadata].present?
