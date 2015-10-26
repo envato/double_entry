@@ -62,6 +62,7 @@ POSTINSTALLMESSAGE
   gem.add_development_dependency 'generator_spec'
   gem.add_development_dependency 'machinist'
   gem.add_development_dependency 'timecop'
+  gem.add_development_dependency 'test-unit'
 
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'pry-doc'

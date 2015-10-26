@@ -1,10 +1,11 @@
 language: ruby
+sudo: false
 before_script:
   - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'
   - psql -c 'create database double_entry_test;' -U postgres
 script:
-  - rake spec
+  - bundle exec rake spec
   - ruby script/jack_hammer -t 2000
 matrix:
   include:
@@ -13,6 +14,12 @@ matrix:
       env: DB=mysql
     - rvm: 2.0.0
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
+      env: DB=mysql
+    - rvm: 2.1.7
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
+      env: DB=mysql
+    - rvm: 2.2.3
+      gemfile: spec/support/gemfiles/Gemfile.rails-3.2.x
       env: DB=mysql
     - rvm: 2.2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.1.x
@@ -26,6 +33,3 @@ matrix:
     - rvm: 2.2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=postgres
-    - rvm: 2.1.7
-      gemfile: spec/support/gemfiles/Gemfile.rails-3.2.x
-      env: DB=mysql
