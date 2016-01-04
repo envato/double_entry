@@ -5,17 +5,18 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'double_entry/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'double_entry'
-  gem.version       = DoubleEntry::VERSION
-  gem.authors       = ['Anthony Sellitti', 'Keith Pitt', 'Martin Jagusch', 'Martin Spickermann', 'Mark Turnley', 'Orien Madgwick', 'Pete Yandall', 'Stephanie Staub']
-  gem.email         = ['anthony.sellitti@envato.com', 'me@keithpitt.com', '_@mj.io', 'spickemann@gmail.com', 'mark@envato.com', '_@orien.io', 'pete@envato.com', 'staub.steph@gmail.com']
-  gem.summary       = 'Tools to build your double entry financial ledger'
-  gem.homepage      = 'https://github.com/envato/double_entry'
+  gem.name                  = 'double_entry'
+  gem.version               = DoubleEntry::VERSION
+  gem.authors               = ['Anthony Sellitti', 'Keith Pitt', 'Martin Jagusch', 'Martin Spickermann', 'Mark Turnley', 'Orien Madgwick', 'Pete Yandall', 'Stephanie Staub', 'Giancarlo Salamanca']
+  gem.email                 = ['anthony.sellitti@envato.com', 'me@keithpitt.com', '_@mj.io', 'spickemann@gmail.com', 'mark@envato.com', '_@orien.io', 'pete@envato.com', 'staub.steph@gmail.com', 'giancarlo@salamanca.net.au']
+  gem.summary               = 'Tools to build your double entry financial ledger'
+  gem.homepage              = 'https://github.com/envato/double_entry'
 
-  gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.require_paths = ['lib']
+  gem.files                 = `git ls-files`.split($/)
+  gem.executables           = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
+  gem.test_files            = gem.files.grep(%r{^(test|spec|features)/})
+  gem.require_paths         = ['lib']
+  gem.required_ruby_version = '>= 2.0.0'
 
   gem.post_install_message = <<-'POSTINSTALLMESSAGE'
 Please note the following changes in DoubleEntry:
