@@ -40,12 +40,27 @@ module DoubleEntry
             describe 'reuse of aggregates' do
               let(:years) { TimeRangeArray.make(range_type, start, finish) }
 
-              context 'and some aggregates were created previously' do
-                before do
-                  Aggregate.formatted_amount(function, account, transfer_code, years[0])
-                  Aggregate.formatted_amount(function, account, transfer_code, years[1])
-                  allow(Aggregate).to receive(:formatted_amount)
+              before do
+                Aggregate.formatted_amount(function, account, transfer_code, years[0])
+                Aggregate.formatted_amount(function, account, transfer_code, years[1])
+                allow(Aggregate).to receive(:formatted_amount)
+              end
+
+              context 'and the transfer code is not provided' do
+                let(:transfer_code) { nil }
+
+                it 'only asks Aggregate for the non-existent ones' do
+                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[0], filter: nil, partner_account: nil)
+                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[1], filter: nil, partner_account: nil)
+
+                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[2], filter: nil, partner_account: nil)
+                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[3], filter: nil, partner_account: nil)
+                  aggregate_array
                 end
+              end
+
+              context 'and the transfer code is provided' do
+                let(:transfer_code) { :bonus }
 
                 it 'only asks Aggregate for the non-existent ones' do
                   expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[0], filter: nil, partner_account: nil)

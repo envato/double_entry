@@ -53,8 +53,8 @@ module DoubleEntry
         scope = LineAggregate.
                 where(:function => function).
                 where(:range_type => 'normal').
-                where(:account => account.to_s).
-                where(:code => code.to_s).
+                where(:account => account.try(:to_s)).
+                where(:code => code.try(:to_s)).
                 where(:partner_account => partner_account.try(:to_s)).
                 where(:filter => filter.inspect).
                 where(LineAggregate.arel_table[range_type].not_eq(nil))
