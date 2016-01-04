@@ -48,11 +48,11 @@ module DoubleEntry
                 end
 
                 it 'only asks Aggregate for the non-existent ones' do
-                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[0], :filter => nil)
-                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[1], :filter => nil)
+                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[0], filter: nil, partner_account: nil)
+                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[1], filter: nil, partner_account: nil)
 
-                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[2], :filter => nil)
-                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[3], :filter => nil)
+                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[2], filter: nil, partner_account: nil)
+                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[3], filter: nil, partner_account: nil)
                   aggregate_array
                 end
               end

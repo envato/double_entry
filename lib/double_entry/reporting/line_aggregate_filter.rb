@@ -2,11 +2,12 @@
 module DoubleEntry
   module Reporting
     class LineAggregateFilter
-      def initialize(account, code, range, filter_criteria)
+      def initialize(account, code, range, filter_criteria, partner_account)
         @account         = account
         @code            = code
         @range           = range
         @filter_criteria = filter_criteria || []
+        @partner_account = partner_account
       end
 
       def filter
@@ -20,6 +21,7 @@ module DoubleEntry
                      where(:account => @account).
                      where(:created_at => @range.start..@range.finish)
         collection = collection.where(:code => @code) if @code
+        collection = collection.where(:partner_account => @partner_account) if @partner_account
 
         collection
       end

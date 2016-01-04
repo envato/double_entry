@@ -14,11 +14,12 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
     let(:function) { :sum }
     let(:account) { spy }
     let(:code) { spy }
+    let(:partner_account) { spy }
     let(:named_scopes) { spy }
     let(:range) { spy }
 
     subject(:aggregate) do
-      DoubleEntry::Reporting::LineAggregate.aggregate(function, account, code, range, named_scopes)
+      DoubleEntry::Reporting::LineAggregate.aggregate(function, account, code, range, named_scopes, partner_account)
     end
 
     before do
@@ -28,7 +29,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
 
     it 'applies the specified filters' do
       expect(DoubleEntry::Reporting::LineAggregateFilter).to have_received(:new).
-        with(account, code, range, named_scopes)
+        with(account, code, range, named_scopes, partner_account)
       expect(filter).to have_received(:filter)
     end
 

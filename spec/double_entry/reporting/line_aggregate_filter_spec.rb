@@ -5,6 +5,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     let(:account) { :account }
     let(:code) { :transfer_code }
     let(:filter_criteria) { nil }
+    let(:partner_account) { nil }
     let(:start) { Time.parse('2014-07-27 10:55:44 +1000') }
     let(:finish) { Time.parse('2015-07-27 10:55:44 +1000') }
     let(:range) do
@@ -14,7 +15,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     let(:lines_scope) { spy(DoubleEntry::Line) }
 
     subject(:filter) do
-      DoubleEntry::Reporting::LineAggregateFilter.new(account, code, range, filter_criteria)
+      DoubleEntry::Reporting::LineAggregateFilter.new(account, code, range, filter_criteria, partner_account)
     end
 
     before do
