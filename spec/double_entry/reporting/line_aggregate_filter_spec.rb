@@ -79,8 +79,31 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       end
     end
 
-    context 'with no code specified' do
+    context 'with a partner_account specified' do
+      let(:partner_account) { :partner_account }
+
+      it 'retrieves the appropriate lines for aggregation' do
+        expect(DoubleEntry::Line).to have_received(:where).with(:account => account)
+        expect(DoubleEntry::Line).to have_received(:where).with(:created_at => start..finish)
+        expect(DoubleEntry::Line).to have_received(:where).with(:partner_account => partner_account)
+      end
+    end
+
+    context 'with code and partner_account specified' do
+      let(:code) { :transfer_code }
+      let(:partner_account) { :partner_account }
+
+      it 'retrieves the appropriate lines for aggregation' do
+        expect(DoubleEntry::Line).to have_received(:where).with(:account => account)
+        expect(DoubleEntry::Line).to have_received(:where).with(:created_at => start..finish)
+        expect(DoubleEntry::Line).to have_received(:where).with(:code => code)
+        expect(DoubleEntry::Line).to have_received(:where).with(:partner_account => partner_account)
+      end
+    end
+
+    context 'with no code or partner_account specified' do
       let(:code) { nil }
+      let(:partner_account) { nil }
 
       it 'retrieves the appropriate lines for aggregation' do
         expect(DoubleEntry::Line).to have_received(:where).with(:account => account)

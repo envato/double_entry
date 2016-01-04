@@ -30,6 +30,8 @@ module DoubleEntry
         Timecop.freeze Time.local(2009, 11, 1, 1, 00, 0) do
           perform_deposit user, 50_00
         end
+
+        allow(LineAggregate).to receive(:aggregate).and_call_original
       end
 
       it 'should store the aggregate for quick retrieval' do
@@ -42,6 +44,23 @@ module DoubleEntry
         Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
         Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
         expect(LineAggregate.count).to eq 2
+        expect(LineAggregate).to have_received(:aggregate).twice
+      end
+
+      it 'calculates a new aggregate when partner_account is specified' do
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
+        expect(LineAggregate.count).to eq 3
+        expect(LineAggregate).to have_received(:aggregate).exactly(3).times
+      end
+
+      it "only stores an aggregate including partner_account once if it's requested more than once" do
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
+        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10), partner_account: :test).amount
+        expect(LineAggregate.count).to eq 2
+        expect(LineAggregate).to have_received(:aggregate).twice
       end
 
       it 'should calculate the complete year correctly' do
