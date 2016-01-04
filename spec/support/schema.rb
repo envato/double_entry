@@ -25,10 +25,10 @@ ActiveRecord::Schema.define do
     t.timestamps                                  :null => false
   end
 
-  add_index "double_entry_lines", ["account", "code", "created_at"],  :name => "lines_account_code_created_at_idx"
-  add_index "double_entry_lines", ["account", "created_at"],          :name => "lines_account_created_at_idx"
-  add_index "double_entry_lines", ["scope", "account", "created_at"], :name => "lines_scope_account_created_at_idx"
-  add_index "double_entry_lines", ["scope", "account", "id"],         :name => "lines_scope_account_id_idx"
+  add_index "double_entry_lines", ["account", "code", "created_at", "partner_account"],  :name => "lines_account_code_created_at_partner_account_idx"
+  add_index "double_entry_lines", ["account", "created_at"],                             :name => "lines_account_created_at_idx"
+  add_index "double_entry_lines", ["scope", "account", "created_at"],                    :name => "lines_scope_account_created_at_idx"
+  add_index "double_entry_lines", ["scope", "account", "id"],                            :name => "lines_scope_account_id_idx"
 
   create_table "double_entry_line_aggregates", :force => true do |t|
     t.string     "function",        :limit => 15, :null => false
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define do
     t.timestamps                                  :null => false
   end
 
-  add_index "double_entry_line_aggregates", ["function", "account", "code", "year", "month", "week", "day"], :name => "line_aggregate_idx"
+  add_index "double_entry_line_aggregates", ["function", "account", "code", "partner_account", "year", "month", "week", "day"], :name => "line_aggregate_idx"
 
   create_table "double_entry_line_checks", :force => true do |t|
     t.integer    "last_line_id", :null => false
