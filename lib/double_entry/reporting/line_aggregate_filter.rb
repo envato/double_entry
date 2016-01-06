@@ -2,12 +2,12 @@
 module DoubleEntry
   module Reporting
     class LineAggregateFilter
-      def initialize(account, code, range, filter_criteria, partner_account)
+      def initialize(account, partner_account, code, range, filter_criteria)
         @account         = account
+        @partner_account = partner_account
         @code            = code
         @range           = range
         @filter_criteria = filter_criteria || []
-        @partner_account = partner_account
       end
 
       def filter

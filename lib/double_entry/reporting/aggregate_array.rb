@@ -9,18 +9,17 @@ module DoubleEntry
       #
       # For example, you could request all sales
       # broken down by month and it would return an array of values
-      attr_reader :function, :account, :code, :partner_account, :filter, :range_type, :start, :finish, :currency
+      attr_reader :function, :account, :partner_account, :code, :filter, :range_type, :start, :finish, :currency
 
-      def initialize(function, account, code, filter: nil, range_type: nil, start: nil, finish: nil,
-                     partner_account: nil)
+      def initialize(function, account, code, partner_account: nil, filter: nil, range_type: nil, start: nil, finish: nil)
         @function        = function.to_s
         @account         = account
         @code            = code
+        @partner_account = partner_account
         @filter          = filter
         @range_type      = range_type
         @start           = start
         @finish          = finish
-        @partner_account = partner_account
         @currency        = DoubleEntry::Account.currency(account)
 
         retrieve_aggregates
@@ -42,7 +41,7 @@ module DoubleEntry
         all_periods.each do |period|
           unless @aggregates[period.key]
             @aggregates[period.key] = Aggregate.formatted_amount(function, account, code, period,
-                                                                 filter: filter, partner_account: partner_account)
+                                                                 partner_account: partner_account, filter: filter)
           end
         end
       end
@@ -54,8 +53,8 @@ module DoubleEntry
                 where(:function => function).
                 where(:range_type => 'normal').
                 where(:account => account.try(:to_s)).
-                where(:code => code.try(:to_s)).
                 where(:partner_account => partner_account.try(:to_s)).
+                where(:code => code.try(:to_s)).
                 where(:filter => filter.inspect).
                 where(LineAggregate.arel_table[range_type].not_eq(nil))
         @aggregates = scope.each_with_object({}) do |result, hash|

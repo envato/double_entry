@@ -114,8 +114,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(
-          function, account, code, range,
+        DoubleEntry::Reporting.aggregate(function, account, code, range,
           filter: [
             :scope => {
               :name => :ten_dollar_transfers,
@@ -142,8 +141,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(
-          function, account, code, range,
+        DoubleEntry::Reporting.aggregate(function, account, code, range,
           filter: [
             :scope => {
               :name      => :specific_transfer_amount,
@@ -171,8 +169,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(
-          function, account, code, range,
+        DoubleEntry::Reporting.aggregate(function, account, code, range,
           filter: [
             :metadata => {
               :reason => 'payday',
@@ -193,7 +190,9 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
       let(:partner_account) { :service_fees }
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(function, account, code, range, partner_account: partner_account)
+        DoubleEntry::Reporting.aggregate(function, account, code, range,
+          partner_account: partner_account,
+        )
       end
 
       specify 'Total amount of service fees paid' do

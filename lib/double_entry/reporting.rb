@@ -78,8 +78,8 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate(function, account, code, range, filter: nil, partner_account: nil)
-      Aggregate.formatted_amount(function, account, code, range, filter: filter, partner_account: partner_account)
+    def aggregate(function, account, code, range, partner_account: nil, filter: nil)
+      Aggregate.formatted_amount(function, account, code, range, partner_account: partner_account, filter: filter)
     end
 
     # Perform an aggregate calculation on a set of transfers for an account
@@ -128,10 +128,10 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate_array(function, account, code, filter: nil, range_type: nil, start: nil, finish: nil,
-                     partner_account: nil)
-      AggregateArray.new(function, account, code, filter: filter, range_type: range_type, start: start, finish: finish,
-                         partner_account: partner_account)
+    def aggregate_array(function, account, code, partner_account: nil, filter: nil,
+                        range_type: nil, start: nil, finish: nil)
+      AggregateArray.new(function, account, code, partner_account: partner_account,
+                         filter: filter, range_type: range_type, start: start, finish: finish)
     end
 
     # Identify the scopes with the given account identifier holding at least
