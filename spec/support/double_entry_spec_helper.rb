@@ -16,6 +16,24 @@ module DoubleEntrySpecHelper
     )
   end
 
+  def transfer_deposit_fee(user, amount)
+    DoubleEntry.transfer(
+      Money.new(amount),
+      :from => DoubleEntry.account(:savings, :scope => user),
+      :to   => DoubleEntry.account(:deposit_fees, :scope => user),
+      :code => :fee,
+    )
+  end
+
+  def transfer_account_fee(user, amount)
+    DoubleEntry.transfer(
+      Money.new(amount),
+      :from => DoubleEntry.account(:savings, :scope => user),
+      :to   => DoubleEntry.account(:account_fees, :scope => user),
+      :code => :fee,
+    )
+  end
+
   def perform_btc_deposit(user, amount)
     DoubleEntry.transfer(
       Money.new(amount, :btc),

@@ -10,12 +10,12 @@ module DoubleEntry
       let(:transfer_code) { :bonus }
       subject(:aggregate_array) do
         AggregateArray.new(
-          function,
-          account,
-          transfer_code,
-          :range_type => range_type,
-          :start => start,
-          :finish => finish,
+          function: function,
+          account: account,
+          code: transfer_code,
+          range_type: range_type,
+          start: start,
+          finish: finish,
         )
       end
 
@@ -42,18 +42,51 @@ module DoubleEntry
 
               context 'and some aggregates were created previously' do
                 before do
-                  Aggregate.formatted_amount(function, account, transfer_code, years[0])
-                  Aggregate.formatted_amount(function, account, transfer_code, years[1])
+                  Aggregate.formatted_amount(function: function, account: account, code: transfer_code, range: years[0])
+                  Aggregate.formatted_amount(function: function, account: account, code: transfer_code, range: years[1])
                   allow(Aggregate).to receive(:formatted_amount)
                 end
 
-                it 'only asks Aggregate for the non-existent ones' do
-                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[0], :filter => nil)
-                  expect(Aggregate).not_to receive(:formatted_amount).with(function, account, transfer_code, years[1], :filter => nil)
+                context 'and the transfer code is not provided' do
+                  let(:transfer_code) { nil }
 
-                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[2], :filter => nil)
-                  expect(Aggregate).to receive(:formatted_amount).with(function, account, transfer_code, years[3], :filter => nil)
-                  aggregate_array
+                  it 'only asks Aggregate for the non-existent ones' do
+                    expect(Aggregate).not_to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[0], partner_account: nil, filter: nil)
+                    expect(Aggregate).not_to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[1], partner_account: nil, filter: nil)
+
+                    expect(Aggregate).to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[2], partner_account: nil, filter: nil)
+                    expect(Aggregate).to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[3], partner_account: nil, filter: nil)
+                    aggregate_array
+                  end
+
+                  context 'and the transfer code is provided' do
+                    let(:transfer_code) { :bonus }
+
+                    it 'only asks Aggregate for the non-existent ones' do
+                      expect(Aggregate).not_to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[0], partner_account: nil, filter: nil)
+                      expect(Aggregate).not_to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[1], partner_account: nil, filter: nil)
+
+                      expect(Aggregate).to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[2], partner_account: nil, filter: nil)
+                      expect(Aggregate).to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[3], partner_account: nil, filter: nil)
+                      aggregate_array
+                    end
+                  end
                 end
               end
             end

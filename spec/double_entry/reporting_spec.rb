@@ -1,6 +1,6 @@
 # encoding: utf-8
 RSpec.describe DoubleEntry::Reporting do
-  describe '::configure' do
+  describe 'configuration' do
     describe 'start_of_business' do
       subject(:start_of_business) { DoubleEntry::Reporting.configuration.start_of_business }
 
@@ -20,7 +20,7 @@ RSpec.describe DoubleEntry::Reporting do
     end
   end
 
-  describe '::scopes_with_minimum_balance_for_account' do
+  describe '.scopes_with_minimum_balance_for_account' do
     subject(:scopes) { DoubleEntry::Reporting.scopes_with_minimum_balance_for_account(minimum_balance, :checking) }
 
     context "a 'checking' account with balance $100" do
@@ -43,7 +43,7 @@ RSpec.describe DoubleEntry::Reporting do
     end
   end
 
-  describe '::aggregate' do
+  describe '.aggregate' do
     before do
       # get rid of "helpful" predefined config
       @config_accounts  = DoubleEntry.configuration.accounts
@@ -56,26 +56,34 @@ RSpec.describe DoubleEntry::Reporting do
           accounts.define(:identifier => :savings)
           accounts.define(:identifier => :cash)
           accounts.define(:identifier => :credit)
+          accounts.define(:identifier => :account_fees)
+          accounts.define(:identifier => :service_fees)
         end
 
         config.define_transfers do |transfers|
-          transfers.define(:from => :savings, :to => :cash,    :code => :spend)
-          transfers.define(:from => :cash,    :to => :savings, :code => :save)
-          transfers.define(:from => :cash,    :to => :credit,  :code => :bill)
+          transfers.define(:from => :savings, :to => :cash,         :code => :spend)
+          transfers.define(:from => :cash,    :to => :savings,      :code => :save)
+          transfers.define(:from => :cash,    :to => :credit,       :code => :bill)
+          transfers.define(:from => :savings, :to => :account_fees, :code => :fees)
+          transfers.define(:from => :savings, :to => :service_fees, :code => :fees)
         end
       end
 
-      cash    = DoubleEntry.account(:cash)
-      savings = DoubleEntry.account(:savings)
-      credit  = DoubleEntry.account(:credit)
-      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings, :code => :save, :metadata => { :reason => 'payday' })
-      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings, :code => :save, :metadata => { :reason => 'payday' })
-      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings, :code => :save)
-      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings, :code => :save)
-      DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => credit,  :code => :bill)
-      DoubleEntry.transfer(Money.new(40_00), :from => cash,    :to => credit,  :code => :bill)
-      DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => cash,    :code => :spend)
-      DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,    :code => :spend, :metadata => { :category => 'entertainment' })
+      cash         = DoubleEntry.account(:cash)
+      savings      = DoubleEntry.account(:savings)
+      credit       = DoubleEntry.account(:credit)
+      service_fees = DoubleEntry.account(:service_fees)
+      account_fees = DoubleEntry.account(:account_fees)
+      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings,      :code => :save, :metadata => { :reason => 'payday' })
+      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings,      :code => :save, :metadata => { :reason => 'payday' })
+      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings,      :code => :save)
+      DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings,      :code => :save)
+      DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => credit,       :code => :bill)
+      DoubleEntry.transfer(Money.new(40_00), :from => cash,    :to => credit,       :code => :bill)
+      DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => cash,         :code => :spend)
+      DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,         :code => :spend, :metadata => { :category => 'entertainment' })
+      DoubleEntry.transfer(Money.new(70_00), :from => savings, :to => service_fees, :code => :fees)
+      DoubleEntry.transfer(Money.new(80_00), :from => savings, :to => account_fees, :code => :fees)
     end
 
     after do
@@ -91,7 +99,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
 
       subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(function, account, code, range)
+        DoubleEntry::Reporting.aggregate(function: function, account: account, code: code, range: range)
       end
 
       specify 'Total attempted to save' do
@@ -107,8 +115,11 @@ RSpec.describe DoubleEntry::Reporting do
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
-          function, account, code, range,
-          :filter => [
+          function: function,
+          account: account,
+          code: code,
+          range: range,
+          filter: [
             :scope => {
               :name => :ten_dollar_transfers,
             },
@@ -135,8 +146,11 @@ RSpec.describe DoubleEntry::Reporting do
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
-          function, account, code, range,
-          :filter => [
+          function: function,
+          account: account,
+          code: code,
+          range: range,
+          filter: [
             :scope => {
               :name      => :specific_transfer_amount,
               :arguments => [Money.new(20_00)],
@@ -164,8 +178,11 @@ RSpec.describe DoubleEntry::Reporting do
 
       subject(:aggregate) do
         DoubleEntry::Reporting.aggregate(
-          function, account, code, range,
-          :filter => [
+          function: function,
+          account: account,
+          code: code,
+          range: range,
+          filter: [
             :metadata => {
               :reason => 'payday',
             },
@@ -176,6 +193,116 @@ RSpec.describe DoubleEntry::Reporting do
       specify 'Total amount of transfers saved because payday' do
         expect(aggregate).to eq(Money.new(20_00))
       end
+    end
+
+    describe 'filter by partner_account' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :fees }
+      let(:range) { DoubleEntry::Reporting::MonthRange.current }
+      let(:partner_account) { :service_fees }
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate(
+          function: function,
+          account: account,
+          code: code,
+          range: range,
+          partner_account: partner_account
+        )
+      end
+
+      specify 'Total amount of service fees paid' do
+        expect(aggregate).to eq(Money.new(-70_00))
+      end
+    end
+  end
+
+  describe '.aggregate_array' do
+    before do
+      # get rid of "helpful" predefined config
+      @config_accounts  = DoubleEntry.configuration.accounts
+      @config_transfers = DoubleEntry.configuration.transfers
+      DoubleEntry.configuration.accounts  = DoubleEntry::Account::Set.new
+      DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+
+      DoubleEntry.configure do |config|
+        config.define_accounts do |accounts|
+          accounts.define(:identifier => :savings)
+          accounts.define(:identifier => :account_fees)
+          accounts.define(:identifier => :service_fees)
+        end
+
+        config.define_transfers do |transfers|
+          transfers.define(:from => :savings, :to => :account_fees, :code => :fees)
+          transfers.define(:from => :savings, :to => :service_fees, :code => :fees)
+        end
+      end
+
+      savings      = DoubleEntry.account(:savings)
+      service_fees = DoubleEntry.account(:service_fees)
+      account_fees = DoubleEntry.account(:account_fees)
+
+      Timecop.travel(Time.local(2015, 11)) do
+        DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => service_fees, :code => :fees)
+        DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => account_fees, :code => :fees)
+      end
+
+      Timecop.travel(Time.local(2015, 12)) do
+        DoubleEntry.transfer(Money.new(70_00), :from => savings, :to => service_fees, :code => :fees)
+        DoubleEntry.transfer(Money.new(80_00), :from => savings, :to => account_fees, :code => :fees)
+      end
+    end
+
+    after do
+      # restore "helpful" predefined config
+      DoubleEntry.configuration.accounts  = @config_accounts
+      DoubleEntry.configuration.transfers = @config_transfers
+    end
+
+    describe 'filter solely on transaction identifiers and time' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :fees }
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate_array(
+          function: function,
+          account: account,
+          code: code,
+          range_type: 'year',
+          start: '2015-01-01'
+        )
+      end
+
+      before do
+        Timecop.travel(Time.local(2016,01,01))
+      end
+
+      it { is_expected.to eq [Money.new(-260_00), Money.zero] }
+    end
+
+    describe 'filter by partner_account' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :fees }
+      let(:start) { '2015-01-01' }
+      let(:range_type) { 'year' }
+      let(:partner_account) { :service_fees }
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate_array(
+          function: function,
+          account: account,
+          code: code,
+          partner_account: partner_account,
+          range_type: range_type,
+          start: start,
+        )
+      end
+
+      before do
+        Timecop.travel(Time.local(2016,01,01))
+      end
+
+      it { is_expected.to eq [Money.new(-120_00), Money.zero] }
     end
   end
 end

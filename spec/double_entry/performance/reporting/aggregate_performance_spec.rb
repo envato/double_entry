@@ -39,9 +39,7 @@ module DoubleEntry
       def profile_aggregation_with_filter(filter)
         start_profiling
         range = TimeRange.make(:year   => 2015, :month => 06, :range_type => :all_time)
-        options = {}
-        options[:filter] = filter if filter
-        Reporting.aggregate(:sum, :savings, :bonus, range, options)
+        Reporting.aggregate(function: :sum, account: :savings, code: :bonus, range: range, filter: filter)
         profile_name = filter ? 'aggregate-with-metadata' : 'aggregate'
         stop_profiling(profile_name)
       end

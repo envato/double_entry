@@ -62,9 +62,12 @@ module DoubleEntry
     # @param [Symbol] code The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @param [DoubleEntry::Reporting::TimeRange] Only include transfers in the
-    #   given time range in the calculation.
-    # @option options :filter [Array<Hash<Symbol,Hash<Symbol,Object>>>]
+    # @param [DoubleEntry::Reporting::TimeRange] range Only include transfers in
+    #   the given time range in the calculation.
+    # @param [Symbol] partner_account The symbol identifying the partner account
+    #   to perform the aggregate calculatoin on.  As specified in the account
+    #   configuration.
+    # @param [Array<Hash<Symbol,Hash<Symbol,Object>>>] filter
     #   An array of custom filter to apply before performing the aggregate
     #   calculation. Filters can be either scope filters, where the name must be
     #   specified, or they can be metadata filters, where the key/value pair to
@@ -78,8 +81,9 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate(function, account, code, range, options = {})
-      Aggregate.formatted_amount(function, account, code, range, options)
+    def aggregate(function:, account:, code:, range:, partner_account: nil, filter: nil)
+      Aggregate.formatted_amount(function: function, account: account, code: code, range: range,
+                                 partner_account: partner_account, filter: filter)
     end
 
     # Perform an aggregate calculation on a set of transfers for an account
@@ -104,21 +108,24 @@ module DoubleEntry
     # @param [Symbol] code The application specific code for the type of
     #   transfer to perform an aggregate calculation on. As specified in the
     #   transfer configuration.
-    # @option options :filter [Array<Symbol>, Array<Hash<Symbol, Object>>]
+    # @param [Symbol] partner_account The symbol identifying the partner account
+    #   to perform the aggregative calculation on.  As specified in the account
+    #   configuration.
+    # @param [Array<Symbol>, Array<Hash<Symbol, Object>>] filter
     #   A custom filter to apply before performing the aggregate calculation.
     #   Currently, filters must be monkey patched as scopes into the
     #   DoubleEntry::Line class in order to be used as filters, as the example
     #   shows. If the filter requires a parameter, it must be given in a Hash,
     #   otherwise pass an array with the symbol names for the defined scopes.
-    # @option options :range_type [String] The type of time range to return data
-    #   for.  For example, specifying 'month' will return an array of the resulting
+    # @param [String] range_type The type of time range to return data
+    #   for. For example, specifying 'month' will return an array of the resulting
     #   aggregate calculation for each month.
     #   Valid range_types are 'hour', 'day', 'week', 'month', and 'year'
-    # @option options :start [String] The start date for the time range to perform
+    # @param [String] start The start date for the time range to perform
     #   calculations in.  The default start date is the start_of_business (can
     #   be specified in configuration).
     #   The format of the string must be as follows: 'YYYY-mm-dd'
-    # @option options :finish [String] The finish (or end) date for the time range
+    # @param [String] finish The finish (or end) date for the time range
     #   to perform calculations in.  The default finish date is the current date.
     #   The format of the string must be as follows: 'YYYY-mm-dd'
     # @return [Array<Money, Fixnum>] Returns an array of Money objects for :sum
@@ -128,8 +135,10 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate_array(function, account, code, options = {})
-      AggregateArray.new(function, account, code, options)
+    def aggregate_array(function:, account:, code:, partner_account: nil, filter: nil,
+                        range_type: nil, start: nil, finish: nil)
+      AggregateArray.new(function: function, account: account, code: code, partner_account: partner_account,
+                         filter: filter, range_type: range_type, start: start, finish: finish)
     end
 
     # Identify the scopes with the given account identifier holding at least
