@@ -11,7 +11,7 @@ module DoubleEntry
       # broken down by month and it would return an array of values
       attr_reader :function, :account, :partner_account, :code, :filter, :range_type, :start, :finish, :currency
 
-      def initialize(function, account, code, partner_account: nil, filter: nil, range_type: nil, start: nil, finish: nil)
+      def initialize(function:, account:, code:, partner_account: nil, filter: nil, range_type: nil, start: nil, finish: nil)
         @function        = function.to_s
         @account         = account
         @code            = code
@@ -40,8 +40,8 @@ module DoubleEntry
         # (this includes aggregates for the still-running period)
         all_periods.each do |period|
           unless @aggregates[period.key]
-            @aggregates[period.key] = Aggregate.formatted_amount(function, account, code, period,
-                                                                 partner_account: partner_account, filter: filter)
+            @aggregates[period.key] = Aggregate.formatted_amount(function: function, account: account, code: code,
+                                                                 range: period, partner_account: partner_account, filter: filter)
           end
         end
       end

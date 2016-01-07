@@ -15,7 +15,13 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     let(:lines_scope) { spy(DoubleEntry::Line) }
 
     subject(:filter) do
-      DoubleEntry::Reporting::LineAggregateFilter.new(account, partner_account, code, range, filter_criteria)
+      DoubleEntry::Reporting::LineAggregateFilter.new(
+        account: account,
+        partner_account: partner_account,
+        code: code,
+        range: range,
+        filter_criteria: filter_criteria
+      )
     end
 
     before do

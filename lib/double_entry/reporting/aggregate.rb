@@ -4,11 +4,18 @@ module DoubleEntry
     class Aggregate
       attr_reader :function, :account, :partner_account, :code, :range, :filter, :currency
 
-      def self.formatted_amount(function, account, code, range, partner_account: nil, filter: nil)
-        new(function, account, code, range, partner_account: partner_account, filter: filter).formatted_amount
+      def self.formatted_amount(function:, account:, code:, range:, partner_account: nil, filter: nil)
+        new(
+          function: function,
+          account: account,
+          code: code,
+          range: range,
+          partner_account: partner_account,
+          filter: filter,
+        ).formatted_amount
       end
 
-      def initialize(function, account, code, range, partner_account: nil, filter: nil)
+      def initialize(function:, account:, code:, range:, partner_account: nil, filter: nil)
         @function = function.to_s
         fail AggregateFunctionNotSupported unless %w(sum count average).include?(@function)
 
@@ -53,7 +60,14 @@ module DoubleEntry
         if range.class == YearRange
           aggregate = calculate_yearly_aggregate
         else
-          aggregate = LineAggregate.aggregate(function, account, partner_account, code, range, filter)
+          aggregate = LineAggregate.aggregate(
+            function: function,
+            account: account,
+            partner_account: partner_account,
+            code: code,
+            range: range,
+            named_scopes: filter
+          )
         end
 
         if range_is_complete?
@@ -74,7 +88,8 @@ module DoubleEntry
           calculate_yearly_average
         else
           result = (1..12).inject(formatted_amount(0)) do |total, month|
-            total + Aggregate.new(function, account, code, MonthRange.new(:year => range.year, :month => month),
+            total + Aggregate.new(function: function, account: account, code: code,
+                                  range: MonthRange.new(:year => range.year, :month => month),
                                   partner_account: partner_account, filter: filter).formatted_amount
           end
           result.is_a?(Money) ? result.cents : result
@@ -84,8 +99,10 @@ module DoubleEntry
       def calculate_yearly_average
         # need this seperate function, because an average of averages is not the correct average
         year_range = YearRange.new(:year => range.year)
-        sum = Aggregate.new(:sum, account, code, year_range, partner_account: partner_account, filter: filter).formatted_amount
-        count = Aggregate.new(:count, account, code, year_range, partner_account: partner_account, filter: filter).formatted_amount
+        sum = Aggregate.new(function: :sum, account: account, code: code, range: year_range,
+                            partner_account: partner_account, filter: filter).formatted_amount
+        count = Aggregate.new(function: :count, account: account, code: code, range: year_range,
+                              partner_account: partner_account, filter: filter).formatted_amount
         (count == 0) ? 0 : (sum / count).cents
       end
 

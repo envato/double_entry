@@ -19,7 +19,14 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
     let(:range) { double }
 
     subject(:aggregate) do
-      DoubleEntry::Reporting::LineAggregate.aggregate(function, account, partner_account, code, range, named_scopes)
+      DoubleEntry::Reporting::LineAggregate.aggregate(
+        function: function,
+        account: account,
+        partner_account: partner_account,
+        code: code,
+        range: range,
+        named_scopes: named_scopes
+      )
     end
 
     before do
@@ -30,7 +37,8 @@ RSpec.describe DoubleEntry::Reporting::LineAggregate do
 
     it 'applies the specified filters' do
       expect(DoubleEntry::Reporting::LineAggregateFilter).to have_received(:new).
-        with(account, partner_account, code, range, named_scopes)
+        with(account: account, partner_account: partner_account, code: code,
+             range: range, filter_criteria: named_scopes)
       expect(filter).to have_received(:filter)
     end
 

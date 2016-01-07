@@ -81,8 +81,9 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate(function, account, code, range, partner_account: nil, filter: nil)
-      Aggregate.formatted_amount(function, account, code, range, partner_account: partner_account, filter: filter)
+    def aggregate(function:, account:, code:, range:, partner_account: nil, filter: nil)
+      Aggregate.formatted_amount(function: function, account: account, code: code, range: range,
+                                 partner_account: partner_account, filter: filter)
     end
 
     # Perform an aggregate calculation on a set of transfers for an account
@@ -134,9 +135,9 @@ module DoubleEntry
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
-    def aggregate_array(function, account, code, partner_account: nil, filter: nil,
+    def aggregate_array(function:, account:, code:, partner_account: nil, filter: nil,
                         range_type: nil, start: nil, finish: nil)
-      AggregateArray.new(function, account, code, partner_account: partner_account,
+      AggregateArray.new(function: function, account: account, code:  code, partner_account: partner_account,
                          filter: filter, range_type: range_type, start: start, finish: finish)
     end
 
