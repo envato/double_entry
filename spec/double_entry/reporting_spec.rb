@@ -1,6 +1,6 @@
 # encoding: utf-8
 RSpec.describe DoubleEntry::Reporting do
-  describe '::configure' do
+  describe 'configuration' do
     describe 'start_of_business' do
       subject(:start_of_business) { DoubleEntry::Reporting.configuration.start_of_business }
 
@@ -20,7 +20,7 @@ RSpec.describe DoubleEntry::Reporting do
     end
   end
 
-  describe '::scopes_with_minimum_balance_for_account' do
+  describe '.scopes_with_minimum_balance_for_account' do
     subject(:scopes) { DoubleEntry::Reporting.scopes_with_minimum_balance_for_account(minimum_balance, :checking) }
 
     context "a 'checking' account with balance $100" do
@@ -43,7 +43,7 @@ RSpec.describe DoubleEntry::Reporting do
     end
   end
 
-  describe '::aggregate' do
+  describe '.aggregate' do
     before do
       # get rid of "helpful" predefined config
       @config_accounts  = DoubleEntry.configuration.accounts
@@ -189,11 +189,7 @@ RSpec.describe DoubleEntry::Reporting do
       let(:code) { :fees }
       let(:range) { DoubleEntry::Reporting::MonthRange.current }
       let(:partner_account) { :service_fees }
-      subject(:aggregate) do
-        DoubleEntry::Reporting.aggregate(function, account, code, range,
-          partner_account: partner_account,
-        )
-      end
+      subject(:aggregate) { DoubleEntry::Reporting.aggregate(function, account, code, range, partner_account: partner_account) }
 
       specify 'Total amount of service fees paid' do
         expect(aggregate).to eq(Money.new(-70_00))

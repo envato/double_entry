@@ -13,22 +13,24 @@ module DoubleEntry
       before do
         # Thursday
         Timecop.freeze Time.local(2009, 10, 1) do
-          perform_deposit user, 20_00
+          perform_deposit(user, 20_00)
         end
 
         # Saturday
         Timecop.freeze Time.local(2009, 10, 3) do
-          perform_deposit user, 40_00
+          perform_deposit(user, 40_00)
         end
 
         Timecop.freeze Time.local(2009, 10, 10) do
-          perform_deposit user, 50_00
+          perform_deposit(user, 50_00)
         end
+
         Timecop.freeze Time.local(2009, 11, 1, 0, 59, 0) do
-          perform_deposit user, 40_00
+          perform_deposit(user, 40_00)
         end
+
         Timecop.freeze Time.local(2009, 11, 1, 1, 00, 0) do
-          perform_deposit user, 50_00
+          perform_deposit(user, 50_00)
         end
 
         allow(LineAggregate).to receive(:aggregate).and_call_original
@@ -39,7 +41,62 @@ module DoubleEntry
         expect(LineAggregate.count).to eq 1
       end
 
-      it 'should only store the aggregate once if it is requested more than once' do
+      describe 'partner_account aggregates' do
+        context 'when transfers exist with the same account and code, but different partner_account' do
+          before do
+            Timecop.freeze Time.local(2009, 10, 1) do
+              transfer_deposit_fee(user, 1_00)
+              transfer_account_fee(user, 1_00)
+            end
+
+            Timecop.freeze Time.local(2009, 10, 5) do
+              transfer_deposit_fee(user, 1_00)
+            end
+
+            Timecop.freeze Time.local(2009, 11, 1) do
+              transfer_deposit_fee(user, 2_00)
+              transfer_account_fee(user, 1_00)
+            end
+          end
+
+          context 'when the partner_account is supplied' do
+            it 'calculates the complete year correctly for deposit fees' do
+              amount = Aggregate.new(:sum, :savings, :fee, TimeRange.make(:year => 2009), partner_account: :deposit_fees).formatted_amount
+              expect(amount).to eq (Money.new(-4_00))
+            end
+
+            it 'calculates the complete year correctly for account fees' do
+              amount = Aggregate.new(:sum, :savings, :fee, TimeRange.make(:year => 2009), partner_account: :account_fees).formatted_amount
+              expect(amount).to eq (Money.new(-2_00))
+            end
+          end
+
+          context 'when the partner_account is not supplied' do
+            it 'calculates the complete year correctly for all fees' do
+              amount = Aggregate.new(:sum, :savings, :fee, TimeRange.make(:year => 2009)).formatted_amount
+              expect(amount).to eq (Money.new(-6_00))
+            end
+          end
+        end
+
+        it 'calculates a new aggregate when partner_account is specified' do
+          Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
+          Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
+          Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
+          expect(LineAggregate.count).to eq 3
+          expect(LineAggregate).to have_received(:aggregate).exactly(3).times
+        end
+
+        it "only stores an aggregate including partner_account once if it's requested more than once" do
+          Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
+          Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
+          Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10), partner_account: :test).amount
+          expect(LineAggregate.count).to eq 2
+          expect(LineAggregate).to have_received(:aggregate).twice
+        end
+      end
+
+      it 'only stores the aggregate once if it is requested more than once' do
         Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
         Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
         Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
@@ -47,28 +104,12 @@ module DoubleEntry
         expect(LineAggregate).to have_received(:aggregate).twice
       end
 
-      it 'calculates a new aggregate when partner_account is specified' do
-        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9)).amount
-        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
-        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).amount
-        expect(LineAggregate.count).to eq 3
-        expect(LineAggregate).to have_received(:aggregate).exactly(3).times
-      end
-
-      it "only stores an aggregate including partner_account once if it's requested more than once" do
-        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
-        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 9), partner_account: :test).amount
-        Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10), partner_account: :test).amount
-        expect(LineAggregate.count).to eq 2
-        expect(LineAggregate).to have_received(:aggregate).twice
-      end
-
-      it 'should calculate the complete year correctly' do
+      it 'calculates the complete year correctly' do
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009)).formatted_amount
         expect(amount).to eq Money.new(200_00)
       end
 
-      it 'should calculate seperate months correctly' do
+      it 'calculates separate months correctly' do
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 10)).formatted_amount
         expect(amount).to eq Money.new(110_00)
 
@@ -76,19 +117,19 @@ module DoubleEntry
         expect(amount).to eq Money.new(90_00)
       end
 
-      it 'should calculate seperate weeks correctly' do
+      it 'calculates separate weeks correctly' do
         # Week 40 - Mon Sep 28, 2009 to Sun Oct 4 2009
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 40)).formatted_amount
         expect(amount).to eq Money.new(60_00)
       end
 
-      it 'should calculate seperate days correctly' do
+      it 'calculates separate days correctly' do
         # 1 Nov 2009
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 44, :day => 7)).formatted_amount
         expect(amount).to eq Money.new(90_00)
       end
 
-      it 'should calculate seperate hours correctly' do
+      it 'calculates separate hours correctly' do
         # 1 Nov 2009
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 44, :day => 7, :hour => 0)).formatted_amount
         expect(amount).to eq Money.new(40_00)
@@ -96,7 +137,7 @@ module DoubleEntry
         expect(amount).to eq Money.new(50_00)
       end
 
-      it 'should calculate, but not store aggregates when the time range is still current' do
+      it 'calculates, but not store aggregates when the time range is still current' do
         Timecop.freeze Time.local(2009, 11, 21) do
           amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 11)).formatted_amount
           expect(amount).to eq Money.new(90_00)
@@ -104,7 +145,7 @@ module DoubleEntry
         end
       end
 
-      it 'should calculate, but not store aggregates when the time range is in the future' do
+      it 'calculates, but not store aggregates when the time range is in the future' do
         Timecop.freeze Time.local(2009, 11, 21) do
           amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 12)).formatted_amount
           expect(amount).to eq Money.new(0)
@@ -112,7 +153,7 @@ module DoubleEntry
         end
       end
 
-      it 'should calculate monthly all_time ranges correctly' do
+      it 'calculates monthly all_time ranges correctly' do
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :month => 12, :range_type => :all_time)).formatted_amount
         expect(amount).to eq Money.new(200_00)
       end
@@ -127,7 +168,7 @@ module DoubleEntry
         expect(amount).to eq 5
       end
 
-      it 'should calculate weekly all_time ranges correctly' do
+      it 'calculates weekly all_time ranges correctly' do
         amount = Aggregate.new(:sum, :savings, :bonus, TimeRange.make(:year => 2009, :week => 43, :range_type => :all_time)).formatted_amount
         expect(amount).to eq Money.new(110_00)
       end
@@ -215,7 +256,7 @@ module DoubleEntry
         perform_btc_deposit(user, 200_000_000)
       end
 
-      it 'should calculate the sum in the correct currency' do
+      it 'calculates the sum in the correct currency' do
         amount = Aggregate.new(:sum, :btc_savings, :btc_test_transfer, TimeRange.make(:year => Time.now.year)).formatted_amount
         expect(amount).to eq(Money.new(300_000_000, :btc))
       end
