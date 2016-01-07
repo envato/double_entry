@@ -22,7 +22,6 @@ DoubleEntry uses the [Money gem](https://github.com/RubyMoney/money) to encapsul
 DoubleEntry is tested against:
 
 Ruby
- * 2.0.0
  * 2.1.5
  * 2.2.0
 
