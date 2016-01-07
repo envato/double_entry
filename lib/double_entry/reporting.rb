@@ -137,7 +137,7 @@ module DoubleEntry
     #
     def aggregate_array(function:, account:, code:, partner_account: nil, filter: nil,
                         range_type: nil, start: nil, finish: nil)
-      AggregateArray.new(function: function, account: account, code:  code, partner_account: partner_account,
+      AggregateArray.new(function: function, account: account, code: code, partner_account: partner_account,
                          filter: filter, range_type: range_type, start: start, finish: finish)
     end
 

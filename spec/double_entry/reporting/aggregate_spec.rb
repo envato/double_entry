@@ -100,12 +100,6 @@ module DoubleEntry
         Aggregate.new(function: :sum, account: :savings, code: :bonus, range: TimeRange.make(:year => 2009, :month => 9)).amount
         Aggregate.new(function: :sum, account: :savings, code: :bonus, range: TimeRange.make(:year => 2009, :month => 9)).amount
         Aggregate.new(function: :sum, account: :savings, code: :bonus, range: TimeRange.make(:year => 2009, :month => 10)).amount
-      end
-
-      it 'should only store the aggregate once if it is requested more than once' do
-        Aggregate.new(function: :sum, account: :savings, code: :bonus, range: TimeRange.make(:year => 2009, :month => 9)).amount
-        Aggregate.new(function: :sum, account: :savings, code: :bonus, range: TimeRange.make(:year => 2009, :month => 9)).amount
-        Aggregate.new(function: :sum, account: :savings, code: :bonus, range: TimeRange.make(:year => 2009, :month => 10)).amount
         expect(LineAggregate.count).to eq 2
         expect(LineAggregate).to have_received(:aggregate).twice
       end
