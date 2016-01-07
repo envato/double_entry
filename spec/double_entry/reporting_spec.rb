@@ -196,4 +196,84 @@ RSpec.describe DoubleEntry::Reporting do
       end
     end
   end
+
+  describe '.aggregate_array' do
+    before do
+      # get rid of "helpful" predefined config
+      @config_accounts  = DoubleEntry.configuration.accounts
+      @config_transfers = DoubleEntry.configuration.transfers
+      DoubleEntry.configuration.accounts  = DoubleEntry::Account::Set.new
+      DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+
+      DoubleEntry.configure do |config|
+        config.define_accounts do |accounts|
+          accounts.define(:identifier => :savings)
+          accounts.define(:identifier => :account_fees)
+          accounts.define(:identifier => :service_fees)
+        end
+
+        config.define_transfers do |transfers|
+          transfers.define(:from => :savings, :to => :account_fees, :code => :fees)
+          transfers.define(:from => :savings, :to => :service_fees, :code => :fees)
+        end
+      end
+
+      savings      = DoubleEntry.account(:savings)
+      service_fees = DoubleEntry.account(:service_fees)
+      account_fees = DoubleEntry.account(:account_fees)
+
+      Timecop.travel(Time.local(2015, 11)) do
+        DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => service_fees, :code => :fees)
+        DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => account_fees, :code => :fees)
+      end
+
+      Timecop.travel(Time.local(2015, 12)) do
+        DoubleEntry.transfer(Money.new(70_00), :from => savings, :to => service_fees, :code => :fees)
+        DoubleEntry.transfer(Money.new(80_00), :from => savings, :to => account_fees, :code => :fees)
+      end
+    end
+
+    after do
+      # restore "helpful" predefined config
+      DoubleEntry.configuration.accounts  = @config_accounts
+      DoubleEntry.configuration.transfers = @config_transfers
+    end
+
+    describe 'filter solely on transaction identifiers and time' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :fees }
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate_array(function, account, code, range_type: 'year', start: '2015-01-01')
+      end
+
+      before do
+        Timecop.travel(Time.local(2016,01,01))
+      end
+
+      it { is_expected.to eq [Money.new(-260_00), Money.zero] }
+    end
+
+    describe 'filter by partner_account' do
+      let(:function) { :sum }
+      let(:account) { :savings }
+      let(:code) { :fees }
+      let(:start) { '2015-01-01' }
+      let(:range_type) { 'year' }
+      let(:partner_account) { :service_fees }
+      subject(:aggregate) do
+        DoubleEntry::Reporting.aggregate_array(function, account, code,
+          partner_account: partner_account,
+          range_type: range_type,
+          start: start,
+        )
+      end
+
+      before do
+        Timecop.travel(Time.local(2016,01,01))
+      end
+
+      it { is_expected.to eq [Money.new(-120_00), Money.zero] }
+    end
+  end
 end
