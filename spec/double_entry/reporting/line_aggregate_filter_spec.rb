@@ -27,7 +27,7 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
     before do
       stub_const('DoubleEntry::Line', lines_scope)
 
-      allow(DoubleEntry::LineMetadata).to receive(:table_name).and_return('double_entry_line_metadata')
+      allow(DoubleEntry::Reporting::LineMetadataFilter).to receive(:filter).and_call_original
 
       allow(lines_scope).to receive(:where).and_return(lines_scope)
       allow(lines_scope).to receive(:joins).and_return(lines_scope)
@@ -69,9 +69,8 @@ RSpec.describe DoubleEntry::Reporting::LineAggregateFilter do
       end
 
       it 'filters by all the metadata provided' do
-        expect(DoubleEntry::Line).to have_received(:joins).with(:metadata)
-        expect(DoubleEntry::Line).to have_received(:where).
-          with(:double_entry_line_metadata => { :key => :meme, :value => 'business_cat' })
+        expect(DoubleEntry::Reporting::LineMetadataFilter).to have_received(:filter).
+          with(collection: anything, metadata: { :meme => 'business_cat'})
       end
     end
 
