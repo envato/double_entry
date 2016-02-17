@@ -74,8 +74,9 @@ RSpec.describe DoubleEntry::Reporting do
       credit       = DoubleEntry.account(:credit)
       service_fees = DoubleEntry.account(:service_fees)
       account_fees = DoubleEntry.account(:account_fees)
+      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings,      :code => :save, :metadata => { :reason => 'payday', :save_for => 'cats' })
       DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings,      :code => :save, :metadata => { :reason => 'payday' })
-      DoubleEntry.transfer(Money.new(10_00), :from => cash,    :to => savings,      :code => :save, :metadata => { :reason => 'payday' })
+      DoubleEntry.transfer(Money.new(11_00), :from => cash,    :to => savings,      :code => :save, :metadata => { :reason => 'payday', :save_for => 'dogs' })
       DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings,      :code => :save)
       DoubleEntry.transfer(Money.new(20_00), :from => cash,    :to => savings,      :code => :save)
       DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => credit,       :code => :bill)
@@ -103,7 +104,7 @@ RSpec.describe DoubleEntry::Reporting do
       end
 
       specify 'Total attempted to save' do
-        expect(aggregate).to eq(Money.new(60_00))
+        expect(aggregate).to eq(Money.new(71_00))
       end
     end
 
@@ -182,16 +183,37 @@ RSpec.describe DoubleEntry::Reporting do
           account: account,
           code: code,
           range: range,
-          filter: [
+          filter: filter,
+        )
+      end
+
+      context 'filtering by a single metadata key/value pair' do
+        let(:filter) do
+          [
             :metadata => {
               :reason => 'payday',
             },
           ]
-        )
+        end
+
+        specify 'Total amount of transfers saved because payday' do
+          expect(aggregate).to eq(Money.new(31_00))
+        end
       end
 
-      specify 'Total amount of transfers saved because payday' do
-        expect(aggregate).to eq(Money.new(20_00))
+      context 'filtering by multiple metadata key/value pairs' do
+        let(:filter) do
+          [
+            :metadata => {
+              :reason => 'payday',
+              :save_for => 'dogs',
+            },
+          ]
+        end
+
+        specify 'Total amount of transfers saved for dogs because payday' do
+          expect(aggregate).to eq(Money.new(11_00))
+        end
       end
     end
 
