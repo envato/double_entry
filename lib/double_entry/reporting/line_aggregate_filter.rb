@@ -2,6 +2,7 @@
 module DoubleEntry
   module Reporting
     class LineAggregateFilter
+
       def initialize(account:, partner_account:, code:, range:, filter_criteria:)
         @account         = account
         @partner_account = partner_account
@@ -44,10 +45,11 @@ module DoubleEntry
       #         :name => :ten_dollar_purchases
       #       }
       #     },
-      #     # an example of providing a single metadatum criteria to filter on
+      #     # an example of providing multiple metadatum criteria to filter on
       #     {
       #       :metadata => {
-      #         :meme => :business_cat
+      #         :meme => :business_cat,
+      #         :category => :fun_times,
       #       }
       #     }
       #   ]
@@ -68,13 +70,7 @@ module DoubleEntry
       end
 
       def filter_by_metadata(collection, metadata)
-        metadata.reduce(collection.joins(:metadata)) do |filtered_collection, (key, value)|
-          filtered_collection.where(metadata_table => { :key => key, :value => value })
-        end
-      end
-
-      def metadata_table
-        DoubleEntry::LineMetadata.table_name.to_sym
+        DoubleEntry::Reporting::LineMetadataFilter.filter(collection: collection, metadata: metadata)
       end
     end
   end
