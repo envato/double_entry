@@ -214,7 +214,7 @@ Transfers between accounts of different currencies are not allowed.
 ```ruby
 DoubleEntry.configure do |config|
   config.define_accounts do |accounts|
-    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :currency => :aud)
+    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :currency => 'AUD')
   end
 end
 ```
