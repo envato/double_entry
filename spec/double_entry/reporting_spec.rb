@@ -82,7 +82,7 @@ RSpec.describe DoubleEntry::Reporting do
       DoubleEntry.transfer(Money.new(30_00), :from => cash,    :to => credit,       :code => :bill)
       DoubleEntry.transfer(Money.new(40_00), :from => cash,    :to => credit,       :code => :bill)
       DoubleEntry.transfer(Money.new(50_00), :from => savings, :to => cash,         :code => :spend)
-      DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,         :code => :spend, :metadata => { :category => 'entertainment' })
+      DoubleEntry.transfer(Money.new(60_00), :from => savings, :to => cash,         :code => :spend, :metadata => { :category => ['entertainment', 'training'] })
       DoubleEntry.transfer(Money.new(70_00), :from => savings, :to => service_fees, :code => :fees)
       DoubleEntry.transfer(Money.new(80_00), :from => savings, :to => account_fees, :code => :fees)
     end
@@ -199,6 +199,34 @@ RSpec.describe DoubleEntry::Reporting do
         specify 'Total amount of transfers saved because payday' do
           expect(aggregate).to eq(Money.new(31_00))
         end
+      end
+
+      context 'filtering by key with multiple values' do
+        let(:code) { :spend }
+        let(:filter) do
+          [
+            :metadata => {
+              :category => category,
+            },
+          ]
+        end
+
+        context 'filter by category entertainment' do
+          let(:category) { 'entertainment' }
+
+          specify 'Total amount of transfers spent because entertainment' do
+            expect(aggregate).to eq(-Money.new(60_00))
+          end
+        end
+
+        context 'filter by category training' do
+          let(:category) { 'training' }
+
+          specify 'Total amount of transfers spent because training' do
+            expect(aggregate).to eq(-Money.new(60_00))
+          end
+        end
+
       end
 
       context 'filtering by multiple metadata key/value pairs' do
