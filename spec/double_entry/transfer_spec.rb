@@ -72,6 +72,29 @@ module DoubleEntry
           expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
         end
       end
+
+      context 'metadata with multiple values in array for one key' do
+        let(:options) { { :from => test, :to => savings, :code => :bonus, :metadata => { :tax => ['GST', 'VAT'] } } }
+        let(:new_metadata) { LineMetadata.all[-4..-1] }
+
+        it 'creates metadata lines' do
+          expect { transfer }.to change { LineMetadata.count }.by 4
+        end
+
+        it 'associates the metadata lines with the transfer lines' do
+          transfer
+          expect(new_metadata.count { |meta| meta.line == new_lines.first }).to be 2
+          expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
+        end
+
+        it 'stores both values to the same key' do
+          transfer
+          taxes = new_metadata.select { |meta| meta.key == :tax }
+          expect(taxes.size).to be 4
+          expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
+          expect(taxes.map(&:line).uniq.size).to be 2
+        end
+      end
     end
 
     describe Transfer::Set do
