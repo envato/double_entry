@@ -133,7 +133,7 @@ DoubleEntry.transfer(
   :from => one_account,
   :to   => another_account,
   :code => :a_business_code_for_this_type_of_transfer,
-  :metadata => {:key1 => 'value 1', :key2 => 'value 2'},
+  :metadata => {:key1 => ['value 1', 'value 2'], :key2 => 'value 3'},
 )
 ```
 
