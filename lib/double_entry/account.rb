@@ -66,7 +66,7 @@ module DoubleEntry
       def scope_identifier
         lambda do |value|
           case value
-          when @active_record_class
+          when @active_record_class.constantize
             value.id
           when String, Fixnum
             value

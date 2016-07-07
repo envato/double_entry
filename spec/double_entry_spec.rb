@@ -352,7 +352,7 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          user_scope = accounts.active_record_scope_identifier(User)
+          user_scope = accounts.active_record_scope_identifier("User")
           accounts.define(:identifier => :bank)
           accounts.define(:identifier => :cash,    :scope_identifier => user_scope)
           accounts.define(:identifier => :savings, :scope_identifier => user_scope)
