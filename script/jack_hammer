@@ -109,6 +109,7 @@ def run_tests
   $balance_flush_count.times do
     puts "Flushing balances"
     DoubleEntry::AccountBalance.delete_all
+    ActiveRecord::Base.connection_pool.disconnect!
 
     if $use_threads
       puts "Using threads as workers"
@@ -127,14 +128,11 @@ def run_tests
 
       pids.each {|pid| Process.wait2(pid) }
     end
-
-    ActiveRecord::Base.connection_pool.disconnect!
   end
 end
 
 
 def run_process(iterations, process_num)
-  ActiveRecord::Base.connection_pool.disconnect!  # Get a unique DB connection for this process.
   srand  # Seed the random number generator separately for each process.
 
   puts "Process #{process_num} running #{iterations} transfers..."
