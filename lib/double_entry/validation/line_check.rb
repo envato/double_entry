@@ -4,7 +4,10 @@ require 'set'
 module DoubleEntry
   module Validation
     class LineCheck < ActiveRecord::Base
-      default_scope -> { order('created_at') }
+
+      def self.last_line_id_checked
+        order('created_at DESC').limit(1).pluck(:last_line_id).first || 0
+      end
 
       def self.perform!
         new.perform
@@ -40,13 +43,8 @@ module DoubleEntry
 
     private
 
-      def last_run_line_id
-        latest = LineCheck.last
-        latest ? latest.last_line_id : 0
-      end
-
       def new_lines_since_last_run
-        Line.where('id > ?', last_run_line_id)
+        Line.with_id_greater_than(LineCheck.last_line_id_checked)
       end
 
       def running_balance_correct?(line, log)

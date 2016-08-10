@@ -2,7 +2,9 @@
 module DoubleEntry
   module Validation
     RSpec.describe LineCheck do
-      describe '#last' do
+      describe '.last_line_id_checked' do
+        subject(:last_line_id_checked) { LineCheck.last_line_id_checked }
+
         context 'Given some checks have been created' do
           before do
             Timecop.freeze 3.minutes.ago do
@@ -17,7 +19,7 @@ module DoubleEntry
           end
 
           it 'should find the newest LineCheck created (by creation_date)' do
-            expect(LineCheck.last.last_line_id).to eq 300
+            expect(last_line_id_checked).to eq 300
           end
         end
       end
