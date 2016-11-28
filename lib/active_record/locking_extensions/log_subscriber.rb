@@ -26,4 +26,4 @@ module ActiveRecord
   end
 end
 
-ActiveRecord::LockingExtensions::LogSubscriber.attach_to :active_record
+ActiveRecord::LockingExtensions::LogSubscriber.attach_to :double_entry
