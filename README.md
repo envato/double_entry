@@ -3,7 +3,7 @@
 
 [![License MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/envato/double_entry/blob/master/LICENSE.md)
 [![Gem Version](https://badge.fury.io/rb/double_entry.svg)](http://badge.fury.io/rb/double_entry)
-[![Build Status](https://travis-ci.org/envato/double_entry.svg?branch=master)](https://travis-ci.org/envato/double_entry)
+[![Build Status](https://travis-ci.org/envato/double_entry.svg?branch=1-stable)](https://travis-ci.org/envato/double_entry)
 [![Code Climate](https://codeclimate.com/github/envato/double_entry.png)](https://codeclimate.com/github/envato/double_entry)
 
 ![Show me the Money](http://24.media.tumblr.com/tumblr_m3bwbqNJIG1rrgbmqo1_500.gif)
@@ -22,14 +22,15 @@ DoubleEntry uses the [Money gem](https://github.com/RubyMoney/money) to encapsul
 DoubleEntry is tested against:
 
 Ruby
- * 2.0.0
- * 2.1.5
- * 2.2.0
+ * 2.1.x
+ * 2.2.x
+ * 2.3.x
 
 Rails
  * 3.2.x
  * 4.1.x
  * 4.2.x
+ * 5.0.x
 
 Databases
  * MySQL
