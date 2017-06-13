@@ -16,20 +16,26 @@ matrix:
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
     - rvm: 2.2.5
-      gemfile: spec/support/gemfiles/Gemfile.rails-5.0.x
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
     - rvm: 2.3.1
       gemfile: spec/support/gemfiles/Gemfile.rails-4.1.x
       env: DB=mysql
     - rvm: 2.3.1
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      env: DB=mysql
+    - rvm: 2.4.1
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
-    - rvm: 2.3.1
+    - rvm: 2.4.1
       gemfile: spec/support/gemfiles/Gemfile.rails-5.0.x
       env: DB=mysql
-    - rvm: 2.3.1
-      gemfile: spec/support/gemfiles/Gemfile.rails-5.0.x
+    - rvm: 2.4.1
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      env: DB=mysql
+    - rvm: 2.4.1
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=sqlite
-    - rvm: 2.3.1
-      gemfile: spec/support/gemfiles/Gemfile.rails-5.0.x
+    - rvm: 2.4.1
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=postgres
