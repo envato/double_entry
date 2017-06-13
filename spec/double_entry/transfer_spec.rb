@@ -98,18 +98,28 @@ module DoubleEntry
     end
 
     describe Transfer::Set do
-      describe '#define' do
+      subject(:set) { described_class.new }
+
+      describe '#find' do
         before do
-          subject.define(
-            :code => 'code',
-            :from => double(:identifier => 'from'),
-            :to   => double(:identifier => 'to'),
+          set.define(
+            :code => :transfer_code,
+            :from => from_account.identifier,
+            :to   => to_account.identifier,
           )
         end
-        its(:first) { should be_a Transfer }
-        its('first.code') { should eq 'code' }
-        its('first.from.identifier') { should eq 'from' }
-        its('first.to.identifier') { should eq 'to' }
+
+        let(:from_account) { instance_double(Account, :identifier => :from) }
+        let(:to_account)   { instance_double(Account, :identifier => :to) }
+
+        subject { set.find(from_account, to_account, :transfer_code) }
+
+        it 'should find the transfer' do
+          expect(subject).to be_a Transfer
+          expect(subject.code).to eq :transfer_code
+          expect(subject.from).to eq from_account.identifier
+          expect(subject.to).to eq to_account.identifier
+        end
       end
     end
   end

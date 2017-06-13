@@ -25,37 +25,36 @@ module DoubleEntry
     end
 
     # @api private
-    class Set < Array
+    class Set
       def define(attributes)
-        self << Transfer.new(attributes)
-      end
-
-      def find(from, to, code)
-        _find(from.identifier, to.identifier, code)
-      end
-
-      def find!(from, to, code)
-        find(from, to, code).tap do |transfer|
-          fail TransferNotAllowed, [from.identifier, to.identifier, code].inspect unless transfer
+        Transfer.new(attributes).tap do |transfer|
+          key = [transfer.from, transfer.to, transfer.code]
+          if _find(*key)
+            fail DuplicateTransfer
+          else
+            backing_collection[key] = transfer
+          end
         end
       end
 
-      def <<(transfer)
-        if _find(transfer.from, transfer.to, transfer.code)
-          fail DuplicateTransfer
-        else
-          super(transfer)
+      def find(from_account, to_account, code)
+        _find(from_account.identifier, to_account.identifier, code)
+      end
+
+      def find!(from_account, to_account, code)
+        find(from_account, to_account, code).tap do |transfer|
+          fail TransferNotAllowed, [from_account.identifier, to_account.identifier, code].inspect unless transfer
         end
       end
 
     private
 
+      def backing_collection
+        @backing_collection ||= Hash.new
+      end
+
       def _find(from, to, code)
-        detect do |transfer|
-          transfer.from == from &&
-            transfer.to == to &&
-            transfer.code == code
-        end
+        backing_collection[[from, to, code]]
       end
     end
 
