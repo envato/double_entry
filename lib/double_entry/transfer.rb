@@ -16,7 +16,7 @@ module DoubleEntry
 
       # @api private
       def transfer(amount, options = {})
-        fail TransferIsNegative if amount < Money.zero
+        fail TransferIsNegative if amount.negative?
         from_account = options[:from]
         to_account = options[:to]
         code = options[:code]
