@@ -80,14 +80,14 @@ module DoubleEntry
           expect(set.find(:savings, false)).to be_an Account
           expect(set.find(:savings, false).identifier).to eq :savings
 
-          expect { set.find(:savings, true) }.to raise_error
+          expect { set.find(:savings, true) }.to raise_error(UnknownAccount)
         end
 
         it 'finds scoped accounts' do
           expect(set.find(:checking, true)).to be_an Account
           expect(set.find(:checking, true).identifier).to eq :checking
 
-          expect { set.find(:checking, false) }.to raise_error
+          expect { set.find(:checking, false) }.to raise_error(UnknownAccount)
         end
       end
 
