@@ -12,13 +12,13 @@ matrix:
     - rvm: 2.1.10
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
-    - rvm: 2.2.6
+    - rvm: 2.2.7
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
-    - rvm: 2.3.3
+    - rvm: 2.3.4
       gemfile: spec/support/gemfiles/Gemfile.rails-4.1.x
       env: DB=mysql
-    - rvm: 2.3.3
+    - rvm: 2.3.4
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
     - rvm: 2.4.1
