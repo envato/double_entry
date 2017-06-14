@@ -66,11 +66,28 @@ module DoubleEntry
     end
 
     describe Account::Set do
-      describe '#define' do
-        context "given a 'savings' account is defined" do
-          before { subject.define(:identifier => 'savings') }
-          its(:first) { should be_an Account }
-          its('first.identifier') { should eq 'savings' }
+      subject(:set) { described_class.new }
+
+      describe '#find' do
+        before do
+          set.define(:identifier => :savings)
+          set.define(:identifier => :checking, :scope_identifier => ar_class)
+        end
+
+        let(:ar_class) { double(:ar_class) }
+
+        it 'finds unscoped accounts' do
+          expect(set.find(:savings, false)).to be_an Account
+          expect(set.find(:savings, false).identifier).to eq :savings
+
+          expect { set.find(:savings, true) }.to raise_error
+        end
+
+        it 'finds scoped accounts' do
+          expect(set.find(:checking, true)).to be_an Account
+          expect(set.find(:checking, true).identifier).to eq :checking
+
+          expect { set.find(:checking, false) }.to raise_error
         end
       end
 
