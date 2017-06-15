@@ -24,7 +24,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'railties',              '>= 3.2.0'
 
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'mysql2',    '~> 0.3.20'
+  gem.add_development_dependency 'mysql2'
   gem.add_development_dependency 'pg'
   gem.add_development_dependency 'sqlite3'
 
@@ -35,12 +35,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'generator_spec'
   gem.add_development_dependency 'factory_girl'
   gem.add_development_dependency 'timecop'
-  gem.add_development_dependency 'test-unit'
-
-  gem.add_development_dependency 'pry'
-  gem.add_development_dependency 'pry-doc'
-  gem.add_development_dependency 'pry-byebug'         if RUBY_VERSION >= '2.0.0'
-  gem.add_development_dependency 'pry-stack_explorer'
-  gem.add_development_dependency 'awesome_print'
   gem.add_development_dependency 'ruby-prof'
 end
