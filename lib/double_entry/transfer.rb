@@ -47,6 +47,10 @@ module DoubleEntry
         end
       end
 
+      def each(&block)
+        backing_collection.values.each(&block)
+      end
+
     private
 
       def backing_collection

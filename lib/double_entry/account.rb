@@ -61,6 +61,16 @@ module DoubleEntry
         ActiveRecordScopeFactory.new(active_record_class).scope_identifier
       end
 
+      def each(&block)
+        backing_collection.values.each(&block)
+      end
+
+      def map(&block)
+        backing_collection.values.map do |account|
+          block.call(account)
+        end
+      end
+
       private
 
       def backing_collection
