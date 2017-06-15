@@ -1,4 +1,6 @@
 # encoding: utf-8
+require 'forwardable'
+
 module DoubleEntry
   class Account
     class << self
@@ -33,6 +35,10 @@ module DoubleEntry
 
     # @api private
     class Set
+      extend Forwardable
+
+      delegate [:each, :map] => :all
+
       def define(attributes)
         Account.new(attributes).tap do |account|
           if find_without_scope(account.identifier)
@@ -61,17 +67,11 @@ module DoubleEntry
         ActiveRecordScopeFactory.new(active_record_class).scope_identifier
       end
 
-      def each(&block)
-        backing_collection.values.each(&block)
+      def all
+        backing_collection.values
       end
 
-      def map(&block)
-        backing_collection.values.map do |account|
-          block.call(account)
-        end
-      end
-
-      private
+    private
 
       def backing_collection
         @backing_collection ||= Hash.new

@@ -1,4 +1,6 @@
 # encoding: utf-8
+require 'forwardable'
+
 module DoubleEntry
   class Transfer
     class << self
@@ -26,6 +28,9 @@ module DoubleEntry
 
     # @api private
     class Set
+      extend Forwardable
+      delegate [:each, :map] => :all
+
       def define(attributes)
         Transfer.new(attributes).tap do |transfer|
           key = [transfer.from, transfer.to, transfer.code]
@@ -47,8 +52,8 @@ module DoubleEntry
         end
       end
 
-      def each(&block)
-        backing_collection.values.each(&block)
+      def all
+        backing_collection.values
       end
 
     private
