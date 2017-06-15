@@ -19,7 +19,7 @@ module DoubleEntry
 
     describe '::transfer' do
       let(:amount)  { Money.new(10_00) }
-      let(:user)    { User.make! }
+      let(:user)    { create(:user) }
       let(:test)    { DoubleEntry.account(:test, :scope => user) }
       let(:savings) { DoubleEntry.account(:savings, :scope => user) }
       let(:new_lines) { Line.all[-2..-1] }

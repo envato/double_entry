@@ -3,7 +3,7 @@
 RSpec.describe DoubleEntry::BalanceCalculator do
   describe '#calculate' do
     let(:account) { DoubleEntry.account(:test, :scope => scope) }
-    let(:scope) { User.make! }
+    let(:scope) { create(:user) }
     let(:from) { nil }
     let(:to) { nil }
     let(:at) { nil }
