@@ -1,7 +1,7 @@
 module DoubleEntry
   module Reporting
     RSpec.describe AggregateArray do
-      let(:user) { User.make! }
+      let(:user) { create(:user) }
       let(:start) { nil }
       let(:finish) { nil }
       let(:range_type) { 'year' }

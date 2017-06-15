@@ -51,14 +51,14 @@ RSpec.describe ActiveRecord::LockingExtensions do
 
   context '#create_ignoring_duplicates' do
     it 'does not raise an error if a duplicate index error is raised in the database' do
-      User.make! :username => 'keith'
+      create(:user, username: 'keith')
 
-      expect { User.make! :username => 'keith' }.to raise_error
+      expect { create(:user, username: 'keith') }.to raise_error
       expect { User.create_ignoring_duplicates! :username => 'keith' }.to_not raise_error
     end
 
     it 'publishes a notification when a duplicate is encountered' do
-      User.make! :username => 'keith'
+      create(:user, username: 'keith')
 
       expect(ActiveSupport::Notifications).
         to receive(:publish).

@@ -37,7 +37,7 @@ silence_warnings do
   require 'rspec'
   require 'rspec/its'
   require 'database_cleaner'
-  require 'machinist/active_record'
+  require 'factory_girl'
   require 'timecop'
   require 'money'
 end
@@ -103,6 +103,7 @@ RSpec.configure do |config|
   config.profile_examples = 5
 
   config.include DoubleEntrySpecHelper
+  config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation

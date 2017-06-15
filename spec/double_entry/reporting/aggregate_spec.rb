@@ -2,7 +2,7 @@
 module DoubleEntry
   module Reporting
     RSpec.describe Aggregate do
-      let(:user) { User.make! }
+      let(:user) { create(:user) }
       let(:expected_weekly_average) do
         (Money.new(20_00) + Money.new(40_00) + Money.new(50_00)) / 3
       end
@@ -250,7 +250,7 @@ module DoubleEntry
       end
     end
     RSpec.describe Aggregate, 'currencies' do
-      let(:user) { User.make! }
+      let(:user) { create(:user) }
       before do
         perform_btc_deposit(user, 100_000_000)
         perform_btc_deposit(user, 200_000_000)

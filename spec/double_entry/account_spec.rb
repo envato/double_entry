@@ -100,7 +100,7 @@ module DoubleEntry
           subject(:scope) { scope_identifier.call(value) }
 
           context 'given a User instance with ID 32' do
-            let(:value) { User.make(:id => 32) }
+            let(:value) { build(:user, :id => 32) }
 
             it { should eq 32 }
           end
