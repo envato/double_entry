@@ -303,3 +303,13 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
     ```sh
     bundle exec rake
     ```
+
+## Contributors
+
+Many thanks to those who have contributed to both this gem, and the library upon which it was based, over the years:
+  * Ryan Allen - @ryan-allen
+  * Keith Pitt - @keithpitt
+  * Martin Spickermann - @spickermann
+  * Stephanie Staub - @stephnacios
+  * Eaden McKee - @eadz
+  * Samuel Cochran - @sj26
