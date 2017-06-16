@@ -118,7 +118,7 @@ module DoubleEntry
       let(:to_account)   { instance_double(Account, :identifier => :to) }
 
       describe '#find' do
-        it 'should find the transfers' do
+        it 'finds the transfers' do
           first_transfer = set.find(from_account, to_account, :transfer_code)
           second_transfer = set.find(from_account, to_account, :another_transfer_code)
 
@@ -133,7 +133,7 @@ module DoubleEntry
           expect(second_transfer.to).to eq to_account.identifier
         end
 
-        it 'should return nothing when searching for undefined transfers' do
+        it 'returns nothing when searching for undefined transfers' do
           undefined_transfer = set.find(to_account, from_account, :transfer_code)
 
           expect(undefined_transfer).to eq nil
@@ -141,7 +141,7 @@ module DoubleEntry
       end
 
       describe '#find!' do
-        it 'should also find the transfers' do
+        it 'also finds the transfers' do
           first_transfer = set.find!(from_account, to_account, :transfer_code)
           second_transfer = set.find!(from_account, to_account, :another_transfer_code)
 
@@ -156,7 +156,7 @@ module DoubleEntry
           expect(second_transfer.to).to eq to_account.identifier
         end
 
-        it 'should raise an error when searching for undefined transfers' do
+        it 'raises an error when searching for undefined transfers' do
           expect { set.find!(to_account, from_account, :transfer_code) }
             .to raise_error(TransferNotAllowed)
         end
