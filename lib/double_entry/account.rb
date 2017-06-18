@@ -1,4 +1,6 @@
 # encoding: utf-8
+require 'forwardable'
+
 module DoubleEntry
   class Account
     class << self
@@ -27,34 +29,52 @@ module DoubleEntry
 
       # @api private
       def currency(identifier)
-        accounts.detect { |a| a.identifier == identifier }.try(:currency)
+        accounts.find_without_scope(identifier).try(:currency)
       end
     end
 
     # @api private
-    class Set < Array
+    class Set
+      extend Forwardable
+
+      delegate [:each, :map] => :all
+
       def define(attributes)
-        self << Account.new(attributes)
+        Account.new(attributes).tap do |account|
+          if find_without_scope(account.identifier)
+            fail DuplicateAccount
+          else
+            backing_collection[account.identifier] = account
+          end
+        end
       end
 
       def find(identifier, scoped)
-        found_account = detect do |account|
-          account.identifier == identifier && account.scoped? == scoped
+        found_account = find_without_scope(identifier)
+
+        if found_account && found_account.scoped? == scoped
+          found_account
+        else
+          fail UnknownAccount, "account: #{identifier} scoped?: #{scoped}"
         end
-        fail UnknownAccount, "account: #{identifier} scoped?: #{scoped}" unless found_account
-        found_account
       end
 
-      def <<(account)
-        if any? { |a| a.identifier == account.identifier }
-          fail DuplicateAccount
-        else
-          super
-        end
+      def find_without_scope(identifier)
+        backing_collection[identifier]
       end
 
       def active_record_scope_identifier(active_record_class)
         ActiveRecordScopeFactory.new(active_record_class).scope_identifier
+      end
+
+      def all
+        backing_collection.values
+      end
+
+    private
+
+      def backing_collection
+        @backing_collection ||= Hash.new
       end
     end
 
