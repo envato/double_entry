@@ -308,6 +308,8 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
 
 Many thanks to those who have contributed to both this gem, and the library upon which it was based, over the years:
   * Ryan Allen - @ryan-allen
+  * Clinton Forbes - @clinton
+  * Vahid Ta'eed - @vahid
   * Keith Pitt - @keithpitt
   * Martin Spickermann - @spickermann
   * Stephanie Staub - @stephnacios
