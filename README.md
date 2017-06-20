@@ -307,11 +307,20 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
 ## Contributors
 
 Many thanks to those who have contributed to both this gem, and the library upon which it was based, over the years:
-  * Ryan Allen - @ryan-allen
+  * Anthony Sellitti - @asellitt
   * Clinton Forbes - @clinton
-  * Vahid Ta'eed - @vahid
-  * Keith Pitt - @keithpitt
-  * Martin Spickermann - @spickermann
-  * Stephanie Staub - @stephnacios
   * Eaden McKee - @eadz
+  * Giancarlo Salamanca - @salamagd
+  * Jiexin Huang - @jiexinhuang
+  * Keith Pitt - @keithpitt
+  * Mark Turnley - @rabidcarrot
+  * Martin Jagusch - @MJIO
+  * Martin Spickermann - @spickermann
+  * Mary-Anne Cosgrove - @macosgrove
+  * Orien Madgwick - @orien
+  * Pete Yandall - @notahat
+  * Ryan Allen - @ryan-allen
   * Samuel Cochran - @sj26
+  * Stephanie Staub - @stephnacios
+  * Trung Lê - @joneslee85
+  * Vahid Ta'eed - @vahid
