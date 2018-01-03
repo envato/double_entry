@@ -12,27 +12,27 @@ script:
   - ruby script/jack_hammer -t 2000
 matrix:
   include:
-    - rvm: 2.2.9
+    - rvm: 2.2
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
-    - rvm: 2.3.6
+    - rvm: 2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
-    - rvm: 2.4.3
+    - rvm: 2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql
-    - rvm: 2.4.3
+    - rvm: 2.4
       gemfile: spec/support/gemfiles/Gemfile.rails-5.0.x
       env: DB=mysql
-    - rvm: 2.4.3
+    - rvm: 2.4
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
-    - rvm: 2.5.0
+    - rvm: 2.5
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
-    - rvm: 2.5.0
+    - rvm: 2.5
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=sqlite
-    - rvm: 2.5.0
+    - rvm: 2.5
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=postgres
