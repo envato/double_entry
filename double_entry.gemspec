@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.executables           = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
   gem.test_files            = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths         = ['lib']
-  gem.required_ruby_version = '>= 2.1.0'
+  gem.required_ruby_version = '>= 2.2.0'
 
   gem.add_dependency 'money',                 '>= 6.0.0'
   gem.add_dependency 'activerecord',          '>= 3.2.0'
