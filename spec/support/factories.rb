@@ -1,3 +1,5 @@
+require 'factory_girl'
+
 User = Class.new(ActiveRecord::Base)
 
 FactoryGirl.define do
@@ -37,4 +39,8 @@ FactoryGirl.define do
       end
     end
   end
+end
+
+RSpec.configure do |config|
+  config.include FactoryGirl::Syntax::Methods
 end

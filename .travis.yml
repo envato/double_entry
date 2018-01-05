@@ -8,7 +8,7 @@ before_script:
   - mysql -e 'create database double_entry_test;'
   - psql -c 'create database double_entry_test;' -U postgres
 script:
-  - bundle exec rake spec
+  - bundle exec rspec
   - ruby script/jack_hammer -t 2000
 matrix:
   include:
