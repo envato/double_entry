@@ -35,8 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Replaced Machinist with Factory Girl in test suite.
 
-- Use `Money#positive?` and `Money#negative?`.
-
 - Back `DoubleEntry::Transfer::Set` and `DoubleEntry::Account::Set` with
   `Hash`es for performance benefits.
 
@@ -55,18 +53,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removed support for Rails 3.2, 4.0, and 4.1.
 
-- Removed Rubocop.
-
 - Removed unneeded development dependencies from Gemspec.
 
 ### Fixed
-
-- Fixed typo in jack_hammer documentation.
 
 - Fixed more Ruby warnings.
 
 - Use `double_entry` namespace when publishing to
   `ActiveSupport::Notifications`.
+
+## [1.0.1] - 2018-01-06
+
+### Removed
+
+- Removed Rubocop checks and build step.
+
+### Fixed
+
+- Use `Money#positive?` and `Money#negative?` rather than comparing to zero.
+  Resolves issues when dealing with multiple currencies.
+
+- Fixed typo in jack_hammer documentation.
 
 ## [1.0.0] - 2015-08-04
 
@@ -322,7 +329,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Library released as Open Source!
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/envato/double_entry/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/envato/double_entry/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/envato/double_entry/compare/v0.10.3...v1.0.0
 [0.10.3]: https://github.com/envato/double_entry/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/envato/double_entry/compare/v0.10.1...v0.10.2
