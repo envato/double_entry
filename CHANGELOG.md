@@ -35,8 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Replaced Machinist with Factory Girl in test suite.
 
-- Back `DoubleEntry::Transfer::Set` and `DoubleEntry::Account::Set` with
-  `Hash`es for performance benefits.
+- Implement `DoubleEntry::Transfer::Set` and `DoubleEntry::Account::Set` with
+  `Hash`es rather than `Array`s for performance.
 
 - Reporting API now uses keyword arguments. Note these reporting classes are
   marked API private: their interface is not considered stable.
