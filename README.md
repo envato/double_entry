@@ -320,6 +320,7 @@ Many thanks to those who have contributed to both this gem, and the library upon
   * Mary-Anne Cosgrove - @macosgrove
   * Orien Madgwick - @orien
   * Pete Yandall - @notahat
+  * Rizal Muthi - @rizalmuthi
   * Ryan Allen - @ryan-allen
   * Samuel Cochran - @sj26
   * Stephanie Staub - @stephnacios
