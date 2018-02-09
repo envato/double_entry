@@ -88,7 +88,7 @@ module DoubleEntry
           case value
           when @active_record_class
             value.id
-          when String, Fixnum
+          when String, Integer
             value
           else
             fail AccountScopeMismatchError, "Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`"
