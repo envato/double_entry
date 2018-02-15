@@ -1,10 +1,4 @@
-if Rails::VERSION::STRING[0..2].to_f < 5
-  active_record_migration_class = ActiveRecord::Migration[Rails::VERSION::STRING[0..2].to_f]
-else
-  active_record_migration_class = ActiveRecord::Migration
-end
-
-class CreateDoubleEntryTables < active_record_migration_class
+class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
   def self.up
     create_table "double_entry_account_balances", :force => true do |t|
       t.string     "account", :limit => 31, :null => false
