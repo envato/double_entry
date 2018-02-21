@@ -1,6 +1,6 @@
 User = Class.new(ActiveRecord::Base)
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :user do
     username { "user#{__id__}" }
 
