@@ -62,6 +62,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Use `double_entry` namespace when publishing to
   `ActiveSupport::Notifications`.
 
+- Fixed problem of Rails version number not being set in migration template for apps using Rails 5 or higher.
+
 ## [1.0.1] - 2018-01-06
 
 ### Removed

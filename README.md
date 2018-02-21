@@ -314,6 +314,7 @@ Many thanks to those who have contributed to both this gem, and the library upon
   * Giancarlo Salamanca - @salamagd
   * Jiexin Huang - @jiexinhuang
   * Keith Pitt - @keithpitt
+  * Kelsey Hannan - @KelseyDH
   * Mark Turnley - @rabidcarrot
   * Martin Jagusch - @MJIO
   * Martin Spickermann - @spickermann
