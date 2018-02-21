@@ -19,7 +19,7 @@ module DoubleEntry
 
       def migration_version
         if ActiveRecord.version.version > '5'
-          "[#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}]"
+          "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
         end
       end
     end
