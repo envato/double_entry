@@ -132,11 +132,11 @@ module DoubleEntry
     end
 
     def decrease?
-      amount < Money.zero
+      amount.negative?
     end
 
     def increase?
-      amount > Money.zero
+      amount.positive?
     end
 
     # Query out just the id and created_at fields for lines, without
@@ -151,10 +151,10 @@ module DoubleEntry
   private
 
     def check_balance_will_remain_valid
-      if account.positive_only && balance < Money.zero
+      if account.positive_only && balance.negative?
         fail AccountWouldBeSentNegative, account
       end
-      if account.negative_only && balance > Money.zero
+      if account.negative_only && balance.positive?
         fail AccountWouldBeSentPositiveError, account
       end
     end

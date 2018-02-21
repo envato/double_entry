@@ -28,5 +28,6 @@
 # DoubleEntry specific
 /bin/
 /log/
+/spec/examples.txt
 /spec/reports/
 /spec/support/database.yml

@@ -26,7 +26,7 @@ RSpec.describe ActiveRecord::LockingExtensions do
         expect(ActiveSupport::Notifications).
           to receive(:publish).
           with('deadlock_restart.double_entry', hash_including(:exception => exception))
-        expect { User.with_restart_on_deadlock { fail exception } }.to raise_error
+        expect { User.with_restart_on_deadlock { fail exception } }.to raise_error(ActiveRecord::RestartTransaction)
       end
     end
 
@@ -53,7 +53,7 @@ RSpec.describe ActiveRecord::LockingExtensions do
     it 'does not raise an error if a duplicate index error is raised in the database' do
       create(:user, username: 'keith')
 
-      expect { create(:user, username: 'keith') }.to raise_error
+      expect { create(:user, username: 'keith') }.to raise_error(ActiveRecord::RecordNotUnique)
       expect { User.create_ignoring_duplicates! :username => 'keith' }.to_not raise_error
     end
 

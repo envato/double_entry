@@ -1,10 +1,7 @@
 require 'rspec/core/rake_task'
 require 'bundler/gem_tasks'
 
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.verbose = false
-  t.ruby_opts = '-w'
-end
+RSpec::Core::RakeTask.new(:spec)
 
 task :default do
   %w(mysql postgres sqlite).each do |db|

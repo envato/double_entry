@@ -43,3 +43,7 @@ module DoubleEntrySpecHelper
     )
   end
 end
+
+RSpec.configure do |config|
+  config.include DoubleEntrySpecHelper
+end

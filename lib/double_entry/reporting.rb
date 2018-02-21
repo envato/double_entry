@@ -77,8 +77,8 @@ module DoubleEntry
     #   class, as the example above shows. Scope filters may also take a list of
     #   arguments to pass into the monkey patched scope, and, if provided, must
     #   be contained within an array.
-    # @return [Money, Fixnum] Returns a Money object for :sum and :average
-    #   calculations, or a Fixnum for :count calculations.
+    # @return [Money, Integer] Returns a Money object for :sum and :average
+    #   calculations, or a Integer for :count calculations.
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
     #   is not supported.
     #
@@ -129,8 +129,8 @@ module DoubleEntry
     # @param [String] finish The finish (or end) date for the time range
     #   to perform calculations in.  The default finish date is the current date.
     #   The format of the string must be as follows: 'YYYY-mm-dd'
-    # @return [Array<Money, Fixnum>] Returns an array of Money objects for :sum
-    #   and :average calculations, or an array of Fixnum for :count calculations.
+    # @return [Array<Money, Integer>] Returns an array of Money objects for :sum
+    #   and :average calculations, or an array of Integer for :count calculations.
     #   The array is indexed by the range_type.  For example, if range_type is
     #   specified as 'month', each index in the array will represent a month.
     # @raise [Reporting::AggregateFunctionNotSupported] The provided function
@@ -153,7 +153,7 @@ module DoubleEntry
     # @param [Money] minimum_balance Minimum account balance a scope must have
     #   to be included in the result set.
     # @param [Symbol] account_identifier
-    # @return [Array<Fixnum>] Scopes
+    # @return [Array<Integer>] Scopes
     #
     def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
       select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map(&:to_i)

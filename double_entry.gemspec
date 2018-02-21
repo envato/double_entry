@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.executables           = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
   gem.test_files            = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths         = ['lib']
-  gem.required_ruby_version = '>= 2.1.0'
+  gem.required_ruby_version = '>= 2.2.0'
 
   gem.add_dependency 'money',                 '>= 6.0.0'
   gem.add_dependency 'activerecord',          '>= 3.2.0'
@@ -30,10 +30,9 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'rspec-its'
-  gem.add_development_dependency 'rspec-instafail'
   gem.add_development_dependency 'database_cleaner'
   gem.add_development_dependency 'generator_spec'
-  gem.add_development_dependency 'factory_girl'
+  gem.add_development_dependency 'factory_bot'
   gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'ruby-prof'
 end
