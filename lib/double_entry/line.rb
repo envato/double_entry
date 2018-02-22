@@ -1,7 +1,6 @@
 # encoding: utf-8
 
 module DoubleEntry
-
   # This is the table to end all tables!
   #
   # Every financial transaction gets two entries in here: one for the source
@@ -56,8 +55,8 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-
     belongs_to :detail, :polymorphic => true
+    has_many :metadata, :class_name => 'DoubleEntry::LineMetadata'
 
     def amount
       self[:amount] && Money.new(self[:amount], currency)
@@ -76,12 +75,12 @@ module DoubleEntry
     end
 
     def save(*)
-      check_balance_will_not_be_sent_negative
+      check_balance_will_remain_valid
       super
     end
 
     def save!(*)
-      check_balance_will_not_be_sent_negative
+      check_balance_will_remain_valid
       super
     end
 
@@ -94,11 +93,11 @@ module DoubleEntry
       self[:code].try(:to_sym)
     end
 
-    def account=(_account)
-      self[:account] = _account.identifier.to_s
-      self.scope = _account.scope_identity
-      raise "Missing Account" unless account
-      _account
+    def account=(account)
+      self[:account] = account.identifier.to_s
+      self.scope = account.scope_identity
+      fail 'Missing Account' unless self.account
+      account
     end
 
     def account
@@ -109,11 +108,11 @@ module DoubleEntry
       account.currency if self[:account]
     end
 
-    def partner_account=(_partner_account)
-      self[:partner_account] = _partner_account.identifier.to_s
-      self.partner_scope = _partner_account.scope_identity
-      raise "Missing Partner Account" unless partner_account
-      _partner_account
+    def partner_account=(partner_account)
+      self[:partner_account] = partner_account.identifier.to_s
+      self.partner_scope = partner_account.scope_identity
+      fail 'Missing Partner Account' unless self.partner_account
+      partner_account
     end
 
     def partner_account
@@ -133,11 +132,11 @@ module DoubleEntry
     end
 
     def decrease?
-      amount < Money.empty
+      amount.negative?
     end
 
     def increase?
-      amount > Money.empty
+      amount.positive?
     end
 
     # Query out just the id and created_at fields for lines, without
@@ -149,13 +148,15 @@ module DoubleEntry
       SQL
     end
 
-    private
+  private
 
-    def check_balance_will_not_be_sent_negative
-      if self.account.positive_only and self.balance < Money.new(0)
-        raise AccountWouldBeSentNegative.new(account)
+    def check_balance_will_remain_valid
+      if account.positive_only && balance.negative?
+        fail AccountWouldBeSentNegative, account
+      end
+      if account.negative_only && balance.positive?
+        fail AccountWouldBeSentPositiveError, account
       end
     end
   end
-
 end

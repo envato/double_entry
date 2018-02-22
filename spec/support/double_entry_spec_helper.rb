@@ -1,6 +1,5 @@
 # encoding: utf-8
 module DoubleEntrySpecHelper
-
   def lines_for_account(account)
     lines = DoubleEntry::Line.order(:id)
     lines = lines.where(:scope => account.scope_identity) if account.scoped?
@@ -9,19 +8,42 @@ module DoubleEntrySpecHelper
   end
 
   def perform_deposit(user, amount)
-    DoubleEntry.transfer(Money.new(amount),
+    DoubleEntry.transfer(
+      Money.new(amount),
       :from => DoubleEntry.account(:test, :scope => user),
       :to   => DoubleEntry.account(:savings, :scope => user),
       :code => :bonus,
     )
   end
 
+  def transfer_deposit_fee(user, amount)
+    DoubleEntry.transfer(
+      Money.new(amount),
+      :from => DoubleEntry.account(:savings, :scope => user),
+      :to   => DoubleEntry.account(:deposit_fees, :scope => user),
+      :code => :fee,
+    )
+  end
+
+  def transfer_account_fee(user, amount)
+    DoubleEntry.transfer(
+      Money.new(amount),
+      :from => DoubleEntry.account(:savings, :scope => user),
+      :to   => DoubleEntry.account(:account_fees, :scope => user),
+      :code => :fee,
+    )
+  end
+
   def perform_btc_deposit(user, amount)
-    DoubleEntry.transfer(Money.new(amount, :btc),
+    DoubleEntry.transfer(
+      Money.new(amount, :btc),
       :from => DoubleEntry.account(:btc_test, :scope => user),
       :to   => DoubleEntry.account(:btc_savings, :scope => user),
       :code => :btc_test_transfer,
     )
   end
+end
 
+RSpec.configure do |config|
+  config.include DoubleEntrySpecHelper
 end

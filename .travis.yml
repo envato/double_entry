@@ -1,20 +1,32 @@
 language: ruby
-rvm:
-  - 2.1.3
-  - 2.0.0
-  - 1.9.3
-env:
-  - DB=mysql
-  - DB=postgres
-  - DB=sqlite
+sudo: false
+before_install:
+  - gem update --system
+  - gem --version
 before_script:
   - cp spec/support/database.travis.yml spec/support/database.yml
   - mysql -e 'create database double_entry_test;'
   - psql -c 'create database double_entry_test;' -U postgres
 script:
-  - rake spec
+  - bundle exec rspec
   - ruby script/jack_hammer -t 2000
-gemfile:
-  - gemfiles/Gemfile.rails-3.2.0
-  - gemfiles/Gemfile.rails-4.0.0
-  - gemfiles/Gemfile.rails-4.1.0
+matrix:
+  include:
+    - rvm: 2.2
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
+      env: DB=mysql
+    - rvm: 2.3
+      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
+      env: DB=mysql
+    - rvm: 2.4
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.0.x
+      env: DB=mysql
+    - rvm: 2.5
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      env: DB=mysql
+    - rvm: 2.5
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      env: DB=sqlite
+    - rvm: 2.5
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      env: DB=postgres

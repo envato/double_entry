@@ -1,24 +1,22 @@
-require 'spec_helper'
 require 'action_controller'
 require 'generator_spec/test_case'
 require 'generators/double_entry/install/install_generator'
 
-
-describe DoubleEntry::Generators::InstallGenerator do
+RSpec.describe DoubleEntry::Generators::InstallGenerator do
   include GeneratorSpec::TestCase
 
-  destination File.expand_path("../../../../../tmp", __FILE__)
+  destination File.expand_path('../../../../../tmp/generators', __FILE__)
 
   before do
     prepare_destination
     run_generator
   end
 
-  specify do
+  it 'generates the expected migrations' do
     expect(destination_root).to have_structure {
-      directory "db" do
-        directory "migrate" do
-          migration "create_double_entry_tables" do
+      directory 'db' do
+        directory 'migrate' do
+          migration 'create_double_entry_tables' do
             contains 'class CreateDoubleEntryTable'
             contains 'create_table "double_entry_account_balances"'
             contains 'create_table "double_entry_lines"'
@@ -29,5 +27,4 @@ describe DoubleEntry::Generators::InstallGenerator do
       end
     }
   end
-
 end

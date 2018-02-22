@@ -1,8 +1,10 @@
 # DoubleEntry
 
+
+[![License MIT](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/envato/double_entry/blob/master/LICENSE.md)
 [![Gem Version](https://badge.fury.io/rb/double_entry.svg)](http://badge.fury.io/rb/double_entry)
-[![Build Status](https://travis-ci.org/envato/double_entry.svg)](https://travis-ci.org/envato/double_entry)
-[![Code Climate](https://codeclimate.com/github/envato/double_entry.png)](https://codeclimate.com/github/envato/double_entry)
+[![Build Status](https://travis-ci.org/envato/double_entry.svg?branch=master)](https://travis-ci.org/envato/double_entry)
+[![Code Climate](https://codeclimate.com/github/envato/double_entry/badges/gpa.svg)](https://codeclimate.com/github/envato/double_entry)
 
 ![Show me the Money](http://24.media.tumblr.com/tumblr_m3bwbqNJIG1rrgbmqo1_500.gif)
 
@@ -13,17 +15,24 @@ DoubleEntry is an accounting system based on the principles of a
 system.  While this gem acts like a double-entry bookkeeping system, as it creates
 two entries in the database for each transfer, it does *not* enforce accounting rules.
 
-DoubleEntry uses the Money gem to avoid floating point rounding errors.
+DoubleEntry uses the [Money gem](https://github.com/RubyMoney/money) to encapsulate operations on currency values.
 
 ## Compatibility
 
-DoubleEntry has been tested with:
+DoubleEntry is tested against:
 
-Ruby Versions: 1.9.3, 2.0.0, 2.1.2
+Ruby
+ * 2.2.x
+ * 2.3.x
+ * 2.4.x
+ * 2.5.x
 
-Rails Versions: Rails 3.2.x, 4.0.x, 4.1.x
+Rails
+ * 4.2.x
+ * 5.0.x
+ * 5.1.x
 
-**Databases Supported:**
+Databases
  * MySQL
  * PostgreSQL
  * SQLite
@@ -104,7 +113,7 @@ To transfer money between accounts:
 
 ```ruby
 DoubleEntry.transfer(
-  20.dollars,
+  Money.new(20_00),
   :from => one_account,
   :to   => another_account,
   :code => :a_business_code_for_this_type_of_transfer,
@@ -115,6 +124,19 @@ The possible transfers, and their codes, should be defined in the configuration.
 
 See **DoubleEntry::Transfer** for more info.
 
+### Metadata
+
+You may associate arbitrary metadata with transfers, for example:
+
+```ruby
+DoubleEntry.transfer(
+  Money.new(20_00),
+  :from => one_account,
+  :to   => another_account,
+  :code => :a_business_code_for_this_type_of_transfer,
+  :metadata => {:key1 => ['value 1', 'value 2'], :key2 => 'value 3'},
+)
+```
 
 ### Locking
 
@@ -150,6 +172,9 @@ See **DoubleEntry::Line** for more info.
 
 AccountBalance records cache the current balance for each Account, and are used
 to perform database level locking.
+
+Transfer metadata is stored as key/value pairs associated with both the source and destination lines of the transfer.
+See **DoubleEntry::LineMetadata** for more info.
 
 ## Configuration
 
@@ -190,7 +215,7 @@ Transfers between accounts of different currencies are not allowed.
 ```ruby
 DoubleEntry.configure do |config|
   config.define_accounts do |accounts|
-    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :currency => :aud)
+    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :currency => 'AUD')
   end
 end
 ```
@@ -202,7 +227,7 @@ Run a concurrency test on the code.
 This spawns a bunch of processes, and does random transactions between a set
 of accounts, then validates that all the numbers add up at the end.
 
-You can also tell out it to flush out the account balances table at regular
+You can also tell it to flush out the account balances table at regular
 intervals, to validate that new account balances records get created with the
 correct balances from the lines table.
 
@@ -279,3 +304,25 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
     ```sh
     bundle exec rake
     ```
+
+## Contributors
+
+Many thanks to those who have contributed to both this gem, and the library upon which it was based, over the years:
+  * Anthony Sellitti - @asellitt
+  * Clinton Forbes - @clinton
+  * Eaden McKee - @eadz
+  * Giancarlo Salamanca - @salamagd
+  * Jiexin Huang - @jiexinhuang
+  * Keith Pitt - @keithpitt
+  * Mark Turnley - @rabidcarrot
+  * Martin Jagusch - @MJIO
+  * Martin Spickermann - @spickermann
+  * Mary-Anne Cosgrove - @macosgrove
+  * Orien Madgwick - @orien
+  * Pete Yandall - @notahat
+  * Rizal Muthi - @rizalmuthi
+  * Ryan Allen - @ryan-allen
+  * Samuel Cochran - @sj26
+  * Stephanie Staub - @stephnacios
+  * Trung Lê - @joneslee85
+  * Vahid Ta'eed - @vahid

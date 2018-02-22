@@ -1,48 +1,80 @@
 # encoding: utf-8
+require 'forwardable'
+
 module DoubleEntry
   class Account
+    class << self
+      attr_writer :accounts, :scope_identifier_max_length, :account_identifier_max_length
 
-    # @api private
-    def self.account(defined_accounts, identifier, options = {})
-      account = defined_accounts.find(identifier, options[:scope].present?)
-      DoubleEntry::Account::Instance.new(:account => account, :scope => options[:scope])
-    end
-
-    # @api private
-    def self.currency(defined_accounts, account)
-      code = account.is_a?(Symbol) ? account : account.identifier
-
-      found_account = defined_accounts.detect do |account|
-        account.identifier == code
+      # @api private
+      def accounts
+        @accounts ||= Set.new
       end
 
-      found_account.currency
+      # @api private
+      def scope_identifier_max_length
+        @scope_identifier_max_length ||= 23
+      end
+
+      # @api private
+      def account_identifier_max_length
+        @account_identifier_max_length ||= 31
+      end
+
+      # @api private
+      def account(identifier, options = {})
+        account = accounts.find(identifier, options[:scope].present?)
+        Instance.new(:account => account, :scope => options[:scope])
+      end
+
+      # @api private
+      def currency(identifier)
+        accounts.find_without_scope(identifier).try(:currency)
+      end
     end
 
     # @api private
-    class Set < Array
+    class Set
+      extend Forwardable
+
+      delegate [:each, :map] => :all
+
       def define(attributes)
-        self << Account.new(attributes)
+        Account.new(attributes).tap do |account|
+          if find_without_scope(account.identifier)
+            fail DuplicateAccount
+          else
+            backing_collection[account.identifier] = account
+          end
+        end
       end
 
       def find(identifier, scoped)
-        account = detect do |account|
-          account.identifier == identifier && account.scoped? == scoped
+        found_account = find_without_scope(identifier)
+
+        if found_account && found_account.scoped? == scoped
+          found_account
+        else
+          fail UnknownAccount, "account: #{identifier} scoped?: #{scoped}"
         end
-        raise UnknownAccount.new("account: #{identifier} scoped?: #{scoped}") unless account
-        return account
       end
 
-      def <<(account)
-        if any? { |a| a.identifier == account.identifier }
-          raise DuplicateAccount.new
-        else
-          super(account)
-        end
+      def find_without_scope(identifier)
+        backing_collection[identifier]
       end
 
       def active_record_scope_identifier(active_record_class)
         ActiveRecordScopeFactory.new(active_record_class).scope_identifier
+      end
+
+      def all
+        backing_collection.values
+      end
+
+    private
+
+      def backing_collection
+        @backing_collection ||= Hash.new
       end
     end
 
@@ -52,16 +84,27 @@ module DoubleEntry
       end
 
       def scope_identifier
-        ->(value) { value.is_a?(@active_record_class) ? value.id : value }
+        lambda do |value|
+          case value
+          when @active_record_class
+            value.id
+          when String, Integer
+            value
+          else
+            fail AccountScopeMismatchError, "Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`"
+          end
+        end
       end
     end
 
     class Instance
-      attr_accessor :account, :scope
-      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :currency, :to => :account
+      attr_reader :account, :scope
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :negative_only, :currency, :to => :account
 
-      def initialize(attributes)
-        attributes.each { |name, value| send("#{name}=", value) }
+      def initialize(args)
+        @account = args[:account]
+        @scope = args[:scope]
+        ensure_scope_is_valid
       end
 
       def scope_identity
@@ -91,8 +134,8 @@ module DoubleEntry
         self == other
       end
 
-      def <=>(account)
-        [scope_identity.to_s, identifier.to_s] <=> [account.scope_identity.to_s, account.identifier.to_s]
+      def <=>(other)
+        [scope_identity.to_s, identifier.to_s] <=> [other.scope_identity.to_s, other.identifier.to_s]
       end
 
       def hash
@@ -110,13 +153,30 @@ module DoubleEntry
       def inspect
         to_s
       end
+
+    private
+
+      def ensure_scope_is_valid
+        identity = scope_identity
+        if identity && identity.length > Account.scope_identifier_max_length
+          fail ScopeIdentifierTooLongError,
+               "scope identifier '#{identity}' is too long. Please limit it to #{Account.scope_identifier_max_length} characters."
+        end
+      end
     end
 
-    attr_accessor :identifier, :scope_identifier, :positive_only, :currency
+    attr_reader :identifier, :scope_identifier, :positive_only, :negative_only, :currency
 
-    def initialize(attributes)
-      attributes.each { |name, value| send("#{name}=", value) }
-      self.currency ||= Money.default_currency
+    def initialize(args)
+      @identifier = args[:identifier]
+      @scope_identifier = args[:scope_identifier]
+      @positive_only = args[:positive_only]
+      @negative_only = args[:negative_only]
+      @currency = args[:currency] || Money.default_currency
+      if identifier.length > Account.account_identifier_max_length
+        fail AccountIdentifierTooLongError,
+             "account identifier '#{identifier}' is too long. Please limit it to #{Account.account_identifier_max_length} characters."
+      end
     end
 
     def scoped?

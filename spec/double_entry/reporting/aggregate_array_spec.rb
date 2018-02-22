@@ -1,25 +1,23 @@
-require 'spec_helper'
 module DoubleEntry
   module Reporting
-    describe AggregateArray do
-
-      let(:user) { User.make! }
+    RSpec.describe AggregateArray do
+      let(:user) { create(:user) }
       let(:start) { nil }
       let(:finish) { nil }
       let(:range_type) { 'year' }
-      let(:function) { :sum }
+      let(:function) { 'sum' }
       let(:account) { :savings }
       let(:transfer_code) { :bonus }
-      subject(:aggregate_array) {
-        Reporting.aggregate_array(
-          function,
-          account,
-          transfer_code,
-          :range_type => range_type,
-          :start => start,
-          :finish => finish,
+      subject(:aggregate_array) do
+        AggregateArray.new(
+          function: function,
+          account: account,
+          code: transfer_code,
+          range_type: range_type,
+          start: start,
+          finish: finish,
         )
-      }
+      end
 
       context 'given a deposit was made in 2007 and 2008' do
         before do
@@ -37,7 +35,61 @@ module DoubleEntry
           context 'when called with range type of "year"' do
             let(:range_type) { 'year' }
             let(:start) { '2006-08-03' }
-            it { should eq [ Money.new(0), Money.new(10_00), Money.new(20_00), Money.new(0) ] }
+            it { should eq [Money.zero, Money.new(10_00), Money.new(20_00), Money.zero] }
+
+            describe 'reuse of aggregates' do
+              let(:years) { TimeRangeArray.make(range_type, start, finish) }
+
+              context 'and some aggregates were created previously' do
+                before do
+                  Aggregate.formatted_amount(function: function, account: account, code: transfer_code, range: years[0])
+                  Aggregate.formatted_amount(function: function, account: account, code: transfer_code, range: years[1])
+                  allow(Aggregate).to receive(:formatted_amount)
+                end
+
+                context 'and the transfer code is not provided' do
+                  let(:transfer_code) { nil }
+
+                  it 'only asks Aggregate for the non-existent ones' do
+                    expect(Aggregate).not_to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[0], partner_account: nil, filter: nil)
+                    expect(Aggregate).not_to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[1], partner_account: nil, filter: nil)
+
+                    expect(Aggregate).to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[2], partner_account: nil, filter: nil)
+                    expect(Aggregate).to receive(:formatted_amount).
+                      with(function: function, account: account, code: transfer_code,
+                           range: years[3], partner_account: nil, filter: nil)
+                    aggregate_array
+                  end
+
+                  context 'and the transfer code is provided' do
+                    let(:transfer_code) { :bonus }
+
+                    it 'only asks Aggregate for the non-existent ones' do
+                      expect(Aggregate).not_to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[0], partner_account: nil, filter: nil)
+                      expect(Aggregate).not_to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[1], partner_account: nil, filter: nil)
+
+                      expect(Aggregate).to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[2], partner_account: nil, filter: nil)
+                      expect(Aggregate).to receive(:formatted_amount).
+                        with(function: function, account: account, code: transfer_code,
+                             range: years[3], partner_account: nil, filter: nil)
+                      aggregate_array
+                    end
+                  end
+                end
+              end
+            end
           end
         end
       end
@@ -56,7 +108,7 @@ module DoubleEntry
           let(:range_type) { 'month' }
           let(:start) { '2006-09-01' }
           let(:finish) { '2007-01-02' }
-          it { should eq [ Money.new(0), Money.new(10_00), Money.new(0), Money.new(20_00), Money.new(0), ] }
+          it { should eq [Money.zero, Money.new(10_00), Money.zero, Money.new(20_00), Money.zero] }
         end
 
         context 'given the date is 2007-02-02' do
@@ -65,7 +117,7 @@ module DoubleEntry
           context 'when called with range type of "month"' do
             let(:range_type) { 'month' }
             let(:start) { '2006-08-03' }
-            it { should eq [ Money.new(0), Money.new(0), Money.new(10_00), Money.new(0), Money.new(20_00), Money.new(0), Money.new(0) ] }
+            it { should eq [Money.zero, Money.zero, Money.new(10_00), Money.zero, Money.new(20_00), Money.zero, Money.zero] }
           end
         end
       end
@@ -81,7 +133,7 @@ module DoubleEntry
           perform_btc_deposit(user, 100_000_000)
         end
 
-        it { should eq [ Money.new(200_000_000, :btc) ] }
+        it { should eq [Money.new(200_000_000, :btc)] }
       end
 
       context 'when called with range type of "invalid_and_should_not_work"' do
@@ -96,7 +148,7 @@ module DoubleEntry
         let(:start) { '2006-08-03' }
         let(:function) { :invalid_function }
         it 'raises an AggregateFunctionNotSupported error' do
-          expect{ aggregate_array }.to raise_error AggregateFunctionNotSupported
+          expect { aggregate_array }.to raise_error AggregateFunctionNotSupported
         end
       end
     end

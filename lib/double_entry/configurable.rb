@@ -1,6 +1,5 @@
 # encoding: utf-8
 module DoubleEntry
-
   # Make configuring a module or a class simple.
   #
   #   class MyClass
@@ -48,5 +47,4 @@ module DoubleEntry
       end
     end
   end
-
 end

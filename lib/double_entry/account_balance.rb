@@ -1,6 +1,5 @@
 # encoding: utf-8
 module DoubleEntry
-
   # Account balance records cache the current balance for each account. They
   # also provide a database representation of an account that we can use to do
   # DB level locking.
@@ -9,7 +8,6 @@ module DoubleEntry
   #
   # Account balances are created on demand when transfers occur.
   class AccountBalance < ActiveRecord::Base
-
     delegate :currency, :to => :account
 
     def balance
@@ -35,7 +33,5 @@ module DoubleEntry
       scope = scope.lock(true) if options[:lock]
       scope.first
     end
-
   end
-
 end

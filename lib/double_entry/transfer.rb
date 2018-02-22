@@ -1,82 +1,132 @@
 # encoding: utf-8
+require 'forwardable'
+
 module DoubleEntry
   class Transfer
+    class << self
+      attr_writer :transfers, :code_max_length
 
-    # @api private
-    def self.transfer(defined_transfers, amount, options = {})
-      raise TransferIsNegative if amount < Money.empty
-      from, to, code, detail = options[:from], options[:to], options[:code],  options[:detail]
-      defined_transfers.
-        find!(from, to, code).
-        process(amount, from, to, code, detail)
+      # @api private
+      def transfers
+        @transfers ||= Set.new
+      end
+
+      # @api private
+      def code_max_length
+        @code_max_length ||= 47
+      end
+
+      # @api private
+      def transfer(amount, options = {})
+        fail TransferIsNegative if amount.negative?
+        from_account = options[:from]
+        to_account = options[:to]
+        code = options[:code]
+        transfers.find!(from_account, to_account, code).process(amount, options)
+      end
     end
 
     # @api private
-    class Set < Array
+    class Set
+      extend Forwardable
+      delegate [:each, :map] => :all
+
       def define(attributes)
-        self << Transfer.new(attributes)
-      end
-
-      def find(from, to, code)
-        _find(from.identifier, to.identifier, code)
-      end
-
-      def find!(from, to, code)
-        transfer = find(from, to, code)
-        raise TransferNotAllowed.new([from.identifier, to.identifier, code].inspect) unless transfer
-        return transfer
-      end
-
-      def <<(transfer)
-        if _find(transfer.from, transfer.to, transfer.code)
-          raise DuplicateTransfer.new
-        else
-          super(transfer)
+        Transfer.new(attributes).tap do |transfer|
+          key = [transfer.from, transfer.to, transfer.code]
+          if _find(*key)
+            fail DuplicateTransfer
+          else
+            backing_collection[key] = transfer
+          end
         end
+      end
+
+      def find(from_account, to_account, code)
+        _find(from_account.identifier, to_account.identifier, code)
+      end
+
+      def find!(from_account, to_account, code)
+        find(from_account, to_account, code).tap do |transfer|
+          fail TransferNotAllowed, [from_account.identifier, to_account.identifier, code].inspect unless transfer
+        end
+      end
+
+      def all
+        backing_collection.values
       end
 
     private
 
+      def backing_collection
+        @backing_collection ||= Hash.new
+      end
+
       def _find(from, to, code)
-        detect do |transfer|
-          transfer.from == from and transfer.to == to and transfer.code == code
-        end
+        backing_collection[[from, to, code]]
       end
     end
 
-    attr_accessor :code, :from, :to, :description
+    attr_reader :code, :from, :to
 
     def initialize(attributes)
-      attributes.each { |name, value| send("#{name}=", value) }
+      @code = attributes[:code]
+      @from = attributes[:from]
+      @to = attributes[:to]
+      if code.length > Transfer.code_max_length
+        fail TransferCodeTooLongError,
+             "transfer code '#{code}' is too long. Please limit it to #{Transfer.code_max_length} characters."
+      end
     end
 
-    def process(amount, from, to, code, detail)
-
-      if to.currency != from.currency
-        raise MismatchedCurrencies.new("Missmatched currency (#{to.currency} <> #{from.currency})")
+    def process(amount, options)
+      from_account = options[:from]
+      to_account = options[:to]
+      code = options[:code]
+      detail = options[:detail]
+      metadata = options[:metadata]
+      if from_account.scope_identity == to_account.scope_identity && from_account.identifier == to_account.identifier
+        fail TransferNotAllowed, 'from account and to account are identical'
       end
+      if to_account.currency != from_account.currency
+        fail MismatchedCurrencies, "Mismatched currency (#{to_account.currency} <> #{from_account.currency})"
+      end
+      Locking.lock_accounts(from_account, to_account) do
+        credit, debit = create_lines(amount, code, detail, from_account, to_account)
+        create_line_metadata(credit, debit, metadata) if metadata
+      end
+    end
 
-      Locking.lock_accounts(from, to) do
-        credit, debit = Line.new, Line.new
+    def create_lines(amount, code, detail, from_account, to_account)
+      credit, debit = Line.new, Line.new
 
-        credit_balance = Locking.balance_for_locked_account(from)
-        debit_balance  = Locking.balance_for_locked_account(to)
+      credit_balance = Locking.balance_for_locked_account(from_account)
+      debit_balance  = Locking.balance_for_locked_account(to_account)
 
-        credit_balance.update_attribute :balance, credit_balance.balance - amount
-        debit_balance.update_attribute  :balance, debit_balance.balance  + amount
+      credit_balance.update_attribute :balance, credit_balance.balance - amount
+      debit_balance.update_attribute :balance, debit_balance.balance + amount
 
-        credit.amount,  debit.amount  = -amount, amount
-        credit.account, debit.account = from, to
-        credit.code,    debit.code    = code, code
-        credit.detail,  debit.detail  = detail, detail
-        credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
+      credit.amount, debit.amount   = -amount, amount
+      credit.account, debit.account = from_account, to_account
+      credit.code, debit.code       = code, code
+      credit.detail, debit.detail   = detail, detail
+      credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
 
-        credit.partner_account, debit.partner_account = to, from
+      credit.partner_account, debit.partner_account = to_account, from_account
 
-        credit.save!
-        debit.partner_id = credit.id
-        debit.save!
-        credit.update_attribute :partner_id, debit.id
+      credit.save!
+      debit.partner_id = credit.id
+      debit.save!
+      credit.update_attribute :partner_id, debit.id
+      [credit, debit]
+    end
+
+    def create_line_metadata(credit, debit, metadata)
+      metadata.each_pair do |key, value|
+        Array(value).each do |each_value|
+          LineMetadata.create!(:line => credit, :key => key, :value => each_value)
+          LineMetadata.create!(:line => debit, :key => key, :value => each_value)
+        end
       end
     end
   end

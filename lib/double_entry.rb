@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'active_record'
 require 'active_record/locking_extensions'
+require 'active_record/locking_extensions/log_subscriber'
 require 'active_support/all'
 require 'money'
 
@@ -14,6 +15,7 @@ require 'double_entry/balance_calculator'
 require 'double_entry/locking'
 require 'double_entry/transfer'
 require 'double_entry/line'
+require 'double_entry/line_metadata'
 require 'double_entry/reporting'
 require 'double_entry/validation'
 
@@ -22,9 +24,7 @@ require 'double_entry/validation'
 # This module provides the public interfaces for everything to do with
 # transferring money around the system.
 module DoubleEntry
-
   class << self
-
     # Get the particular account instance with the provided identifier and
     # scope.
     #
@@ -37,9 +37,11 @@ module DoubleEntry
     # @return [DoubleEntry::Account::Instance]
     # @raise [DoubleEntry::UnknownAccount] The described account has not been
     #   configured. It is unknown.
+    # @raise [DoubleEntry::AccountScopeMismatchError] The provided scope does not
+    #   match that defined on the account.
     #
     def account(identifier, options = {})
-      Account.account(configuration.accounts, identifier, options)
+      Account.account(identifier, options)
     end
 
     # Transfer money from one account to another.
@@ -75,7 +77,7 @@ module DoubleEntry
     #   accounts with the provided code is not allowed. Check configuration.
     #
     def transfer(amount, options = {})
-      Transfer.transfer(configuration.transfers, amount, options)
+      Transfer.transfer(amount, options)
     end
 
     # Get the current or historic balance of an account.
@@ -124,16 +126,13 @@ module DoubleEntry
     # @option options :codes [Array<Symbol>] consider only the transfers with
     #   these codes
     # @return [Money] The balance
+    # @raise [DoubleEntry::UnknownAccount] The described account has not been
+    #   configured. It is unknown.
+    # @raise [DoubleEntry::AccountScopeMismatchError] The provided scope does not
+    #   match that defined on the account.
     def balance(account, options = {})
+      account = account(account, options) if account.is_a? Symbol
       BalanceCalculator.calculate(account, options)
-    end
-
-    # Get the currency of an account.
-    #
-    # @param [DoubleEntry::Account:Instance, Symbol] account Find the currency for this account
-    # @return [Currency] the currency
-    def currency(account)
-      Account.currency(configuration.accounts, account)
     end
 
     # Lock accounts in preparation for transfers.

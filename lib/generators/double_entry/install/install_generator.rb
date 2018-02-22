@@ -14,9 +14,8 @@ module DoubleEntry
       end
 
       def copy_migrations
-        migration_template "migration.rb", "db/migrate/create_double_entry_tables.rb"
+        migration_template 'migration.rb', 'db/migrate/create_double_entry_tables.rb'
       end
-
     end
   end
 end
