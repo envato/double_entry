@@ -88,6 +88,8 @@ module DoubleEntry
           case value
           when value.is_a?(@active_record_class)
             value.id
+          when @active_record_class.constantize
+            value.id
           when String, Integer
             value
           else
