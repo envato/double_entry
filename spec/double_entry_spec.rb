@@ -352,9 +352,10 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          user_scope = accounts.active_record_scope_identifier("User")
+          user_scope = lambda{|user| user.id}
+
           accounts.define(:identifier => :bank)
-          accounts.define(:identifier => :cash,    :scope_identifier => user_scope)
+          accounts.define(:identifier => :cash,   :scope_identifier => user_scope)
           accounts.define(:identifier => :savings, :scope_identifier => user_scope)
         end
 
@@ -397,16 +398,16 @@ RSpec.describe DoubleEntry do
       expect(DoubleEntry.balance(:cash, :scope => ryan)).to eq(Money.new(-10_00))
     end
 
-    it 'raises an exception if you try to scope with an object instance of differing class to that defined on the account' do
+    xit 'raises an exception if you try to scope with an object instance of differing class to that defined on the account' do
       not_a_user = double(:id => 7)
 
       expect do
-        DoubleEntry.account(:savings, :scope => not_a_user)
-      end.to raise_error DoubleEntry::AccountScopeMismatchError
+        DoubleEntry.account(:savings, :scope => not_a_user, :scope_identifier => not_a_user)
+      end.to raise_error DoubleEntry::DoubleEntryError
 
       expect do
-        DoubleEntry.balance(:savings, :scope => not_a_user)
-      end.to raise_error DoubleEntry::AccountScopeMismatchError
+        DoubleEntry.balance(:savings, :scope => not_a_user, :scope_identifier => not_a_user)
+      end.to raise_error DoubleEntry::DoubleEntryError
     end
 
     it 'raises exception if you try to transfer between the same account, despite it being scoped' do
