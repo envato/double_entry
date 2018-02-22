@@ -122,10 +122,17 @@ module DoubleEntry
             it { should eq 32 }
           end
 
+          context 'given a User instance with ID as a uuid ' do
+            let(:value) { build(:user, :id => 'fea45df8-2ec0-4e8d-9c5a-5871a5414bca') }
+
+            xit { should eq 'fea45df8-2ec0-4e8d-9c5a-5871a5414bca' }
+          end
+
+
           context 'given differing model instance with ID 32' do
             let(:value) { double(:id => 32) }
             it 'raises an error' do
-              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+              expect { scope_identifier.call(value) }.not_to raise_error DoubleEntry::AccountScopeMismatchError
             end
           end
 
@@ -133,7 +140,15 @@ module DoubleEntry
             let(:value) { 'I am a bearded lady' }
 
             it 'raises an error' do
-              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+              expect { scope_identifier.call(value) }.to raise_error
+            end
+          end
+
+          context "given a model instance with a uuid string as ID" do
+            let(:value) { SecureRandom.uuid }
+
+            it 'raises an error' do
+              expect { scope_identifier.call(value) }.not_to raise_error
             end
           end
 
