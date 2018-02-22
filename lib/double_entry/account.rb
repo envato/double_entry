@@ -85,7 +85,8 @@ module DoubleEntry
 
       def scope_identifier
         lambda do |value|
-          if value.is_a?(@active_record_class)
+          case value
+          when value.is_a?(@active_record_class)
             value.id
           when String, Integer
             value
