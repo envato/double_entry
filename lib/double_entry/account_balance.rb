@@ -25,7 +25,7 @@ module DoubleEntry
     end
 
     def account
-      DoubleEntry.account(self[:account].to_sym, :scope => self[:scope])
+      DoubleEntry.account(self[:account].to_sym, :scope_identity => self[:scope])
     end
 
     def self.find_by_account(account, options = {})

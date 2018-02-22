@@ -3,12 +3,12 @@ require_relative 'factories'
 DoubleEntry.configure do |config|
   # A set of accounts to test with
   config.define_accounts do |accounts|
-    user_scope = accounts.active_record_scope_identifier(User)
-    accounts.define(:identifier => :savings,      :scope_identifier => user_scope, :positive_only => true)
-    accounts.define(:identifier => :checking,     :scope_identifier => user_scope, :positive_only => true)
-    accounts.define(:identifier => :test,         :scope_identifier => user_scope)
-    accounts.define(:identifier => :btc_test,     :scope_identifier => user_scope, :currency => 'BTC')
-    accounts.define(:identifier => :btc_savings,  :scope_identifier => user_scope, :currency => 'BTC')
+    user_scope = lambda{|user| user.id}
+    accounts.define(:identifier => :savings,     :scope_identifier => user_scope, :positive_only => true)
+    accounts.define(:identifier => :checking,    :scope_identifier => user_scope, :positive_only => true)
+    accounts.define(:identifier => :test,        :scope_identifier => user_scope)
+    accounts.define(:identifier => :btc_test,    :scope_identifier => user_scope, :currency => 'BTC')
+    accounts.define(:identifier => :btc_savings, :scope_identifier => user_scope, :currency => 'BTC')
     accounts.define(:identifier => :deposit_fees, :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :account_fees, :scope_identifier => user_scope, :positive_only => true)
   end

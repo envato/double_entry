@@ -1,4 +1,4 @@
-# encoding: utf-8
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
@@ -12,20 +12,20 @@ Gem::Specification.new do |gem|
   gem.summary               = 'Tools to build your double entry financial ledger'
   gem.homepage              = 'https://github.com/envato/double_entry'
 
-  gem.files                 = `git ls-files`.split($/)
+  gem.files                 = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   gem.executables           = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
   gem.test_files            = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths         = ['lib']
   gem.required_ruby_version = '>= 2.2.0'
 
-  gem.add_dependency 'money',                 '>= 6.0.0'
   gem.add_dependency 'activerecord',          '>= 3.2.0'
   gem.add_dependency 'activesupport',         '>= 3.2.0'
+  gem.add_dependency 'money',                 '>= 6.0.0'
   gem.add_dependency 'railties',              '>= 3.2.0'
 
-  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'mysql2'
   gem.add_development_dependency 'pg'
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'sqlite3'
 
   gem.add_development_dependency 'rspec'
