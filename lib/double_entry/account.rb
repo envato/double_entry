@@ -90,6 +90,8 @@ module DoubleEntry
             value.id
           when @active_record_class.constantize
             value.id
+          when String, Integer
+            value
           else
             fail AccountScopeMismatchError, "Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`"
           end

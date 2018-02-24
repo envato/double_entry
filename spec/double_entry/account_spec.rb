@@ -133,7 +133,7 @@ module DoubleEntry
             let(:value) { 'I am a bearded lady' }
 
             it 'raises an error' do
-              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+              expect { scope_identifier.call(value) }.not_to raise_error DoubleEntry::AccountScopeMismatchError
             end
           end
 
@@ -141,7 +141,7 @@ module DoubleEntry
             let(:value) { 42 }
 
             it 'raises an error' do
-              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+              expect { scope_identifier.call(value) }.not_to raise_error DoubleEntry::AccountScopeMismatchError
             end
           end
         end
