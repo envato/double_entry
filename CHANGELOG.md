@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- Replaced Machinist with Factory Girl in test suite.
+- Replaced Machinist with Factory Bot in test suite.
 
 - Implement `DoubleEntry::Transfer::Set` and `DoubleEntry::Account::Set` with
   `Hash`es rather than `Array`s for performance.
