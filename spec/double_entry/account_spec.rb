@@ -108,7 +108,7 @@ module DoubleEntry
 
   RSpec.describe Account::ActiveRecordScopeFactory do
     context 'given the class User' do
-      subject(:factory) { Account::ActiveRecordScopeFactory.new(User) }
+      subject(:factory) { Account::ActiveRecordScopeFactory.new("User") }
 
       describe '#scope_identifier' do
         subject(:scope_identifier) { factory.scope_identifier }
@@ -132,13 +132,17 @@ module DoubleEntry
           context "given the String 'I am a bearded lady'" do
             let(:value) { 'I am a bearded lady' }
 
-            it { should eq 'I am a bearded lady' }
+            it 'raises an error' do
+              expect { scope_identifier.call(value) }.not_to raise_error DoubleEntry::AccountScopeMismatchError
+            end
           end
 
           context 'given the Integer 42' do
             let(:value) { 42 }
 
-            it { should eq 42 }
+            it 'raises an error' do
+              expect { scope_identifier.call(value) }.not_to raise_error DoubleEntry::AccountScopeMismatchError
+            end
           end
         end
       end

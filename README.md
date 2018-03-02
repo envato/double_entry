@@ -195,7 +195,7 @@ require 'double_entry'
 
 DoubleEntry.configure do |config|
   config.define_accounts do |accounts|
-    user_scope = accounts.active_record_scope_identifier(User)
+    user_scope = accounts.active_record_scope_identifier("User")
     accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :positive_only => true)
     accounts.define(:identifier => :checking, :scope_identifier => user_scope)
   end

@@ -101,7 +101,7 @@ module DoubleEntry
     end
 
     def account
-      DoubleEntry.account(self[:account].to_sym, :scope => scope)
+      DoubleEntry.account(self[:account].to_sym, :scope_identity => scope)
     end
 
     def currency
@@ -116,7 +116,7 @@ module DoubleEntry
     end
 
     def partner_account
-      DoubleEntry.account(self[:partner_account].to_sym, :scope => partner_scope)
+      DoubleEntry.account(self[:partner_account].to_sym, :scope_identity => partner_scope)
     end
 
     def partner

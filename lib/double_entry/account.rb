@@ -23,8 +23,8 @@ module DoubleEntry
 
       # @api private
       def account(identifier, options = {})
-        account = accounts.find(identifier, options[:scope].present?)
-        Instance.new(:account => account, :scope => options[:scope])
+        account = accounts.find(identifier, (options[:scope].present? || options[:scope_identity].present?))
+        Instance.new(:account => account, :scope => options[:scope], :scope_identity => options[:scope_identity])
       end
 
       # @api private
@@ -86,7 +86,9 @@ module DoubleEntry
       def scope_identifier
         lambda do |value|
           case value
-          when @active_record_class
+          when @active_record_class.is_a?(Class)
+            value.id
+          when @active_record_class.constantize
             value.id
           when String, Integer
             value
@@ -104,10 +106,15 @@ module DoubleEntry
       def initialize(args)
         @account = args[:account]
         @scope = args[:scope]
+        @scope_identity = args[:scope_identity]
         ensure_scope_is_valid
       end
 
       def scope_identity
+        @scope_identity || call_scope_identifier
+      end
+
+      def call_scope_identifier
         scope_identifier.call(scope).to_s if scoped?
       end
 
