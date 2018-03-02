@@ -108,7 +108,7 @@ module DoubleEntry
 
   RSpec.describe Account::ActiveRecordScopeFactory do
     context 'given the class User' do
-      subject(:factory) { Account::ActiveRecordScopeFactory.new(User) }
+      subject(:factory) { Account::ActiveRecordScopeFactory.new("User") }
 
       describe '#scope_identifier' do
         subject(:scope_identifier) { factory.scope_identifier }
