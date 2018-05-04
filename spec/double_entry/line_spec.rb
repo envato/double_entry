@@ -31,7 +31,14 @@ RSpec.describe DoubleEntry::Line do
 
       context 'given code = nil' do
         let(:code) { nil }
-        specify { expect { line_to_persist.save! }.to raise_error }
+        let(:expected_error) do
+          if defined?(ActiveRecord::NotNullViolation)
+            ActiveRecord::NotNullViolation
+          else
+            ActiveRecord::StatementInvalid
+          end
+        end
+        specify { expect { line_to_persist.save! }.to raise_error(expected_error) }
       end
 
       context 'given account = :test, 54 ' do

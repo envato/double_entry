@@ -1,6 +1,8 @@
+require 'factory_bot'
+
 User = Class.new(ActiveRecord::Base)
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :user do
     username { "user#{__id__}" }
 
@@ -37,4 +39,8 @@ FactoryGirl.define do
       end
     end
   end
+end
+
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
 end

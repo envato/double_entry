@@ -25,6 +25,7 @@ Ruby
  * 2.2.x
  * 2.3.x
  * 2.4.x
+ * 2.5.x
 
 Rails
  * 4.2.x
@@ -313,12 +314,14 @@ Many thanks to those who have contributed to both this gem, and the library upon
   * Giancarlo Salamanca - @salamagd
   * Jiexin Huang - @jiexinhuang
   * Keith Pitt - @keithpitt
+  * Kelsey Hannan - @KelseyDH
   * Mark Turnley - @rabidcarrot
   * Martin Jagusch - @MJIO
   * Martin Spickermann - @spickermann
   * Mary-Anne Cosgrove - @macosgrove
   * Orien Madgwick - @orien
   * Pete Yandall - @notahat
+  * Rizal Muthi - @rizalmuthi
   * Ryan Allen - @ryan-allen
   * Samuel Cochran - @sj26
   * Stephanie Staub - @stephnacios
