@@ -23,8 +23,8 @@ module DoubleEntry
 
       # @api private
       def account(identifier, options = {})
-        account = accounts.find(identifier, options[:scope].present?)
-        Instance.new(:account => account, :scope => options[:scope])
+        account = accounts.find(identifier, (options[:scope].present? || options[:scope_identity].present?))
+        Instance.new(:account => account, :scope => options[:scope], :scope_identity => options[:scope_identity])
       end
 
       # @api private
@@ -85,11 +85,8 @@ module DoubleEntry
 
       def scope_identifier
         lambda do |value|
-          case value
-          when @active_record_class
+          if value.is_a?(@active_record_class)
             value.id
-          when String, Integer
-            value
           else
             fail AccountScopeMismatchError, "Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`"
           end
@@ -104,10 +101,15 @@ module DoubleEntry
       def initialize(args)
         @account = args[:account]
         @scope = args[:scope]
+        @scope_identity = args[:scope_identity]
         ensure_scope_is_valid
       end
 
       def scope_identity
+        @scope_identity || call_scope_identifier
+      end
+
+      def call_scope_identifier
         scope_identifier.call(scope).to_s if scoped?
       end
 
