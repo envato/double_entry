@@ -19,7 +19,7 @@ module DoubleEntry
 
     describe '::transfer' do
       let(:amount)  { Money.new(10_00) }
-      let(:user)    { User.make! }
+      let(:user)    { create(:user) }
       let(:test)    { DoubleEntry.account(:test, :scope => user) }
       let(:savings) { DoubleEntry.account(:savings, :scope => user) }
       let(:new_lines) { Line.all[-2..-1] }
@@ -98,18 +98,68 @@ module DoubleEntry
     end
 
     describe Transfer::Set do
-      describe '#define' do
-        before do
-          subject.define(
-            :code => 'code',
-            :from => double(:identifier => 'from'),
-            :to   => double(:identifier => 'to'),
-          )
+      subject(:set) { described_class.new }
+
+      before do
+        set.define(
+          :code => :transfer_code,
+          :from => from_account.identifier,
+          :to   => to_account.identifier,
+        )
+
+        set.define(
+          :code => :another_transfer_code,
+          :from => from_account.identifier,
+          :to   => to_account.identifier,
+        )
+      end
+
+      let(:from_account) { instance_double(Account, :identifier => :from) }
+      let(:to_account)   { instance_double(Account, :identifier => :to) }
+
+      describe '#find' do
+        it 'finds the transfers' do
+          first_transfer = set.find(from_account, to_account, :transfer_code)
+          second_transfer = set.find(from_account, to_account, :another_transfer_code)
+
+          expect(first_transfer).to be_a Transfer
+          expect(first_transfer.code).to eq :transfer_code
+          expect(first_transfer.from).to eq from_account.identifier
+          expect(first_transfer.to).to eq to_account.identifier
+
+          expect(second_transfer).to be_a Transfer
+          expect(second_transfer.code).to eq :another_transfer_code
+          expect(second_transfer.from).to eq from_account.identifier
+          expect(second_transfer.to).to eq to_account.identifier
         end
-        its(:first) { should be_a Transfer }
-        its('first.code') { should eq 'code' }
-        its('first.from.identifier') { should eq 'from' }
-        its('first.to.identifier') { should eq 'to' }
+
+        it 'returns nothing when searching for undefined transfers' do
+          undefined_transfer = set.find(to_account, from_account, :transfer_code)
+
+          expect(undefined_transfer).to eq nil
+        end
+      end
+
+      describe '#find!' do
+        it 'also finds the transfers' do
+          first_transfer = set.find!(from_account, to_account, :transfer_code)
+          second_transfer = set.find!(from_account, to_account, :another_transfer_code)
+
+          expect(first_transfer).to be_a Transfer
+          expect(first_transfer.code).to eq :transfer_code
+          expect(first_transfer.from).to eq from_account.identifier
+          expect(first_transfer.to).to eq to_account.identifier
+
+          expect(second_transfer).to be_a Transfer
+          expect(second_transfer.code).to eq :another_transfer_code
+          expect(second_transfer.from).to eq from_account.identifier
+          expect(second_transfer.to).to eq to_account.identifier
+        end
+
+        it 'raises an error when searching for undefined transfers' do
+          expect { set.find!(to_account, from_account, :transfer_code) }
+            .to raise_error(TransferNotAllowed)
+        end
       end
     end
   end

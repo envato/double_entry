@@ -14,7 +14,13 @@ module DoubleEntry
       end
 
       def copy_migrations
-        migration_template 'migration.rb', 'db/migrate/create_double_entry_tables.rb'
+        migration_template 'migration.rb', 'db/migrate/create_double_entry_tables.rb', migration_version: migration_version
+      end
+
+      def migration_version
+        if ActiveRecord.version.version > '5'
+          "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+        end
       end
     end
   end

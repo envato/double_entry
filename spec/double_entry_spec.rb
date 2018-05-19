@@ -370,11 +370,11 @@ RSpec.describe DoubleEntry do
     let(:cash) { DoubleEntry.account(:cash) }
     let(:savings) { DoubleEntry.account(:savings) }
 
-    let(:john) { User.make! }
+    let(:john) { create(:user) }
     let(:johns_cash) { DoubleEntry.account(:cash, :scope => john) }
     let(:johns_savings) { DoubleEntry.account(:savings, :scope => john) }
 
-    let(:ryan) { User.make! }
+    let(:ryan) { create(:user) }
     let(:ryans_cash) { DoubleEntry.account(:cash, :scope => ryan) }
     let(:ryans_savings) { DoubleEntry.account(:savings, :scope => ryan) }
 

@@ -5,15 +5,15 @@ require 'generators/double_entry/install/install_generator'
 RSpec.describe DoubleEntry::Generators::InstallGenerator do
   include GeneratorSpec::TestCase
 
-  destination File.expand_path('../../../../../tmp', __FILE__)
+  destination File.expand_path('../../../../../tmp/generators', __FILE__)
 
   before do
     prepare_destination
     run_generator
   end
 
-  specify do
-    expect(destination_root).to have_structure do
+  it 'generates the expected migrations' do
+    expect(destination_root).to have_structure {
       directory 'db' do
         directory 'migrate' do
           migration 'create_double_entry_tables' do
@@ -25,6 +25,6 @@ RSpec.describe DoubleEntry::Generators::InstallGenerator do
           end
         end
       end
-    end
+    }
   end
 end

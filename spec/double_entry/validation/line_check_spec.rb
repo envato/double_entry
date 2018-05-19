@@ -28,7 +28,7 @@ module DoubleEntry
         subject(:performed_line_check) { LineCheck.perform! }
 
         context 'Given a user with 100 dollars' do
-          before { User.make!(:savings_balance => Money.new(100_00)) }
+          before { create(:user, :savings_balance => Money.new(100_00)) }
 
           context 'And all is consistent' do
             context 'And all lines have been checked' do
@@ -78,7 +78,7 @@ module DoubleEntry
         end
 
         context 'Given a user with a non default currency balance' do
-          before { User.make!(:bitcoin_balance => Money.new(100_00, 'BTC')) }
+          before { create(:user, :bitcoin_balance => Money.new(100_00, 'BTC')) }
           its(:errors_found) { should eq false }
           context 'And there is a consistency error in lines' do
             before { DoubleEntry::Line.order(:id).limit(1).update_all('balance = balance + 1') }

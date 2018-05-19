@@ -22,15 +22,15 @@ DoubleEntry uses the [Money gem](https://github.com/RubyMoney/money) to encapsul
 DoubleEntry is tested against:
 
 Ruby
- * 2.1.x
  * 2.2.x
  * 2.3.x
+ * 2.4.x
+ * 2.5.x
 
 Rails
- * 3.2.x
- * 4.1.x
  * 4.2.x
  * 5.0.x
+ * 5.1.x
 
 Databases
  * MySQL
@@ -304,3 +304,26 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
     ```sh
     bundle exec rake
     ```
+
+## Contributors
+
+Many thanks to those who have contributed to both this gem, and the library upon which it was based, over the years:
+  * Anthony Sellitti - @asellitt
+  * Clinton Forbes - @clinton
+  * Eaden McKee - @eadz
+  * Giancarlo Salamanca - @salamagd
+  * Jiexin Huang - @jiexinhuang
+  * Keith Pitt - @keithpitt
+  * Kelsey Hannan - @KelseyDH
+  * Mark Turnley - @rabidcarrot
+  * Martin Jagusch - @MJIO
+  * Martin Spickermann - @spickermann
+  * Mary-Anne Cosgrove - @macosgrove
+  * Orien Madgwick - @orien
+  * Pete Yandall - @notahat
+  * Rizal Muthi - @rizalmuthi
+  * Ryan Allen - @ryan-allen
+  * Samuel Cochran - @sj26
+  * Stephanie Staub - @stephnacios
+  * Trung Lê - @joneslee85
+  * Vahid Ta'eed - @vahid

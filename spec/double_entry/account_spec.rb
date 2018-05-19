@@ -66,11 +66,28 @@ module DoubleEntry
     end
 
     describe Account::Set do
-      describe '#define' do
-        context "given a 'savings' account is defined" do
-          before { subject.define(:identifier => 'savings') }
-          its(:first) { should be_an Account }
-          its('first.identifier') { should eq 'savings' }
+      subject(:set) { described_class.new }
+
+      describe '#find' do
+        before do
+          set.define(:identifier => :savings)
+          set.define(:identifier => :checking, :scope_identifier => ar_class)
+        end
+
+        let(:ar_class) { double(:ar_class) }
+
+        it 'finds unscoped accounts' do
+          expect(set.find(:savings, false)).to be_an Account
+          expect(set.find(:savings, false).identifier).to eq :savings
+
+          expect { set.find(:savings, true) }.to raise_error(UnknownAccount)
+        end
+
+        it 'finds scoped accounts' do
+          expect(set.find(:checking, true)).to be_an Account
+          expect(set.find(:checking, true).identifier).to eq :checking
+
+          expect { set.find(:checking, false) }.to raise_error(UnknownAccount)
         end
       end
 
@@ -100,7 +117,7 @@ module DoubleEntry
           subject(:scope) { scope_identifier.call(value) }
 
           context 'given a User instance with ID 32' do
-            let(:value) { User.make(:id => 32) }
+            let(:value) { build(:user, :id => 32) }
 
             it { should eq 32 }
           end
@@ -115,13 +132,17 @@ module DoubleEntry
           context "given the String 'I am a bearded lady'" do
             let(:value) { 'I am a bearded lady' }
 
-            it { should eq 'I am a bearded lady' }
+            it 'raises an error' do
+              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+            end
           end
 
           context 'given the Integer 42' do
             let(:value) { 42 }
 
-            it { should eq 42 }
+            it 'raises an error' do
+              expect { scope_identifier.call(value) }.to raise_error DoubleEntry::AccountScopeMismatchError
+            end
           end
         end
       end

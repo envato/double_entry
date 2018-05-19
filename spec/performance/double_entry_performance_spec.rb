@@ -2,7 +2,7 @@ module DoubleEntry
   RSpec.describe DoubleEntry do
     describe 'transfer performance' do
       include PerformanceHelper
-      let(:user) { User.make! }
+      let(:user) { create(:user) }
       let(:amount) { Money.new(10_00) }
       let(:test) { DoubleEntry.account(:test, :scope => user) }
       let(:savings) { DoubleEntry.account(:savings, :scope => user) }

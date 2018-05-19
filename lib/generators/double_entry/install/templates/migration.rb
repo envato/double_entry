@@ -1,5 +1,4 @@
-class CreateDoubleEntryTables < ActiveRecord::Migration
-
+class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
   def self.up
     create_table "double_entry_account_balances", :force => true do |t|
       t.string     "account", :limit => 31, :null => false

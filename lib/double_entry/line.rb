@@ -102,7 +102,7 @@ module DoubleEntry
     end
 
     def account
-      DoubleEntry.account(self[:account].to_sym, :scope => scope)
+      DoubleEntry.account(self[:account].to_sym, :scope_identity => scope)
     end
 
     def currency
@@ -117,7 +117,7 @@ module DoubleEntry
     end
 
     def partner_account
-      DoubleEntry.account(self[:partner_account].to_sym, :scope => partner_scope)
+      DoubleEntry.account(self[:partner_account].to_sym, :scope_identity => partner_scope)
     end
 
     def partner
@@ -133,11 +133,11 @@ module DoubleEntry
     end
 
     def decrease?
-      amount < Money.zero
+      amount.negative?
     end
 
     def increase?
-      amount > Money.zero
+      amount.positive?
     end
 
     # Query out just the id and created_at fields for lines, without
@@ -152,10 +152,10 @@ module DoubleEntry
   private
 
     def check_balance_will_remain_valid
-      if account.positive_only && balance < Money.zero
+      if account.positive_only && balance.negative?
         fail AccountWouldBeSentNegative, account
       end
-      if account.negative_only && balance > Money.zero
+      if account.negative_only && balance.positive?
         fail AccountWouldBeSentPositiveError, account
       end
     end
