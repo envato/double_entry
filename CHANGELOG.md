@@ -66,6 +66,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removed unneeded development dependencies from Gemspec.
 
+- Removed spec and script files from gem package.
+
 ### Fixed
 
 - Fixed more Ruby warnings.
