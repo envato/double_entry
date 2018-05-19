@@ -54,6 +54,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
       t.timestamps                             :null => false
     end
 
+    add_index "double_entry_line_checks", ["created_at", "last_line_id"], :name => "line_checks_created_at_last_line_id_idx"
+
     create_table "double_entry_line_metadata", :force => true do |t|
       t.integer    "line_id",               :null => false
       t.string     "key",     :limit => 48, :null => false

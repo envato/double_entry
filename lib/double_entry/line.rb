@@ -57,6 +57,7 @@ module DoubleEntry
   class Line < ActiveRecord::Base
     belongs_to :detail, :polymorphic => true
     has_many :metadata, :class_name => 'DoubleEntry::LineMetadata'
+    scope :with_id_greater_than, ->(id) { where('id > ?', id) }
 
     def amount
       self[:amount] && Money.new(self[:amount], currency)

@@ -31,6 +31,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Allow filtering aggregates by multiple metadata key/value pairs.
 
+- Add index on the `double_entry_line_checks` table. This covers the query to
+  obtain the last line check.
+
+  Add this index to your database via a migration like:
+
+    ```ruby
+    def up
+      add_index "double_entry_line_checks", ["created_at", "last_line_id"], :name => "line_checks_created_at_last_line_id_idx"
+    end
+    ```
+
 ### Changed
 
 - Replaced Machinist with Factory Bot in test suite.
