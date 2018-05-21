@@ -13,9 +13,6 @@ script:
   - ruby script/jack_hammer -t 2000
 matrix:
   include:
-    - rvm: 2.2
-      gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
-      env: DB=mysql
     - rvm: 2.3
       gemfile: spec/support/gemfiles/Gemfile.rails-4.2.x
       env: DB=mysql

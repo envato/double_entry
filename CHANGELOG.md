@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
-- Removed support for Ruby 1.9, 2.0 and 2.1.
+- Removed support for Ruby 1.9, 2.0, 2.1 and 2.2.
 
 - Removed support for Rails 3.2, 4.0, and 4.1.
 
