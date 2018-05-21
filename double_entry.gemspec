@@ -12,9 +12,9 @@ Gem::Specification.new do |gem|
   gem.summary               = 'Tools to build your double entry financial ledger'
   gem.homepage              = 'https://github.com/envato/double_entry'
 
-  gem.files                 = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
-  gem.executables           = gem.files.grep(%r{bin/}).map { |f| File.basename(f) }
-  gem.test_files            = gem.files.grep(%r{^(test|spec|features)/})
+  gem.files                 = `git ls-files -z`.split("\x0").select do |f|
+    f.match(%r{^(?:double_entry.gemspec|README|LICENSE|CHANGELOG|lib/)})
+  end
   gem.require_paths         = ['lib']
   gem.required_ruby_version = '>= 2.2.0'
 
