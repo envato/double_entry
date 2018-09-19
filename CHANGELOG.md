@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added support for Ruby 2.3, 2.4 and 2.5.
 
-- Added support for Rails 5.0 and 5.1.
+- Added support for Rails 5.0, 5.1 and 5.2
 
 - Support passing an array of metadata values.
 
