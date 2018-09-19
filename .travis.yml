@@ -23,8 +23,11 @@ matrix:
       gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
       env: DB=mysql
     - rvm: 2.5
-      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.2.x
+      env: DB=mysql
+    - rvm: 2.5
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.2.x
       env: DB=sqlite
     - rvm: 2.5
-      gemfile: spec/support/gemfiles/Gemfile.rails-5.1.x
+      gemfile: spec/support/gemfiles/Gemfile.rails-5.2.x
       env: DB=postgres
