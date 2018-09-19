@@ -30,6 +30,7 @@ Rails
  * 4.2.x
  * 5.0.x
  * 5.1.x
+ * 5.2.x
 
 Databases
  * MySQL
