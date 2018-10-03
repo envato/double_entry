@@ -5,9 +5,9 @@ RSpec.describe DoubleEntry::Configuration do
 
   describe 'max lengths' do
     context 'given a max length has not been set' do
-      its(:code_max_length) { should be 47 }
-      its(:scope_identifier_max_length) { should be 23 }
-      its(:account_identifier_max_length) { should be 31 }
+      its(:code_max_length) { should be_nil }
+      its(:scope_identifier_max_length) { should be_nil }
+      its(:account_identifier_max_length) { should be_nil }
     end
 
     context 'given a code max length of 10 has been set' do

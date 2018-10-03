@@ -2,17 +2,22 @@
 module DoubleEntry
   RSpec.describe Transfer do
     describe '::new' do
-      context 'given a code 47 characters in length' do
-        let(:code) { 'xxxxxxxxxxxxxxxx 47 characters xxxxxxxxxxxxxxxx' }
-        specify do
-          expect { Transfer.new(:code => code) }.to_not raise_error
-        end
-      end
+      context 'given a code_max_length of 47' do
+        before { Transfer.code_max_length = 47 }
+        after { Transfer.code_max_length = nil }
 
-      context 'given a code 48 characters in length' do
-        let(:code) { 'xxxxxxxxxxxxxxxx 48 characters xxxxxxxxxxxxxxxxx' }
-        specify do
-          expect { Transfer.new(:code => code) }.to raise_error TransferCodeTooLongError, /'#{code}'/
+        context 'given a code 47 characters in length' do
+          let(:code) { 'xxxxxxxxxxxxxxxx 47 characters xxxxxxxxxxxxxxxx' }
+          specify do
+            expect { Transfer.new(:code => code) }.to_not raise_error
+          end
+        end
+
+        context 'given a code 48 characters in length' do
+          let(:code) { 'xxxxxxxxxxxxxxxx 48 characters xxxxxxxxxxxxxxxxx' }
+          specify do
+            expect { Transfer.new(:code => code) }.to raise_error TransferCodeTooLongError, /'#{code}'/
+          end
         end
       end
     end

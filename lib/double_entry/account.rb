@@ -4,21 +4,12 @@ require 'forwardable'
 module DoubleEntry
   class Account
     class << self
-      attr_writer :accounts, :scope_identifier_max_length, :account_identifier_max_length
+      attr_accessor :scope_identifier_max_length, :account_identifier_max_length
+      attr_writer :accounts
 
       # @api private
       def accounts
         @accounts ||= Set.new
-      end
-
-      # @api private
-      def scope_identifier_max_length
-        @scope_identifier_max_length ||= 23
-      end
-
-      # @api private
-      def account_identifier_max_length
-        @account_identifier_max_length ||= 31
       end
 
       # @api private
@@ -160,7 +151,7 @@ module DoubleEntry
 
       def ensure_scope_is_valid
         identity = scope_identity
-        if identity && identity.length > Account.scope_identifier_max_length
+        if identity && Account.scope_identifier_max_length && identity.length > Account.scope_identifier_max_length
           fail ScopeIdentifierTooLongError,
                "scope identifier '#{identity}' is too long. Please limit it to #{Account.scope_identifier_max_length} characters."
         end
@@ -175,7 +166,7 @@ module DoubleEntry
       @positive_only = args[:positive_only]
       @negative_only = args[:negative_only]
       @currency = args[:currency] || Money.default_currency
-      if identifier.length > Account.account_identifier_max_length
+      if Account.account_identifier_max_length && identifier.length > Account.account_identifier_max_length
         fail AccountIdentifierTooLongError,
              "account identifier '#{identifier}' is too long. Please limit it to #{Account.account_identifier_max_length} characters."
       end

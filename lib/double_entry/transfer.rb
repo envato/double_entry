@@ -4,16 +4,12 @@ require 'forwardable'
 module DoubleEntry
   class Transfer
     class << self
-      attr_writer :transfers, :code_max_length
+      attr_accessor :code_max_length
+      attr_writer :transfers
 
       # @api private
       def transfers
         @transfers ||= Set.new
-      end
-
-      # @api private
-      def code_max_length
-        @code_max_length ||= 47
       end
 
       # @api private
@@ -73,7 +69,7 @@ module DoubleEntry
       @code = attributes[:code]
       @from = attributes[:from]
       @to = attributes[:to]
-      if code.length > Transfer.code_max_length
+      if Transfer.code_max_length && code.length > Transfer.code_max_length
         fail TransferCodeTooLongError,
              "transfer code '#{code}' is too long. Please limit it to #{Transfer.code_max_length} characters."
       end
