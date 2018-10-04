@@ -68,6 +68,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Removed spec and script files from gem package.
 
+- Removed the `active_record_scope_identifier` method for configuring scoped accounts.
+
+    ```ruby
+    user_scope = accounts.active_record_scope_identifier(User)
+    ```
+
+  As a replacement, please define your own with a lambda:
+
+    ```ruby
+    user_scope = ->(user) do
+      raise 'not a User' unless user.class.name == 'User'
+      user.id
+    end
+    ```
+
 ### Fixed
 
 - Fixed more Ruby warnings.

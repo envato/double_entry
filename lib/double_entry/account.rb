@@ -63,10 +63,6 @@ module DoubleEntry
         backing_collection[identifier]
       end
 
-      def active_record_scope_identifier(active_record_class)
-        ActiveRecordScopeFactory.new(active_record_class).scope_identifier
-      end
-
       def all
         backing_collection.values
       end
@@ -75,22 +71,6 @@ module DoubleEntry
 
       def backing_collection
         @backing_collection ||= Hash.new
-      end
-    end
-
-    class ActiveRecordScopeFactory
-      def initialize(active_record_class)
-        @active_record_class = active_record_class
-      end
-
-      def scope_identifier
-        lambda do |value|
-          if value.is_a?(@active_record_class)
-            value.id
-          else
-            fail AccountScopeMismatchError, "Expected instance of `#{@active_record_class}`, received instance of `#{value.class}`"
-          end
-        end
       end
     end
 
