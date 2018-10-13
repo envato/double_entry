@@ -99,6 +99,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
    change_column :double_entry_lines, :detail_id, :bigint, null: true
    ```
 
+- Line check validation no-longer performs corrections by default. The
+  `DoubleEntry::Validation::LineCheck::perform!` method will only log validation
+  failures in the database. To perform auto-correction pass the `fixer` option:
+  `LineCheck.perform!(fixer: DoubleEntry::Validation::AccountFixer.new)`
+
 ### Removed
 
 - Removed support for Ruby 1.9, 2.0, 2.1 and 2.2.

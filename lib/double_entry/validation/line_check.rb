@@ -9,11 +9,11 @@ module DoubleEntry
         order('created_at DESC').limit(1).pluck(:last_line_id).first || 0
       end
 
-      def self.perform!
-        new.perform
+      def self.perform!(fixer: nil)
+        new.perform(fixer: fixer)
       end
 
-      def perform
+      def perform(fixer: nil)
         log = ''
         current_line_id = nil
 
@@ -30,7 +30,7 @@ module DoubleEntry
           incorrect_accounts << account unless cached_balance_correct?(account, log)
         end
 
-        incorrect_accounts.each { |account| recalculate_account(account) }
+        incorrect_accounts.each(&fixer.method(:recalculate_account)) if fixer
 
         unless active_accounts.empty?
           LineCheck.create!(
@@ -86,7 +86,7 @@ module DoubleEntry
           #{previous_line.inspect}
           #{line.inspect}
 
-          END_OF_MESSAGE
+        END_OF_MESSAGE
       end
 
       def cached_balance_correct?(account, log)
@@ -102,31 +102,6 @@ module DoubleEntry
           MESSAGE
           return correct
         end
-      end
-
-      def recalculate_account(account)
-        DoubleEntry.lock_accounts(account) do
-          recalculated_balance = Money.zero(account.currency)
-
-          lines_for_account(account).each do |line|
-            recalculated_balance += line.amount
-            line.update_attribute(:balance, recalculated_balance) if line.balance != recalculated_balance
-          end
-
-          update_balance_for_account(account, recalculated_balance)
-        end
-      end
-
-      def lines_for_account(account)
-        Line.where(
-          :account => account.identifier.to_s,
-          :scope   => account.scope_identity.to_s,
-        ).order(:id)
-      end
-
-      def update_balance_for_account(account, balance)
-        account_balance = Locking.balance_for_locked_account(account)
-        account_balance.update_attribute(:balance, balance)
       end
     end
   end
