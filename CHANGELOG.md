@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Removed
+
+- Reporting API has been extracted to a separate gem:
+  [`double_entry-reporting`](https://github.com/envato/double_entry-reporting).
+
 ## [2.0.0.beta1] - 2018-12-31
 
 ### Added

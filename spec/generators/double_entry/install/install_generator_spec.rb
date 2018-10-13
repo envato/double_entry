@@ -20,7 +20,6 @@ RSpec.describe DoubleEntry::Generators::InstallGenerator do
             contains 'class CreateDoubleEntryTable'
             contains 'create_table "double_entry_account_balances"'
             contains 'create_table "double_entry_lines"'
-            contains 'create_table "double_entry_line_aggregates"'
             contains 'create_table "double_entry_line_checks"'
           end
         end
