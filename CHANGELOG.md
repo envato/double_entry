@@ -42,6 +42,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     end
     ```
 
+- Log account balance cache errors to the database when performing the line check:
+  `DoubleEntry::Validation::LineCheck::perform!`
+
 ### Changed
 
 - Replaced Machinist with Factory Bot in test suite.
