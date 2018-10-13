@@ -142,28 +142,6 @@ module DoubleEntry
                          filter: filter, range_type: range_type, start: start, finish: finish)
     end
 
-    # Identify the scopes with the given account identifier holding at least
-    # the provided minimum balance.
-    #
-    # @example Find users with at least $1,000,000 in their savings accounts
-    #   DoubleEntry::Reporting.scopes_with_minimum_balance_for_account(
-    #     1_000_000.dollars,
-    #     :savings,
-    #   ) # might return the user ids: [ 1423, 12232, 34729 ]
-    # @param [Money] minimum_balance Minimum account balance a scope must have
-    #   to be included in the result set.
-    # @param [Symbol] account_identifier
-    # @return [Array<Integer>] Scopes
-    #
-    def scopes_with_minimum_balance_for_account(minimum_balance, account_identifier)
-      select_values(sanitize_sql_array([<<-SQL, account_identifier, minimum_balance.cents])).map(&:to_i)
-        SELECT scope
-          FROM #{AccountBalance.table_name}
-         WHERE account = ?
-           AND balance >= ?
-      SQL
-    end
-
     # This is used by the concurrency test script.
     #
     # @api private
