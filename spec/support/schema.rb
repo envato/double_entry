@@ -2,27 +2,27 @@ ActiveRecord::Schema.define do
   self.verbose = false
 
   create_table "double_entry_account_balances", :force => true do |t|
-    t.string     "account", :limit => 31, :null => false
-    t.string     "scope",   :limit => 23
-    t.integer    "balance",               :null => false
-    t.timestamps                          :null => false
+    t.string     "account", :null => false
+    t.string     "scope"
+    t.integer    "balance", :null => false
+    t.timestamps            :null => false
   end
 
   add_index "double_entry_account_balances", ["account"],          :name => "index_account_balances_on_account"
   add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
   create_table "double_entry_lines", :force => true do |t|
-    t.string     "account",         :limit => 31, :null => false
-    t.string     "scope",           :limit => 23
-    t.string     "code",            :limit => 47, :null => false
-    t.integer    "amount",                        :null => false
-    t.integer    "balance",                       :null => false
+    t.string     "account",         :null => false
+    t.string     "scope"
+    t.string     "code",            :null => false
+    t.integer    "amount",          :null => false
+    t.integer    "balance",         :null => false
     t.integer    "partner_id"
-    t.string     "partner_account", :limit => 31, :null => false
-    t.string     "partner_scope",   :limit => 23
+    t.string     "partner_account", :null => false
+    t.string     "partner_scope"
     t.integer    "detail_id"
     t.string     "detail_type"
-    t.timestamps                                  :null => false
+    t.timestamps                    :null => false
   end
 
   add_index "double_entry_lines", ["account", "code", "created_at", "partner_account"],  :name => "lines_account_code_created_at_partner_account_idx"
@@ -32,10 +32,10 @@ ActiveRecord::Schema.define do
 
   create_table "double_entry_line_aggregates", :force => true do |t|
     t.string     "function",        :limit => 15, :null => false
-    t.string     "account",         :limit => 31, :null => false
-    t.string     "code",            :limit => 47
-    t.string     "partner_account", :limit => 31
-    t.string     "scope",           :limit => 23
+    t.string     "account",                       :null => false
+    t.string     "code"
+    t.string     "partner_account"
+    t.string     "scope"
     t.integer    "year"
     t.integer    "month"
     t.integer    "week"
@@ -59,10 +59,10 @@ ActiveRecord::Schema.define do
   add_index "double_entry_line_checks", ["created_at", "last_line_id"], :name => "line_checks_created_at_last_line_id_idx"
 
   create_table "double_entry_line_metadata", :force => true do |t|
-    t.integer    "line_id",               :null => false
-    t.string     "key",     :limit => 48, :null => false
-    t.string     "value",   :limit => 64, :null => false
-    t.timestamps                          :null => false
+    t.integer    "line_id", :null => false
+    t.string     "key",     :null => false
+    t.string     "value",   :null => false
+    t.timestamps            :null => false
   end
 
   add_index "double_entry_line_metadata", ["line_id", "key", "value"], :name => "lines_meta_line_id_key_value_idx"

@@ -58,6 +58,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `DoubleEntry::Reporting::AggregateArray::new`
   - `DoubleEntry::Reporting::LineAggregateFilter::new`
 
+- Loosened database string column contstraints to the default (255 characters).
+  Engineering teams can choose to apply this change, or apply their own column
+  length constraints specific to their needs. ([#152])
+
+- Removed default values for the length checks on `code`, `account` and `scope`
+  ([#152]). These checks will now only be performed when configured with a value:
+
+   ```ruby
+   DoubleEntry.configure do |config|
+     config.code_max_length = 47
+     config.account_identifier_max_length = 31
+     config.scope_identifier_max_length = 23
+   end
+   ```
+
 ### Removed
 
 - Removed support for Ruby 1.9, 2.0, 2.1 and 2.2.
@@ -76,6 +91,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   `ActiveSupport::Notifications`.
 
 - Fixed problem of Rails version number not being set in migration template for apps using Rails 5 or higher.
+
+[#152]: https://github.com/envato/double_entry/pull/152
 
 ## [1.0.1] - 2018-01-06
 

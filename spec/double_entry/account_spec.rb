@@ -4,17 +4,22 @@ module DoubleEntry
     let(:identity_scope) { ->(value) { value } }
 
     describe '::new' do
-      context 'given an identifier 31 characters in length' do
-        let(:identifier) { 'xxxxxxxx 31 characters xxxxxxxx' }
-        specify do
-          expect { Account.new(:identifier => identifier) }.to_not raise_error
-        end
-      end
+      context 'given a account_identifier_max_length of 31' do
+        before { Account.account_identifier_max_length = 31 }
+        after { Account.account_identifier_max_length = nil }
 
-      context 'given an identifier 32 characters in length' do
-        let(:identifier) { 'xxxxxxxx 32 characters xxxxxxxxx' }
-        specify do
-          expect { Account.new(:identifier => identifier) }.to raise_error AccountIdentifierTooLongError, /'#{identifier}'/
+        context 'given an identifier 31 characters in length' do
+          let(:identifier) { 'xxxxxxxx 31 characters xxxxxxxx' }
+          specify do
+            expect { Account.new(:identifier => identifier) }.to_not raise_error
+          end
+        end
+
+        context 'given an identifier 32 characters in length' do
+          let(:identifier) { 'xxxxxxxx 32 characters xxxxxxxxx' }
+          specify do
+            expect { Account.new(:identifier => identifier) }.to raise_error AccountIdentifierTooLongError, /'#{identifier}'/
+          end
         end
       end
     end
@@ -41,14 +46,19 @@ module DoubleEntry
         let(:account) { Account.new(:identifier => 'x', :scope_identifier => identity_scope) }
         subject(:initialize_account_instance) { Account::Instance.new(:account => account, :scope => scope) }
 
-        context 'given a scope identifier 23 characters in length' do
-          let(:scope) { 'xxxx 23 characters xxxx' }
-          specify { expect { initialize_account_instance }.to_not raise_error }
-        end
+        context 'given a scope_identifier_max_length of 23' do
+          before { Account.scope_identifier_max_length = 23 }
+          after { Account.scope_identifier_max_length = nil }
 
-        context 'given a scope identifier 24 characters in length' do
-          let(:scope) { 'xxxx 24 characters xxxxx' }
-          specify { expect { initialize_account_instance }.to raise_error ScopeIdentifierTooLongError, /'#{scope}'/ }
+          context 'given a scope identifier 23 characters in length' do
+             let(:scope) { 'xxxx 23 characters xxxx' }
+             specify { expect { initialize_account_instance }.to_not raise_error }
+           end
+
+          context 'given a scope identifier 24 characters in length' do
+            let(:scope) { 'xxxx 24 characters xxxxx' }
+            specify { expect { initialize_account_instance }.to raise_error ScopeIdentifierTooLongError, /'#{scope}'/ }
+          end
         end
       end
     end
