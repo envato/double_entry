@@ -3,7 +3,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
     create_table "double_entry_account_balances", :force => true do |t|
       t.string     "account", :null => false
       t.string     "scope"
-      t.integer    "balance", :null => false
+      t.bigint     "balance", :null => false
       t.timestamps            :null => false
     end
 
@@ -14,8 +14,8 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
       t.string     "account",         :null => false
       t.string     "scope"
       t.string     "code",            :null => false
-      t.integer    "amount",          :null => false
-      t.integer    "balance",         :null => false
+      t.bigint     "amount",          :null => false
+      t.bigint     "balance",         :null => false
       t.references "partner",                         :index => false
       t.string     "partner_account", :null => false
       t.string     "partner_scope"
@@ -40,7 +40,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
       t.integer    "week"
       t.integer    "day"
       t.integer    "hour"
-      t.integer    "amount",                   :null => false
+      t.bigint     "amount",                   :null => false
       t.string     "filter"
       t.string     "range_type", :limit => 15, :null => false
       t.timestamps                             :null => false
