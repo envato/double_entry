@@ -352,7 +352,10 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          user_scope = accounts.active_record_scope_identifier(User)
+          user_scope = ->(user) do
+            raise 'not a User' unless user.class.name == 'User'
+            user.id
+          end
           accounts.define(:identifier => :bank)
           accounts.define(:identifier => :cash,    :scope_identifier => user_scope)
           accounts.define(:identifier => :savings, :scope_identifier => user_scope)
@@ -402,11 +405,11 @@ RSpec.describe DoubleEntry do
 
       expect do
         DoubleEntry.account(:savings, :scope => not_a_user)
-      end.to raise_error DoubleEntry::AccountScopeMismatchError
+      end.to raise_error RuntimeError, 'not a User'
 
       expect do
         DoubleEntry.balance(:savings, :scope => not_a_user)
-      end.to raise_error DoubleEntry::AccountScopeMismatchError
+      end.to raise_error RuntimeError, 'not a User'
     end
 
     it 'raises exception if you try to transfer between the same account, despite it being scoped' do
