@@ -72,6 +72,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
      config.scope_identifier_max_length = 23
    end
    ```
+- Use `bigint` for monetary values in the database to avoid integer overflow
+  ([#154]). Apply changes via this migration:
+
+   ```ruby
+   change_column :double_entry_account_balances, :balance, :bigint, null: false
+
+   change_column :double_entry_line_aggregates, :amount, :bigint, null: false
+
+   change_column :double_entry_lines, :amount, :bigint, null: false
+   change_column :double_entry_lines, :balance, :bigint, null: false
+   ```
+- On Rails version 5.1 and above, use `bigint` for foreign key values in the
+  database to avoid integer overflow ([#154]). Apply changes via this
+  migration:
+
+   ```ruby
+   change_column :double_entry_line_checks, :last_line_id, :bigint, null: false
+
+   change_column :double_entry_line_metadata, :line_id, :bigint, null: false
+
+   change_column :double_entry_lines, :partner_id, :bigint, null: true
+   change_column :double_entry_lines, :detail_id, :bigint, null: true
+   ```
 
 ### Removed
 
@@ -93,6 +116,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed problem of Rails version number not being set in migration template for apps using Rails 5 or higher.
 
 [#152]: https://github.com/envato/double_entry/pull/152
+[#154]: https://github.com/envato/double_entry/pull/154
 
 ## [1.0.1] - 2018-01-06
 
