@@ -7,9 +7,9 @@ FactoryBot.define do
     username { "user#{__id__}" }
 
     transient do
-      savings_balance false
-      checking_balance false
-      bitcoin_balance false
+      savings_balance { false }
+      checking_balance { false }
+      bitcoin_balance { false }
     end
 
     after(:create) do |user, evaluator|
