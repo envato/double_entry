@@ -12,6 +12,13 @@ Gem::Specification.new do |gem|
   gem.summary               = 'Tools to build your double entry financial ledger'
   gem.homepage              = 'https://github.com/envato/double_entry'
 
+  gem.metadata = {
+    'bug_tracker_uri'   => 'https://github.com/envato/double_entry/issues',
+    'changelog_uri'     => 'https://github.com/envato/double_entry/blob/master/CHANGELOG.md',
+    'documentation_uri' => 'https://www.rubydoc.info/github/envato/double_entry/',
+    'source_code_uri'   => 'https://github.com/envato/double_entry',
+  }
+
   gem.files                 = `git ls-files -z`.split("\x0").select do |f|
     f.match(%r{^(?:double_entry.gemspec|README|LICENSE|CHANGELOG|lib/)})
   end
