@@ -91,12 +91,12 @@ module DoubleEntry
 
       def cached_balance_correct?(account, log)
         DoubleEntry.lock_accounts(account) do
-          account_balance_1 = AccountBalance.find_by_account(account).balance
-          account_balance_2 = account.balance
-          correct = (account_balance_1 == account_balance_2)
+          cached_balance = AccountBalance.find_by_account(account).balance
+          running_balance = account.balance
+          correct = (cached_balance == running_balance)
           log << <<~MESSAGE unless correct
             *********************************
-            Error on account #{account}: #{account_balance_1} (cached balance) != #{account_balance_2} (running balance)
+            Error on account #{account}: #{cached_balance} (cached balance) != #{running_balance} (running balance)
             *********************************
 
           MESSAGE
