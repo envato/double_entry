@@ -69,6 +69,10 @@ module DoubleEntry
 
             its(:errors_found) { should be true }
 
+            its(:log) { should include <<~LOG }
+              Error on account \#{Account account: savings scope:  currency: USD}: 100.01 (cached balance) != 100.00 (running balance)
+            LOG
+
             it 'should correct the account balance' do
               expect { LineCheck.perform!  }.
                 to change { DoubleEntry::AccountBalance.order(:id).first.balance }.
@@ -84,9 +88,11 @@ module DoubleEntry
             before { DoubleEntry::Line.order(:id).limit(1).update_all('balance = balance + 1') }
 
             its(:errors_found) { should eq true }
+
             its(:log) { should include <<~LOG }
-              Error on account \#{Account account: btc_test scope:  currency: BTC} :: balance: -0.00010000 != -0.00009999
+              Error on account \#{Account account: btc_test scope:  currency: BTC}: -0.00010000 (cached balance) != -0.00009999 (running balance)
             LOG
+
             it 'should correct the running balance' do
               expect { LineCheck.perform!  }.
                 to change { DoubleEntry::Line.order(:id).first.balance }.

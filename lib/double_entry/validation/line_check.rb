@@ -96,7 +96,7 @@ module DoubleEntry
           correct = (account_balance_1 == account_balance_2)
           log << <<~MESSAGE unless correct
             *********************************
-            Error on account #{account} :: balance: #{account_balance_1} != #{account_balance_2}
+            Error on account #{account}: #{account_balance_1} (cached balance) != #{account_balance_2} (running balance)
             *********************************
 
           MESSAGE
