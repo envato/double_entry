@@ -27,7 +27,7 @@ module DoubleEntry
         end
 
         active_accounts.each do |account|
-          incorrect_accounts << account      unless cached_balance_correct?(account)
+          incorrect_accounts << account unless cached_balance_correct?(account, log)
         end
 
         incorrect_accounts.each { |account| recalculate_account(account) }
@@ -89,9 +89,18 @@ module DoubleEntry
           END_OF_MESSAGE
       end
 
-      def cached_balance_correct?(account)
+      def cached_balance_correct?(account, log)
         DoubleEntry.lock_accounts(account) do
-          return AccountBalance.find_by_account(account).balance == account.balance
+          cached_balance = AccountBalance.find_by_account(account).balance
+          running_balance = account.balance
+          correct = (cached_balance == running_balance)
+          log << <<~MESSAGE unless correct
+            *********************************
+            Error on account #{account}: #{cached_balance} (cached balance) != #{running_balance} (running balance)
+            *********************************
+
+          MESSAGE
+          return correct
         end
       end
 
