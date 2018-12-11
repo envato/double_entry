@@ -25,19 +25,19 @@ module DoubleEntry
       end
 
       describe '#perform!' do
-        subject(:performed_line_check) { LineCheck.perform! }
+        subject(:line_check) { LineCheck.perform!(fixer: AccountFixer.new) }
 
         context 'Given a user with 100 dollars' do
           before { create(:user, :savings_balance => Money.new(100_00)) }
 
           context 'And all is consistent' do
             context 'And all lines have been checked' do
-              before { LineCheck.perform!  }
+              before { LineCheck.perform!(fixer: AccountFixer.new)  }
 
               it { should be_nil }
 
               it 'should not persist a new LineCheck' do
-                expect { LineCheck.perform!  }.
+                expect { line_check }.
                   to_not change { LineCheck.count }
               end
             end
@@ -46,7 +46,7 @@ module DoubleEntry
             its(:errors_found) { should eq false }
 
             it 'should persist the LineCheck' do
-              line_check = LineCheck.perform!
+              line_check
               expect(LineCheck.last).to eq line_check
             end
           end
@@ -58,9 +58,15 @@ module DoubleEntry
             its(:log) { should match(/Error on line/) }
 
             it 'should correct the running balance' do
-              expect { LineCheck.perform!  }.
+              expect { line_check }.
                 to change { DoubleEntry::Line.order(:id).first.balance }.
                 by Money.new(-1)
+            end
+
+            context 'And given we ask not to correct the errors' do
+              it 'should not correct the running balance' do
+                expect { LineCheck.perform!(fixer: nil) }.not_to change { Line.order(:id).first.balance }
+              end
             end
           end
 
@@ -74,9 +80,15 @@ module DoubleEntry
             LOG
 
             it 'should correct the account balance' do
-              expect { LineCheck.perform!  }.
+              expect { line_check  }.
                 to change { DoubleEntry::AccountBalance.order(:id).first.balance }.
                 by Money.new(-1)
+            end
+
+            context 'And given we ask not to correct the errors' do
+              it 'should not correct the account balance' do
+                expect { LineCheck.perform!(fixer: nil) }.not_to change { AccountBalance.order(:id).first.balance }
+              end
             end
           end
         end
@@ -94,9 +106,15 @@ module DoubleEntry
             LOG
 
             it 'should correct the running balance' do
-              expect { LineCheck.perform!  }.
+              expect { line_check  }.
                 to change { DoubleEntry::Line.order(:id).first.balance }.
                 by Money.new(-1, 'BTC')
+            end
+
+            context 'And given we ask not to correct the errors' do
+              it 'should not correct the running balance' do
+                expect { LineCheck.perform!(fixer: nil) }.not_to change { Line.order(:id).first.balance }
+              end
             end
           end
         end
