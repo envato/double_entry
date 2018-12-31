@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.email                 = ['rubygems@envato.com']
   gem.summary               = 'Tools to build your double entry financial ledger'
   gem.homepage              = 'https://github.com/envato/double_entry'
+  gem.license               = 'MIT'
 
   gem.metadata = {
     'bug_tracker_uri'   => 'https://github.com/envato/double_entry/issues',
