@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.0.0.beta.1] - 2018-12-31
+## [2.0.0.beta1] - 2018-12-31
 
 ### Added
 
@@ -346,8 +346,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Library released as Open Source!
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta.1...HEAD
-[2.0.0.beta.1]: https://github.com/envato/double_entry/compare/v1.0.1...v2.0.0.beta.1
+[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta1...HEAD
+[2.0.0.beta1]: https://github.com/envato/double_entry/compare/v1.0.1...v2.0.0.beta1
 [1.0.1]: https://github.com/envato/double_entry/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/envato/double_entry/compare/v0.10.3...v1.0.0
 [0.10.3]: https://github.com/envato/double_entry/compare/v0.10.2...v0.10.3
