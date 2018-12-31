@@ -9,8 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
-- Reporting API has been extracted to a separate gem:
+- Extract `DoubleEntry::Reporting` module to a separate gem:
   [`double_entry-reporting`](https://github.com/envato/double_entry-reporting).
+
+  If this module is in use in your project add the `double_entry-reporting` gem
+  and checkout the
+  [changelog](https://github.com/envato/double_entry-reporting/blob/master/CHANGELOG.md)
+  for more updates.
+
+  If not in use, one can delete the `double_entry_line_aggregates` table using
+  the following migration:
+
+    ```ruby
+    drop_table :double_entry_line_aggregates
+    ```
 
 ## [2.0.0.beta1] - 2018-12-31
 
