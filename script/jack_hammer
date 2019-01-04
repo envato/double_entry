@@ -148,6 +148,14 @@ def run_process(iterations, process_num)
   end
 end
 
+def reconciled?(account)
+  scoped_lines = DoubleEntry::Line.where(:account => "#{account.identifier}")
+  scoped_lines = scoped_lines.where(:scope => "#{account.scope_identity}") if account.scoped?
+  sum_of_amounts = scoped_lines.sum(:amount)
+  final_balance  = scoped_lines.order(:id).last[:balance]
+  cached_balance = DoubleEntry::AccountBalance.find_by_account(account)[:balance]
+  final_balance == sum_of_amounts && final_balance == cached_balance
+end
 
 def reconcile
   error_count = 0
@@ -160,11 +168,11 @@ def reconcile
     error_count += 1
   end
 
-  if $accounts.all? {|account| DoubleEntry::Reporting.reconciled?(account) }
+  if $accounts.all?(&method(:reconciled?))
     puts "All accounts reconciled, FTW!"
   else
     $accounts.each do |account|
-      if !DoubleEntry::Reporting.reconciled?(account)
+      unless reconciled?(account)
         puts "Account #{account.identifier} failed to reconcile. :("
 
         # See http://bugs.mysql.com/bug.php?id=51431

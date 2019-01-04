@@ -29,25 +29,6 @@ ActiveRecord::Schema.define do
   add_index "double_entry_lines", ["scope", "account", "created_at"],                    :name => "lines_scope_account_created_at_idx"
   add_index "double_entry_lines", ["scope", "account", "id"],                            :name => "lines_scope_account_id_idx"
 
-  create_table "double_entry_line_aggregates", :force => true do |t|
-    t.string     "function",        :limit => 15, :null => false
-    t.string     "account",                       :null => false
-    t.string     "code"
-    t.string     "partner_account"
-    t.string     "scope"
-    t.integer    "year"
-    t.integer    "month"
-    t.integer    "week"
-    t.integer    "day"
-    t.integer    "hour"
-    t.bigint     "amount",                        :null => false
-    t.string     "filter"
-    t.string     "range_type",      :limit => 15, :null => false
-    t.timestamps                                  :null => false
-  end
-
-  add_index "double_entry_line_aggregates", ["function", "account", "code", "partner_account", "year", "month", "week", "day"], :name => "line_aggregate_idx"
-
   create_table "double_entry_line_checks", :force => true do |t|
     t.references "last_line",    :null => false, :index => false
     t.boolean    "errors_found", :null => false
