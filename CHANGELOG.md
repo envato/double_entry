@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.0.beta3] - 2019-11-14
+
+### Fixed
+
+- Remove duplicate detail columns in `double_entry_lines` table migration, ([#173]).
+
+[#173]: https://github.com/envato/double_entry/pull/173
+
 ## [2.0.0.beta2] - 2019-01-27
 
 ### Removed
@@ -429,7 +437,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Library released as Open Source!
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta1...HEAD
+[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta3...HEAD
+[2.0.0.beta3]: https://github.com/envato/double_entry/compare/v2.0.0.beta2...v2.0.0.beta3
+[2.0.0.beta2]: https://github.com/envato/double_entry/compare/v2.0.0.beta1...v2.0.0.beta2
 [2.0.0.beta1]: https://github.com/envato/double_entry/compare/v1.0.1...v2.0.0.beta1
 [1.0.1]: https://github.com/envato/double_entry/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/envato/double_entry/compare/v0.10.3...v1.0.0
