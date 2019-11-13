@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Test against Rails 6.0, ([#176]).
+
+[#176]: https://github.com/envato/double_entry/pull/176
+
 ## [2.0.0.beta3] - 2019-11-14
 
 ### Fixed
