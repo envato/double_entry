@@ -20,8 +20,6 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
       t.string     "partner_account", :null => false
       t.string     "partner_scope"
       t.references "detail",                          :index => false, :polymorphic => true
-      t.integer    "detail_id"
-      t.string     "detail_type"
       t.timestamps                    :null => false
     end
 
