@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Prevent using Ruby 2.2 via restrictions in Gemfile and Gemspec, ([#175]).
+
+[#175]: https://github.com/envato/double_entry/pull/175
+
 ## [2.0.0.beta3] - 2019-11-14
 
 ### Fixed
