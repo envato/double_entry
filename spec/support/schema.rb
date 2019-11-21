@@ -21,6 +21,13 @@ ActiveRecord::Schema.define do
     t.string     "partner_account", :null => false
     t.string     "partner_scope"
     t.references "detail",                          :index => false, :polymorphic => true
+    unless ActiveRecord.version.version < '5'
+      if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
+        t.jsonb "metadata"
+      else
+        t.json "metadata"
+      end
+    end
     t.timestamps                    :null => false
   end
 

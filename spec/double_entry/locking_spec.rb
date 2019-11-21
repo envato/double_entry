@@ -2,15 +2,15 @@
 
 RSpec.describe DoubleEntry::Locking do
   before do
-    @config_accounts = DoubleEntry.configuration.accounts
-    @config_transfers = DoubleEntry.configuration.transfers
-    DoubleEntry.configuration.accounts = DoubleEntry::Account::Set.new
-    DoubleEntry.configuration.transfers = DoubleEntry::Transfer::Set.new
+    @config_accounts = DoubleEntry.config.accounts
+    @config_transfers = DoubleEntry.config.transfers
+    DoubleEntry.config.accounts = DoubleEntry::Account::Set.new
+    DoubleEntry.config.transfers = DoubleEntry::Transfer::Set.new
   end
 
   after do
-    DoubleEntry.configuration.accounts = @config_accounts
-    DoubleEntry.configuration.transfers = @config_transfers
+    DoubleEntry.config.accounts = @config_accounts
+    DoubleEntry.config.transfers = @config_transfers
   end
 
   before do

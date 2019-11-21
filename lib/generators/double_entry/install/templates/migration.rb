@@ -20,6 +20,13 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
       t.string     "partner_account", :null => false
       t.string     "partner_scope"
       t.references "detail",                          :index => false, :polymorphic => true
+      <%- if json_metadata -%>
+      if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
+        t.jsonb "metadata"
+      else
+        t.json "metadata"
+      end
+      <%- end -%>
       t.timestamps                    :null => false
     end
 
@@ -36,6 +43,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
     end
 
     add_index "double_entry_line_checks", ["created_at", "last_line_id"], :name => "line_checks_created_at_last_line_id_idx"
+    <%- unless json_metadata -%>
 
     create_table "double_entry_line_metadata", :force => true do |t|
       t.references "line",    :null => false, :index => false
@@ -45,10 +53,11 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
     end
 
     add_index "double_entry_line_metadata", ["line_id", "key", "value"], :name => "lines_meta_line_id_key_value_idx"
+    <%- end -%>
   end
 
   def self.down
-    drop_table "double_entry_line_metadata"
+    drop_table "double_entry_line_metadata" if table_exists?("double_entry_line_metadata")
     drop_table "double_entry_line_checks"
     drop_table "double_entry_lines"
     drop_table "double_entry_account_balances"

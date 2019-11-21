@@ -4,6 +4,7 @@ require 'active_record/locking_extensions'
 require 'active_record/locking_extensions/log_subscriber'
 require 'active_support/all'
 require 'money'
+require 'rails/railtie'
 
 require 'double_entry/version'
 require 'double_entry/errors'
@@ -14,8 +15,6 @@ require 'double_entry/account_balance'
 require 'double_entry/balance_calculator'
 require 'double_entry/locking'
 require 'double_entry/transfer'
-require 'double_entry/line'
-require 'double_entry/line_metadata'
 require 'double_entry/validation'
 
 # Keep track of all the monies!
@@ -23,6 +22,16 @@ require 'double_entry/validation'
 # This module provides the public interfaces for everything to do with
 # transferring money around the system.
 module DoubleEntry
+  class Railtie < ::Rails::Railtie
+    # So we can access user config from initializer in their app
+    config.after_initialize do
+      unless DoubleEntry.config.json_metadata
+        require 'double_entry/line_metadata'
+      end
+      require 'double_entry/line'
+    end
+  end
+
   class << self
     # Get the particular account instance with the provided identifier and
     # scope.

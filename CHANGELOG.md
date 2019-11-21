@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Metadata stored by default in a json(b) column for new installs ([#178]).
 - Test against Rails 6.0, ([#176]).
 
 ### Changed

@@ -38,66 +38,154 @@ module DoubleEntry
           expect { transfer }.to change { Line.count }.by 2
         end
 
-        it 'does not create metadata lines' do
-          expect { transfer }.not_to change { LineMetadata.count }
+        context 'with config.json_metadata = true', skip: ActiveRecord.version.version < '5' do
+          around do |example|
+            DoubleEntry.config.json_metadata = true
+            example.run
+            DoubleEntry.config.json_metadata = false
+          end
+
+          it 'does not create metadata lines' do
+            expect { transfer }.not_to change { LineMetadata.count }
+          end
+
+          it 'does not attach metadata to the lines' do
+            transfer
+            new_lines.each do |line|
+              expect(line.metadata).to be_blank
+            end
+          end
+        end
+
+        context 'with config.json_metadata = false' do
+          it 'does not create metadata lines' do
+            expect { transfer }.not_to change { LineMetadata.count }
+          end
+
+          it 'does not attach metadata to the lines', skip: ActiveRecord.version.version < '5' do
+            transfer
+            new_lines.each do |line|
+              expect(line.metadata).to be_blank
+            end
+          end
         end
       end
 
       context 'with metadata' do
         let(:options) { { :from => test, :to => savings, :code => :bonus, :metadata => { :country => 'AU', :tax => 'GST' } } }
-        let(:new_metadata) { LineMetadata.all[-4..-1] }
 
-        it 'creates metadata lines' do
-          expect { transfer }.to change { LineMetadata.count }.by 4
+        context 'with config.json_metadata = true', skip: ActiveRecord.version.version < '5' do
+          around do |example|
+            DoubleEntry.config.json_metadata = true
+            example.run
+            DoubleEntry.config.json_metadata = false
+          end
+
+          it 'does not create metadata lines' do
+            expect { transfer }.not_to change { LineMetadata.count }
+          end
+
+          it 'stores the first key/value pair' do
+            transfer
+            expect(new_lines.count { |line| line.metadata['country'] == 'AU' }).to be 2
+          end
+
+          it 'stores another key/value pair' do
+            transfer
+            expect(new_lines.count { |line| line.metadata['tax'] == 'GST' }).to be 2
+          end
         end
 
-        it 'associates the metadata lines with the transfer lines' do
-          transfer
-          expect(new_metadata.count { |meta| meta.line == new_lines.first }).to be 2
-          expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
-        end
+        context 'with config.json_metadata = false' do
+          let(:new_metadata) { LineMetadata.all[-4..-1] }
 
-        it 'stores the first key/value pair' do
-          transfer
-          countries = new_metadata.select { |meta| meta.key == :country }
-          expect(countries.size).to be 2
-          expect(countries.count { |meta| meta.value == 'AU' }).to be 2
-        end
+          it 'creates metadata lines' do
+            expect { transfer }.to change { LineMetadata.count }.by 4
+          end
 
-        it 'associates the first key/value pair with both lines' do
-          transfer
-          countries = new_metadata.select { |meta| meta.key == :country }
-          expect(countries.map(&:line).uniq.size).to be 2
-        end
+          it 'associates the metadata lines with the transfer lines' do
+            transfer
+            expect(new_metadata.count { |meta| meta.line == new_lines.first }).to be 2
+            expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
+          end
 
-        it 'stores another key/value pair' do
-          transfer
-          taxes = new_metadata.select { |meta| meta.key == :tax }
-          expect(taxes.size).to be 2
-          expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
+          it 'stores the first key/value pair' do
+            transfer
+
+            countries = new_metadata.select { |meta| meta.key == :country }
+            expect(countries.size).to be 2
+            expect(countries.count { |meta| meta.value == 'AU' }).to be 2
+          end
+
+          it 'associates the first key/value pair with both lines' do
+            transfer
+            countries = new_metadata.select { |meta| meta.key == :country }
+            expect(countries.map(&:line).uniq.size).to be 2
+          end
+
+          it 'stores another key/value pair' do
+            transfer
+            taxes = new_metadata.select { |meta| meta.key == :tax }
+            expect(taxes.size).to be 2
+            expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
+          end
+
+          it 'does not attach metadata to the lines', skip: ActiveRecord.version.version < '5' do
+            transfer
+            new_lines.each do |line|
+              expect(line.metadata).to be_blank
+            end
+          end
         end
       end
 
       context 'metadata with multiple values in array for one key' do
         let(:options) { { :from => test, :to => savings, :code => :bonus, :metadata => { :tax => ['GST', 'VAT'] } } }
-        let(:new_metadata) { LineMetadata.all[-4..-1] }
 
-        it 'creates metadata lines' do
-          expect { transfer }.to change { LineMetadata.count }.by 4
+        context 'with config.json_metadata = true', skip: ActiveRecord.version.version < '5' do
+          around do |example|
+            DoubleEntry.config.json_metadata = true
+            example.run
+            DoubleEntry.config.json_metadata = false
+          end
+
+          it 'does not create metadata lines' do
+            expect { transfer }.not_to change { LineMetadata.count }
+          end
+
+          it 'stores both values to the same key' do
+            transfer
+            expect(new_lines.count { |line| line.metadata['tax'] == ['GST', 'VAT'] }).to be 2
+          end
         end
 
-        it 'associates the metadata lines with the transfer lines' do
-          transfer
-          expect(new_metadata.count { |meta| meta.line == new_lines.first }).to be 2
-          expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
-        end
+        context 'with config.json_metadata = false' do
+          let(:new_metadata) { LineMetadata.all[-4..-1] }
 
-        it 'stores both values to the same key' do
-          transfer
-          taxes = new_metadata.select { |meta| meta.key == :tax }
-          expect(taxes.size).to be 4
-          expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
-          expect(taxes.map(&:line).uniq.size).to be 2
+          it 'creates metadata lines' do
+            expect { transfer }.to change { LineMetadata.count }.by 4
+          end
+
+          it 'associates the metadata lines with the transfer lines' do
+            transfer
+            expect(new_metadata.count { |meta| meta.line == new_lines.first }).to be 2
+            expect(new_metadata.count { |meta| meta.line == new_lines.last }).to be 2
+          end
+
+          it 'stores both values to the same key' do
+            transfer
+            taxes = new_metadata.select { |meta| meta.key == :tax }
+            expect(taxes.size).to be 4
+            expect(taxes.count { |meta| meta.value == 'GST' }).to be 2
+            expect(taxes.map(&:line).uniq.size).to be 2
+          end
+
+          it 'does not attach metadata to the lines', skip: ActiveRecord.version.version < '5' do
+            transfer
+            new_lines.each do |line|
+              expect(line.metadata).to be_blank
+            end
+          end
         end
       end
     end

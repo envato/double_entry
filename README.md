@@ -55,6 +55,8 @@ bundle
 
 Generate Rails schema migrations for the required tables:
 
+> The default behavior is to store metadata in a json(b) column rather than a separate `double_entry_line_metadata` table. If you would like the old (1.x) behavior, you can add `--no-json-metadata`.
+
 ```sh
 rails generate double_entry:install
 ```
@@ -175,8 +177,7 @@ See **DoubleEntry::Line** for more info.
 AccountBalance records cache the current balance for each Account, and are used
 to perform database level locking.
 
-Transfer metadata is stored as key/value pairs associated with both the source and destination lines of the transfer.
-See **DoubleEntry::LineMetadata** for more info.
+Transfer metadata is stored in a json(b) column on both the source and destination lines of the transfer.
 
 ## Configuration
 
@@ -184,7 +185,7 @@ A configuration file should be used to define a set of accounts, optional scopes
 the accounts, and permitted transfers between those accounts.
 
 The configuration file should be kept in your application's load path.  For example,
-*config/initializers/double_entry.rb*
+*config/initializers/double_entry.rb*. By default, this file will be created when you run the installer, but you will need to fill out your accounts.
 
 For example, the following specifies two accounts, savings and checking.
 Each account is scoped by User (where User is an object with an ID), meaning
@@ -196,6 +197,9 @@ This configuration also specifies that money can be transferred between the two 
 require 'double_entry'
 
 DoubleEntry.configure do |config|
+  # Use json(b) column in double_entry_lines table to store metadata instead of separate metadata table
+  config.json_metadata = true
+
   config.define_accounts do |accounts|
     user_scope = ->(user) do
       raise 'not a User' unless user.class.name == 'User'
@@ -329,6 +333,7 @@ Many thanks to those who have contributed to both this gem, and the library upon
   * Rizal Muthi - @rizalmuthi
   * Ryan Allen - @ryan-allen
   * Samuel Cochran - @sj26
+  * Stefan Wrobel - @swrobel
   * Stephanie Staub - @stephnacios
   * Trung Lê - @joneslee85
   * Vahid Ta'eed - @vahid

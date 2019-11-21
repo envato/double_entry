@@ -3,6 +3,12 @@ module DoubleEntry
   include Configurable
 
   class Configuration
+    attr_accessor :json_metadata
+
+    def initialize
+      @json_metadata = false
+    end
+
     delegate(
       :accounts,
       :accounts=,
