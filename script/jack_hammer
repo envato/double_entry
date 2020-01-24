@@ -31,6 +31,7 @@ require "#{support}/schema"
 lib = File.expand_path('../../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'double_entry'
+require 'double_entry/line'
 
 def parse_options
   $account_count       = 5

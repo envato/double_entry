@@ -41,6 +41,7 @@ module DoubleEntry
       def configuration
         @configuration ||= self::Configuration.new
       end
+      alias config configuration
 
       def configure
         yield(configuration)

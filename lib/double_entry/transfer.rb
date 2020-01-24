@@ -88,12 +88,12 @@ module DoubleEntry
         fail MismatchedCurrencies, "Mismatched currency (#{to_account.currency} <> #{from_account.currency})"
       end
       Locking.lock_accounts(from_account, to_account) do
-        credit, debit = create_lines(amount, code, detail, from_account, to_account)
-        create_line_metadata(credit, debit, metadata) if metadata
+        credit, debit = create_lines(amount, code, detail, from_account, to_account, metadata)
+        create_line_metadata(credit, debit, metadata) if metadata && !DoubleEntry.config.json_metadata
       end
     end
 
-    def create_lines(amount, code, detail, from_account, to_account)
+    def create_lines(amount, code, detail, from_account, to_account, metadata)
       credit, debit = Line.new, Line.new
 
       credit_balance = Locking.balance_for_locked_account(from_account)
@@ -107,6 +107,7 @@ module DoubleEntry
       credit.code, debit.code       = code, code
       credit.detail, debit.detail   = detail, detail
       credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
+      credit.metadata, debit.metadata = metadata, metadata if DoubleEntry.config.json_metadata
 
       credit.partner_account, debit.partner_account = to_account, from_account
 
