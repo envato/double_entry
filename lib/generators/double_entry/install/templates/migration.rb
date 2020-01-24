@@ -1,6 +1,6 @@
 class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
   def self.up
-    create_table "double_entry_account_balances", :force => true do |t|
+    create_table "double_entry_account_balances" do |t|
       t.string     "account", :null => false
       t.string     "scope"
       t.bigint     "balance", :null => false
@@ -10,7 +10,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
     add_index "double_entry_account_balances", ["account"],          :name => "index_account_balances_on_account"
     add_index "double_entry_account_balances", ["scope", "account"], :name => "index_account_balances_on_scope_and_account", :unique => true
 
-    create_table "double_entry_lines", :force => true do |t|
+    create_table "double_entry_lines" do |t|
       t.string     "account",         :null => false
       t.string     "scope"
       t.string     "code",            :null => false
@@ -35,7 +35,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
     add_index "double_entry_lines", ["scope", "account", "created_at"], :name => "lines_scope_account_created_at_idx"
     add_index "double_entry_lines", ["scope", "account", "id"],         :name => "lines_scope_account_id_idx"
 
-    create_table "double_entry_line_checks", :force => true do |t|
+    create_table "double_entry_line_checks" do |t|
       t.references "last_line",    :null => false, :index => false
       t.boolean    "errors_found", :null => false
       t.text       "log"
@@ -45,7 +45,7 @@ class CreateDoubleEntryTables < ActiveRecord::Migration<%= migration_version %>
     add_index "double_entry_line_checks", ["created_at", "last_line_id"], :name => "line_checks_created_at_last_line_id_idx"
     <%- unless json_metadata -%>
 
-    create_table "double_entry_line_metadata", :force => true do |t|
+    create_table "double_entry_line_metadata" do |t|
       t.references "line",    :null => false, :index => false
       t.string     "key",     :null => false
       t.string     "value",   :null => false
