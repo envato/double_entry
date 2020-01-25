@@ -9,18 +9,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Metadata stored by default in a json(b) column for new installs ([#178]).
 - Test against Rails 6.0, ([#176]).
 
-- Added support for Ruby 2.7 ([#180]).
+- Support for Ruby 2.7 ([#180]).
 
 ### Changed
 
-- Prevent using Ruby 2.2 via restrictions in Gemfile and Gemspec, ([#175]).
+- Metadata stored by default in a json(b) column for new installs ([#178]).
+
+- Remove `force: true` from migration ([#181]).
+
+- Prevent using Ruby 2.2 via restrictions in Gemfile and Gemspec ([#175]).
 
 [#175]: https://github.com/envato/double_entry/pull/175
 [#176]: https://github.com/envato/double_entry/pull/176
+[#178]: https://github.com/envato/double_entry/pull/178
 [#180]: https://github.com/envato/double_entry/pull/180
+[#181]: https://github.com/envato/double_entry/pull/181
 
 ## [2.0.0.beta3] - 2019-11-14
 
