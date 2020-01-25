@@ -7,15 +7,15 @@ RSpec.describe DoubleEntry::Line do
   describe 'persistance' do
     let(:line_to_persist) do
       DoubleEntry::Line.new(
-        :amount => Money.new(10_00),
-        :balance => Money.zero,
-        :account => account,
-        :partner_account => partner_account,
-        :code => code,
+        amount: Money.new(10_00),
+        balance: Money.zero,
+        account: account,
+        partner_account: partner_account,
+        code: code,
       )
     end
-    let(:account) { DoubleEntry.account(:test, :scope_identity => '17') }
-    let(:partner_account) { DoubleEntry.account(:test, :scope_identity => '72') }
+    let(:account) { DoubleEntry.account(:test, scope_identity: '17') }
+    let(:partner_account) { DoubleEntry.account(:test, scope_identity: '72') }
     let(:code) { :test_code }
 
     subject(:persisted_line) do
@@ -42,28 +42,28 @@ RSpec.describe DoubleEntry::Line do
       end
 
       context 'given account = :test, 54 ' do
-        let(:account) { DoubleEntry.account(:test, :scope_identity => '54') }
+        let(:account) { DoubleEntry.account(:test, scope_identity: '54') }
         its('account.account.identifier') { should eq :test }
         its('account.scope_identity') { should eq '54' }
       end
 
       context 'given partner_account = :test, 91 ' do
-        let(:partner_account) { DoubleEntry.account(:test, :scope_identity => '91') }
+        let(:partner_account) { DoubleEntry.account(:test, scope_identity: '91') }
         its('partner_account.account.identifier') { should eq :test }
         its('partner_account.scope_identity') { should eq '91' }
       end
 
       context 'currency' do
-        let(:account) { DoubleEntry.account(:btc_test, :scope_identity => '17') }
-        let(:partner_account) { DoubleEntry.account(:btc_test, :scope_identity => '72') }
+        let(:account) { DoubleEntry.account(:btc_test, scope_identity: '17') }
+        let(:partner_account) { DoubleEntry.account(:btc_test, scope_identity: '72') }
         its(:currency) { should eq 'BTC' }
       end
     end
 
     context 'when balance is sent negative' do
-      before { DoubleEntry::Account.accounts.define(:identifier => :a_positive_only_acc, :positive_only => true) }
+      before { DoubleEntry::Account.accounts.define(identifier: :a_positive_only_acc, positive_only: true) }
       let(:account) { DoubleEntry.account(:a_positive_only_acc) }
-      let(:line) { DoubleEntry::Line.new(:balance => Money.new(-1), :account => account) }
+      let(:line) { DoubleEntry::Line.new(balance: Money.new(-1), account: account) }
 
       it 'raises AccountWouldBeSentNegative error' do
         expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentNegative
@@ -71,9 +71,9 @@ RSpec.describe DoubleEntry::Line do
     end
 
     context 'when balance is sent positive' do
-      before { DoubleEntry::Account.accounts.define(:identifier => :a_negative_only_acc, :negative_only => true) }
+      before { DoubleEntry::Account.accounts.define(identifier: :a_negative_only_acc, negative_only: true) }
       let(:account) { DoubleEntry.account(:a_negative_only_acc) }
-      let(:line) { DoubleEntry::Line.new(:balance => Money.new(1), :account => account) }
+      let(:line) { DoubleEntry::Line.new(balance: Money.new(1), account: account) }
 
       it 'raises AccountWouldBeSentPositiveError' do
         expect { line.save }.to raise_error DoubleEntry::AccountWouldBeSentPositiveError

@@ -79,18 +79,18 @@ module DoubleEntry
     # @api private
     class RelationBuilder
       attr_reader :options
-      delegate :account, :scope, :scope?, :from, :to, :between?, :at, :at?, :codes, :code?, :to => :options
+      delegate :account, :scope, :scope?, :from, :to, :between?, :at, :at?, :codes, :code?, to: :options
 
       def initialize(options)
         @options = options
       end
 
       def build
-        lines = Line.where(:account => account)
+        lines = Line.where(account: account)
         lines = lines.where('created_at <= ?', at) if at?
-        lines = lines.where(:created_at => from..to) if between?
-        lines = lines.where(:code => codes) if code?
-        lines = lines.where(:scope => scope) if scope?
+        lines = lines.where(created_at: from..to) if between?
+        lines = lines.where(code: codes) if code?
+        lines = lines.where(scope: scope) if scope?
         lines
       end
     end

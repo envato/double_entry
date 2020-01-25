@@ -9,14 +9,14 @@ module DoubleEntry
         context 'given a code 47 characters in length' do
           let(:code) { 'xxxxxxxxxxxxxxxx 47 characters xxxxxxxxxxxxxxxx' }
           specify do
-            expect { Transfer.new(:code => code) }.to_not raise_error
+            expect { Transfer.new(code: code) }.to_not raise_error
           end
         end
 
         context 'given a code 48 characters in length' do
           let(:code) { 'xxxxxxxxxxxxxxxx 48 characters xxxxxxxxxxxxxxxxx' }
           specify do
-            expect { Transfer.new(:code => code) }.to raise_error TransferCodeTooLongError, /'#{code}'/
+            expect { Transfer.new(code: code) }.to raise_error TransferCodeTooLongError, /'#{code}'/
           end
         end
       end
@@ -25,14 +25,14 @@ module DoubleEntry
     describe '::transfer' do
       let(:amount)  { Money.new(10_00) }
       let(:user)    { create(:user) }
-      let(:test)    { DoubleEntry.account(:test, :scope => user) }
-      let(:savings) { DoubleEntry.account(:savings, :scope => user) }
+      let(:test)    { DoubleEntry.account(:test, scope: user) }
+      let(:savings) { DoubleEntry.account(:savings, scope: user) }
       let(:new_lines) { Line.all[-2..-1] }
 
       subject(:transfer) { Transfer.transfer(amount, options) }
 
       context 'without metadata' do
-        let(:options) { { :from => test, :to => savings, :code => :bonus } }
+        let(:options) { { from: test, to: savings, code: :bonus } }
 
         it 'creates lines' do
           expect { transfer }.to change { Line.count }.by 2
@@ -72,7 +72,7 @@ module DoubleEntry
       end
 
       context 'with metadata' do
-        let(:options) { { :from => test, :to => savings, :code => :bonus, :metadata => { :country => 'AU', :tax => 'GST' } } }
+        let(:options) { { from: test, to: savings, code: :bonus, metadata: { country: 'AU', tax: 'GST' } } }
 
         context 'with config.json_metadata = true', skip: ActiveRecord.version.version < '5' do
           around do |example|
@@ -140,7 +140,7 @@ module DoubleEntry
       end
 
       context 'metadata with multiple values in array for one key' do
-        let(:options) { { :from => test, :to => savings, :code => :bonus, :metadata => { :tax => ['GST', 'VAT'] } } }
+        let(:options) { { from: test, to: savings, code: :bonus, metadata: { tax: ['GST', 'VAT'] } } }
 
         context 'with config.json_metadata = true', skip: ActiveRecord.version.version < '5' do
           around do |example|
@@ -195,20 +195,20 @@ module DoubleEntry
 
       before do
         set.define(
-          :code => :transfer_code,
-          :from => from_account.identifier,
-          :to   => to_account.identifier,
+          code: :transfer_code,
+          from: from_account.identifier,
+          to:    to_account.identifier,
         )
 
         set.define(
-          :code => :another_transfer_code,
-          :from => from_account.identifier,
-          :to   => to_account.identifier,
+          code: :another_transfer_code,
+          from: from_account.identifier,
+          to:    to_account.identifier,
         )
       end
 
-      let(:from_account) { instance_double(Account, :identifier => :from) }
-      let(:to_account)   { instance_double(Account, :identifier => :to) }
+      let(:from_account) { instance_double(Account, identifier: :from) }
+      let(:to_account)   { instance_double(Account, identifier: :to) }
 
       describe '#find' do
         it 'finds the transfers' do

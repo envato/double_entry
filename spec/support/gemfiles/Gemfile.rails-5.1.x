@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gemspec :path => '../../../'
+gemspec path: '../../../'
 
 gem 'activerecord', '~> 5.1.0'
 

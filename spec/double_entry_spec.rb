@@ -19,8 +19,8 @@ RSpec.describe DoubleEntry do
       expect do
         DoubleEntry.configure do |config|
           config.define_accounts do |accounts|
-            accounts.define(:identifier => :gah!)
-            accounts.define(:identifier => :gah!)
+            accounts.define(identifier: :gah!)
+            accounts.define(identifier: :gah!)
           end
         end
       end.to raise_error DoubleEntry::DuplicateAccount
@@ -30,8 +30,8 @@ RSpec.describe DoubleEntry do
       expect do
         DoubleEntry.configure do |config|
           config.define_transfers do |transfers|
-            transfers.define(:from => :savings, :to => :cash, :code => :xfer)
-            transfers.define(:from => :savings, :to => :cash, :code => :xfer)
+            transfers.define(from: :savings, to: :cash, code: :xfer)
+            transfers.define(from: :savings, to: :cash, code: :xfer)
           end
         end
       end.to raise_error DoubleEntry::DuplicateTransfer
@@ -42,13 +42,13 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.define(:identifier => :unscoped)
-          accounts.define(:identifier => :scoped, :scope_identifier => ->(u) { u.id })
+          accounts.define(identifier: :unscoped)
+          accounts.define(identifier: :scoped, scope_identifier: ->(u) { u.id })
         end
       end
     end
 
-    let(:scope) { double('a scope', :id => 1) }
+    let(:scope) { double('a scope', id: 1) }
 
     describe 'fetching' do
       it 'can find an unscoped account by identifier' do
@@ -56,7 +56,7 @@ RSpec.describe DoubleEntry do
       end
 
       it 'can find a scoped account by identifier' do
-        expect(DoubleEntry.account(:scoped, :scope => scope)).to_not be_nil
+        expect(DoubleEntry.account(:scoped, scope: scope)).to_not be_nil
       end
 
       it 'raises an exception when it cannot find an account' do
@@ -64,7 +64,7 @@ RSpec.describe DoubleEntry do
       end
 
       it 'raises exception when you ask for an unscoped account w/ scope' do
-        expect { DoubleEntry.account(:unscoped, :scope => scope) }.to raise_error(DoubleEntry::UnknownAccount)
+        expect { DoubleEntry.account(:unscoped, scope: scope) }.to raise_error(DoubleEntry::UnknownAccount)
       end
 
       it 'raises exception when you ask for a scoped account w/ out scope' do
@@ -80,7 +80,7 @@ RSpec.describe DoubleEntry do
       end
     end
     context 'a scoped account' do
-      subject(:scoped) { DoubleEntry.account(:scoped, :scope => scope) }
+      subject(:scoped) { DoubleEntry.account(:scoped, scope: scope) }
 
       it 'has an identifier' do
         expect(scoped.identifier).to eq :scoped
@@ -92,15 +92,15 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.define(:identifier => :savings)
-          accounts.define(:identifier => :cash)
-          accounts.define(:identifier => :trash)
-          accounts.define(:identifier => :bitbucket, :currency => :btc)
+          accounts.define(identifier: :savings)
+          accounts.define(identifier: :cash)
+          accounts.define(identifier: :trash)
+          accounts.define(identifier: :bitbucket, currency: :btc)
         end
 
         config.define_transfers do |transfers|
-          transfers.define(:from => :savings, :to => :cash, :code => :xfer)
-          transfers.define(:from => :trash, :to => :bitbucket, :code => :mismatch_xfer)
+          transfers.define(from: :savings, to: :cash, code: :xfer)
+          transfers.define(from: :trash, to: :bitbucket, code: :mismatch_xfer)
         end
       end
     end
@@ -113,9 +113,9 @@ RSpec.describe DoubleEntry do
     it 'can transfer from an account to an account, if the transfer is allowed' do
       DoubleEntry.transfer(
         Money.new(100_00),
-        :from => savings,
-        :to   => cash,
-        :code => :xfer,
+        from: savings,
+        to:    cash,
+        code: :xfer,
       )
     end
 
@@ -123,9 +123,9 @@ RSpec.describe DoubleEntry do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
-          :from => cash,
-          :to   => savings,
-          :code => :xfer,
+          from: cash,
+          to:    savings,
+          code: :xfer,
         )
       end.to raise_error DoubleEntry::TransferNotAllowed
     end
@@ -134,9 +134,9 @@ RSpec.describe DoubleEntry do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
-          :from => savings,
-          :to   => cash,
-          :code => :yfer,
+          from: savings,
+          to:    cash,
+          code: :yfer,
         )
       end.to raise_error DoubleEntry::TransferNotAllowed
     end
@@ -145,8 +145,8 @@ RSpec.describe DoubleEntry do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
-          :from => cash,
-          :to   => trash,
+          from: cash,
+          to:    trash,
         )
       end.to raise_error DoubleEntry::TransferNotAllowed
     end
@@ -155,9 +155,9 @@ RSpec.describe DoubleEntry do
       expect do
         DoubleEntry.transfer(
           Money.new(100_00),
-          :from => trash,
-          :to   => bitbucket,
-          :code => :mismatch_xfer,
+          from: trash,
+          to:    bitbucket,
+          code: :mismatch_xfer,
         )
       end.to raise_error DoubleEntry::MismatchedCurrencies
     end
@@ -167,16 +167,16 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.define(:identifier => :a)
-          accounts.define(:identifier => :b)
+          accounts.define(identifier: :a)
+          accounts.define(identifier: :b)
         end
 
         config.define_transfers do |transfers|
-          transfers.define(:code => :xfer, :from => :a, :to => :b)
+          transfers.define(code: :xfer, from: :a, to: :b)
         end
       end
 
-      DoubleEntry.transfer(Money.new(10_00), :from => account_a, :to => account_b, :code => :xfer)
+      DoubleEntry.transfer(Money.new(10_00), from: account_a, to: account_b, code: :xfer)
     end
 
     let(:account_a) { DoubleEntry.account(:a) }
@@ -239,51 +239,51 @@ RSpec.describe DoubleEntry do
     before do
       DoubleEntry.configure do |config|
         config.define_accounts do |accounts|
-          accounts.define(:identifier => :work)
-          accounts.define(:identifier => :cash)
-          accounts.define(:identifier => :savings)
-          accounts.define(:identifier => :store)
-          accounts.define(:identifier => :btc_store, :currency => 'BTC')
-          accounts.define(:identifier => :btc_wallet, :currency => 'BTC')
+          accounts.define(identifier: :work)
+          accounts.define(identifier: :cash)
+          accounts.define(identifier: :savings)
+          accounts.define(identifier: :store)
+          accounts.define(identifier: :btc_store, currency: 'BTC')
+          accounts.define(identifier: :btc_wallet, currency: 'BTC')
         end
 
         config.define_transfers do |transfers|
-          transfers.define(:code => :salary,   :from => :work,    :to => :cash)
-          transfers.define(:code => :xfer,     :from => :cash,    :to => :savings)
-          transfers.define(:code => :xfer,     :from => :savings, :to => :cash)
-          transfers.define(:code => :purchase, :from => :cash,    :to => :store)
-          transfers.define(:code => :layby,    :from => :cash,    :to => :store)
-          transfers.define(:code => :deposit,  :from => :cash,    :to => :store)
-          transfers.define(:code => :btc_ex,   :from => :btc_store,    :to => :btc_wallet)
+          transfers.define(code: :salary,   from: :work,    to: :cash)
+          transfers.define(code: :xfer,     from: :cash,    to: :savings)
+          transfers.define(code: :xfer,     from: :savings, to: :cash)
+          transfers.define(code: :purchase, from: :cash,    to: :store)
+          transfers.define(code: :layby,    from: :cash,    to: :store)
+          transfers.define(code: :deposit,  from: :cash,    to: :store)
+          transfers.define(code: :btc_ex,   from: :btc_store,    to: :btc_wallet)
         end
       end
 
       Timecop.freeze 3.weeks.ago + 1.day do
         # got paid from work
-        DoubleEntry.transfer(Money.new(1_000_00), :from => work, :code => :salary, :to => cash)
+        DoubleEntry.transfer(Money.new(1_000_00), from: work, code: :salary, to: cash)
         # transfer half salary into savings
-        DoubleEntry.transfer(Money.new(500_00), :from => cash, :code => :xfer, :to => savings)
+        DoubleEntry.transfer(Money.new(500_00), from: cash, code: :xfer, to: savings)
       end
 
       Timecop.freeze 2.weeks.ago + 1.day do
         # got myself a darth vader helmet
-        DoubleEntry.transfer(Money.new(200_00), :from => cash, :code => :purchase, :to => store)
+        DoubleEntry.transfer(Money.new(200_00), from: cash, code: :purchase, to: store)
         # paid off some of my darth vader suit layby (to go with the helmet)
-        DoubleEntry.transfer(Money.new(100_00), :from => cash, :code => :layby, :to => store)
+        DoubleEntry.transfer(Money.new(100_00), from: cash, code: :layby, to: store)
         # put a deposit on the darth vader voice changer module (for the helmet)
-        DoubleEntry.transfer(Money.new(100_00), :from => cash, :code => :deposit, :to => store)
+        DoubleEntry.transfer(Money.new(100_00), from: cash, code: :deposit, to: store)
       end
 
       Timecop.freeze 1.week.ago + 1.day do
         # transfer 200 out of savings
-        DoubleEntry.transfer(Money.new(200_00), :from => savings, :code => :xfer, :to => cash)
+        DoubleEntry.transfer(Money.new(200_00), from: savings, code: :xfer, to: cash)
         # pay the remaining balance on the darth vader voice changer module
-        DoubleEntry.transfer(Money.new(200_00), :from => cash, :code => :purchase, :to => store)
+        DoubleEntry.transfer(Money.new(200_00), from: cash, code: :purchase, to: store)
       end
 
       Timecop.freeze 1.week.from_now do
         # it's the future, man
-        DoubleEntry.transfer(Money.new(200_00, 'BTC'), :from => btc_store, :code => :btc_ex, :to => btc_wallet)
+        DoubleEntry.transfer(Money.new(200_00, 'BTC'), from: btc_store, code: :btc_ex, to: btc_wallet)
       end
     end
 
@@ -310,30 +310,30 @@ RSpec.describe DoubleEntry do
       cash_balance = cash.balance
       amount = Money.new(10_00)
 
-      DoubleEntry.transfer(amount, :from => savings, :code => :xfer, :to => cash)
+      DoubleEntry.transfer(amount, from: savings, code: :xfer, to: cash)
 
       expect(savings.balance).to eq(savings_balance - amount)
       expect(cash.balance).to eq(cash_balance + amount)
     end
 
     it 'can be queried at a given point in time' do
-      expect(cash.balance(:at => 1.week.ago)).to eq(Money.new(100_00))
+      expect(cash.balance(at: 1.week.ago)).to eq(Money.new(100_00))
     end
 
     it 'can be queries between two points in time' do
-      expect(cash.balance(:from => 3.weeks.ago, :to => 2.weeks.ago)).to eq(Money.new(500_00))
+      expect(cash.balance(from: 3.weeks.ago, to: 2.weeks.ago)).to eq(Money.new(500_00))
     end
 
     it 'can be queried between two points in time, even in the future' do
-      expect(btc_wallet.balance(:from => Time.now, :to => 2.weeks.from_now)).to eq(Money.new(200_00, 'BTC'))
+      expect(btc_wallet.balance(from: Time.now, to: 2.weeks.from_now)).to eq(Money.new(200_00, 'BTC'))
     end
 
     it 'can report on balances, scoped by code' do
-      expect(cash.balance(:code => :salary)).to eq Money.new(1_000_00)
+      expect(cash.balance(code: :salary)).to eq Money.new(1_000_00)
     end
 
     it 'can report on balances, scoped by many codes' do
-      expect(store.balance(:codes => [:layby, :deposit])).to eq(Money.new(200_00))
+      expect(store.balance(codes: [:layby, :deposit])).to eq(Money.new(200_00))
     end
 
     it 'has running balances for each line' do
@@ -356,15 +356,15 @@ RSpec.describe DoubleEntry do
             raise 'not a User' unless user.class.name == 'User'
             user.id
           end
-          accounts.define(:identifier => :bank)
-          accounts.define(:identifier => :cash,    :scope_identifier => user_scope)
-          accounts.define(:identifier => :savings, :scope_identifier => user_scope)
+          accounts.define(identifier: :bank)
+          accounts.define(identifier: :cash,    scope_identifier: user_scope)
+          accounts.define(identifier: :savings, scope_identifier: user_scope)
         end
 
         config.define_transfers do |transfers|
-          transfers.define(:from => :bank, :to => :cash,    :code => :xfer)
-          transfers.define(:from => :cash, :to => :cash,    :code => :xfer)
-          transfers.define(:from => :cash, :to => :savings, :code => :xfer)
+          transfers.define(from: :bank, to: :cash,    code: :xfer)
+          transfers.define(from: :cash, to: :cash,    code: :xfer)
+          transfers.define(from: :cash, to: :savings, code: :xfer)
         end
       end
     end
@@ -374,52 +374,52 @@ RSpec.describe DoubleEntry do
     let(:savings) { DoubleEntry.account(:savings) }
 
     let(:john) { create(:user) }
-    let(:johns_cash) { DoubleEntry.account(:cash, :scope => john) }
-    let(:johns_savings) { DoubleEntry.account(:savings, :scope => john) }
+    let(:johns_cash) { DoubleEntry.account(:cash, scope: john) }
+    let(:johns_savings) { DoubleEntry.account(:savings, scope: john) }
 
     let(:ryan) { create(:user) }
-    let(:ryans_cash) { DoubleEntry.account(:cash, :scope => ryan) }
-    let(:ryans_savings) { DoubleEntry.account(:savings, :scope => ryan) }
+    let(:ryans_cash) { DoubleEntry.account(:cash, scope: ryan) }
+    let(:ryans_savings) { DoubleEntry.account(:savings, scope: ryan) }
 
     it 'treats each separately scoped account having their own separate balances' do
-      DoubleEntry.transfer(Money.new(20_00), :from => bank, :to => johns_cash, :code => :xfer)
-      DoubleEntry.transfer(Money.new(10_00), :from => bank, :to => ryans_cash, :code => :xfer)
+      DoubleEntry.transfer(Money.new(20_00), from: bank, to: johns_cash, code: :xfer)
+      DoubleEntry.transfer(Money.new(10_00), from: bank, to: ryans_cash, code: :xfer)
       expect(johns_cash.balance).to eq(Money.new(20_00))
       expect(ryans_cash.balance).to eq(Money.new(10_00))
     end
 
     it 'allows transfer between two separately scoped accounts' do
-      DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => johns_cash, :code => :xfer)
+      DoubleEntry.transfer(Money.new(10_00), from: ryans_cash, to: johns_cash, code: :xfer)
       expect(ryans_cash.balance).to eq(Money.new(-10_00))
       expect(johns_cash.balance).to eq(Money.new(10_00))
     end
 
     it 'reports balance correctly if called from either account or finances object' do
-      DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => johns_cash, :code => :xfer)
+      DoubleEntry.transfer(Money.new(10_00), from: ryans_cash, to: johns_cash, code: :xfer)
       expect(ryans_cash.balance).to eq(Money.new(-10_00))
-      expect(DoubleEntry.balance(:cash, :scope => ryan)).to eq(Money.new(-10_00))
+      expect(DoubleEntry.balance(:cash, scope: ryan)).to eq(Money.new(-10_00))
     end
 
     it 'raises an exception if you try to scope with an object instance of differing class to that defined on the account' do
-      not_a_user = double(:id => 7)
+      not_a_user = double(id: 7)
 
       expect do
-        DoubleEntry.account(:savings, :scope => not_a_user)
+        DoubleEntry.account(:savings, scope: not_a_user)
       end.to raise_error RuntimeError, 'not a User'
 
       expect do
-        DoubleEntry.balance(:savings, :scope => not_a_user)
+        DoubleEntry.balance(:savings, scope: not_a_user)
       end.to raise_error RuntimeError, 'not a User'
     end
 
     it 'raises exception if you try to transfer between the same account, despite it being scoped' do
       expect do
-        DoubleEntry.transfer(Money.new(10_00), :from => ryans_cash, :to => ryans_cash, :code => :xfer)
+        DoubleEntry.transfer(Money.new(10_00), from: ryans_cash, to: ryans_cash, code: :xfer)
       end.to raise_error(DoubleEntry::TransferNotAllowed)
     end
 
     it 'allows transfer from one persons account to the same persons other kind of account' do
-      DoubleEntry.transfer(Money.new(100_00), :from => ryans_cash, :to => ryans_savings, :code => :xfer)
+      DoubleEntry.transfer(Money.new(100_00), from: ryans_cash, to: ryans_savings, code: :xfer)
       expect(ryans_cash.balance).to eq(Money.new(-100_00))
       expect(ryans_savings.balance).to eq(Money.new(100_00))
     end

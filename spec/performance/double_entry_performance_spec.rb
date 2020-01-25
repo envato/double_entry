@@ -4,8 +4,8 @@ module DoubleEntry
       include PerformanceHelper
       let(:user) { create(:user) }
       let(:amount) { Money.new(10_00) }
-      let(:test) { DoubleEntry.account(:test, :scope => user) }
-      let(:savings) { DoubleEntry.account(:savings, :scope => user) }
+      let(:test) { DoubleEntry.account(:test, scope: user) }
+      let(:savings) { DoubleEntry.account(:savings, scope: user) }
 
       it 'creates a lot of transfers quickly without metadata' do
         profile_transfers_with_metadata(nil)
@@ -31,7 +31,7 @@ module DoubleEntry
 
     def profile_transfers_with_metadata(metadata, profile_name = nil)
       start_profiling
-      options = { :from => test, :to => savings, :code => :bonus }
+      options = { from: test, to: savings, code: :bonus }
       options[:metadata] = metadata if metadata
       100.times { Transfer.transfer(amount, options) }
       profile_name ||= 'transfer'

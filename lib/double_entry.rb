@@ -66,9 +66,9 @@ module DoubleEntry
     #   savings_account  = DoubleEntry.account(:savings,  scope: user)
     #   DoubleEntry.transfer(
     #     20.dollars,
-    #     :from => checking_account,
-    #     :to   => savings_account,
-    #     :code => :save,
+    #     from: checking_account,
+    #     to:   savings_account,
+    #     code: :save,
     #   )
     # @param [Money] amount The quantity of money to transfer from one account
     #   to the other.
@@ -91,35 +91,35 @@ module DoubleEntry
     # Get the current or historic balance of an account.
     #
     # @example Obtain the current balance of my checking account
-    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   DoubleEntry.balance(checking_account)
     # @example Obtain the current balance of my checking account (without account or user model)
-    #   DoubleEntry.balance(:checking, :scope => user_id)
+    #   DoubleEntry.balance(:checking, scope: user_id)
     # @example Obtain a historic balance of my checking account
-    #   checking_account = DoubleEntry.account(:checking, :scope => user)
-    #   DoubleEntry.balance(checking_account, :at => Time.new(2012, 1, 1))
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
+    #   DoubleEntry.balance(checking_account, at: Time.new(2012, 1, 1))
     # @example Obtain the net balance of my checking account during may
-    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   DoubleEntry.balance(
     #     checking_account,
-    #     :from => Time.new(2012, 5,  1,  0,  0,  0),
-    #     :to   => Time.new(2012, 5, 31, 23, 59, 59),
+    #     from: Time.new(2012, 5,  1,  0,  0,  0),
+    #     to:   Time.new(2012, 5, 31, 23, 59, 59),
     #   )
     # @example Obtain the balance of salary deposits made to my checking account during may
-    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   DoubleEntry.balance(
     #     checking_account,
-    #     :code => :salary,
-    #     :from => Time.new(2012, 5,  1,  0,  0,  0),
-    #     :to   => Time.new(2012, 5, 31, 23, 59, 59),
+    #     code: :salary,
+    #     from: Time.new(2012, 5,  1,  0,  0,  0),
+    #     to:   Time.new(2012, 5, 31, 23, 59, 59),
     #   )
     # @example Obtain the balance of salary & lottery deposits made to my checking account during may
-    #   checking_account = DoubleEntry.account(:checking, :scope => user)
+    #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   DoubleEntry.balance(
     #     checking_account,
-    #     :codes => [ :salary, :lottery ],
-    #     :from  => Time.new(2012, 5,  1,  0,  0,  0),
-    #     :to    => Time.new(2012, 5, 31, 23, 59, 59),
+    #     codes: [ :salary, :lottery ],
+    #     from:  Time.new(2012, 5,  1,  0,  0,  0),
+    #     to:    Time.new(2012, 5, 31, 23, 59, 59),
     #   )
     # @param [DoubleEntry::Account:Instance, Symbol] account Find the balance
     #   for this account

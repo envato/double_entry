@@ -93,7 +93,7 @@ than scoped accounts due to lock contention.
 To get a particular account:
 
 ```ruby
-account = DoubleEntry.account(:spending, :scope => user)
+account = DoubleEntry.account(:spending, scope: user)
 ```
 
 (This actually returns an Account::Instance object.)
@@ -119,9 +119,9 @@ To transfer money between accounts:
 ```ruby
 DoubleEntry.transfer(
   Money.new(20_00),
-  :from => one_account,
-  :to   => another_account,
-  :code => :a_business_code_for_this_type_of_transfer,
+  from: one_account,
+  to:   another_account,
+  code: :a_business_code_for_this_type_of_transfer,
 )
 ```
 
@@ -136,10 +136,10 @@ You may associate arbitrary metadata with transfers, for example:
 ```ruby
 DoubleEntry.transfer(
   Money.new(20_00),
-  :from => one_account,
-  :to   => another_account,
-  :code => :a_business_code_for_this_type_of_transfer,
-  :metadata => {:key1 => ['value 1', 'value 2'], :key2 => 'value 3'},
+  from: one_account,
+  to:   another_account,
+  code: :a_business_code_for_this_type_of_transfer,
+  metadata: {key1: ['value 1', 'value 2'], key2: 'value 3'},
 )
 ```
 
@@ -152,7 +152,7 @@ manually lock the accounts you're using:
 ```ruby
 DoubleEntry.lock_accounts(account_a, account_b) do
   # Perhaps transfer some money
-  DoubleEntry.transfer(Money.new(20_00), :from => account_a, :to => account_b, :code => :purchase)
+  DoubleEntry.transfer(Money.new(20_00), from: account_a, to: account_b, code: :purchase)
   # Perform other tasks that should be commited atomically with the transfer of funds...
 end
 ```
@@ -206,13 +206,13 @@ DoubleEntry.configure do |config|
       raise 'not a User' unless user.class.name == 'User'
       user.id
     end
-    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :positive_only => true)
-    accounts.define(:identifier => :checking, :scope_identifier => user_scope)
+    accounts.define(identifier: :savings,  scope_identifier: user_scope, positive_only: true)
+    accounts.define(identifier: :checking, scope_identifier: user_scope)
   end
 
   config.define_transfers do |transfers|
-    transfers.define(:from => :checking, :to => :savings,  :code => :deposit)
-    transfers.define(:from => :savings,  :to => :checking, :code => :withdraw)
+    transfers.define(from: :checking, to: :savings,  code: :deposit)
+    transfers.define(from: :savings,  to: :checking, code: :withdraw)
   end
 end
 ```
@@ -225,7 +225,7 @@ Transfers between accounts of different currencies are not allowed.
 ```ruby
 DoubleEntry.configure do |config|
   config.define_accounts do |accounts|
-    accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :currency => 'AUD')
+    accounts.define(identifier: :savings,  scope_identifier: user_scope, currency: 'AUD')
   end
 end
 ```
