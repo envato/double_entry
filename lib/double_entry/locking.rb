@@ -32,14 +32,14 @@ module DoubleEntry
     #
     # The transaction must be the outermost transaction to ensure data integrity. A
     # LockMustBeOutermostTransaction will be raised if it isn't.
-    def self.lock_accounts(*accounts)
+    def self.lock_accounts(*accounts, &block)
       lock = Lock.new(accounts)
 
       if lock.in_a_locked_transaction?
         lock.ensure_locked!
-        yield
+        block.call
       else
-        lock.perform_lock(&Proc.new)
+        lock.perform_lock(&block)
       end
 
     rescue ActiveRecord::StatementInvalid => exception
