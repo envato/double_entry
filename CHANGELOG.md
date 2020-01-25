@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta4...HEAD
+
+## [2.0.0.beta4] - 2020-01-25
+
 ### Added
 
 - Test against Rails 6.0, ([#176]).
@@ -21,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Prevent using Ruby 2.2 via restrictions in Gemfile and Gemspec ([#175]).
 
+[2.0.0.beta4]: https://github.com/envato/double_entry/compare/v2.0.0.beta3...v2.0.0.beta4
 [#175]: https://github.com/envato/double_entry/pull/175
 [#176]: https://github.com/envato/double_entry/pull/176
 [#178]: https://github.com/envato/double_entry/pull/178
@@ -457,7 +462,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Library released as Open Source!
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta3...HEAD
 [2.0.0.beta3]: https://github.com/envato/double_entry/compare/v2.0.0.beta2...v2.0.0.beta3
 [2.0.0.beta2]: https://github.com/envato/double_entry/compare/v2.0.0.beta1...v2.0.0.beta2
 [2.0.0.beta1]: https://github.com/envato/double_entry/compare/v1.0.1...v2.0.0.beta1
