@@ -81,7 +81,7 @@ def create_accounts_and_transfers
     config.define_accounts do |accounts|
       scope = ->(x) { x }
       $account_count.times do |i|
-        accounts.define(:identifier => :"account-#{i}", :scope_identifier => scope)
+        accounts.define(identifier: :"account-#{i}", scope_identifier: scope)
       end
     end
 
@@ -89,14 +89,14 @@ def create_accounts_and_transfers
     config.define_transfers do |transfers|
       config.accounts.each do |from|
         config.accounts.each do |to|
-          transfers.define(:from => from.identifier, :to => to.identifier, :code => :test)
+          transfers.define(from: from.identifier, to: to.identifier, code: :test)
         end
       end
     end
 
     # Find account instances so we have something to work with.
     $accounts = config.accounts.map do |account|
-      DoubleEntry.account(account.identifier, :scope => 1)
+      DoubleEntry.account(account.identifier, scope: 1)
     end
   end
 end
@@ -143,15 +143,15 @@ def run_process(iterations, process_num)
     account_b = ($accounts - [account_a]).sample
     amount = rand(1000) + 1
 
-    DoubleEntry.transfer(Money.new(amount), :from => account_a, :to => account_b, :code => :test)
+    DoubleEntry.transfer(Money.new(amount), from: account_a, to: account_b, code: :test)
 
     puts "Process #{process_num} completed #{i+1} transfers" if (i+1) % 100 == 0
   end
 end
 
 def reconciled?(account)
-  scoped_lines = DoubleEntry::Line.where(:account => "#{account.identifier}")
-  scoped_lines = scoped_lines.where(:scope => "#{account.scope_identity}") if account.scoped?
+  scoped_lines = DoubleEntry::Line.where(account: "#{account.identifier}")
+  scoped_lines = scoped_lines.where(scope: "#{account.scope_identity}") if account.scoped?
   sum_of_amounts = scoped_lines.sum(:amount)
   final_balance  = scoped_lines.order(:id).last[:balance]
   cached_balance = DoubleEntry::AccountBalance.find_by_account(account)[:balance]

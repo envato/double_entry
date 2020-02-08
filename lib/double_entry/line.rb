@@ -55,8 +55,8 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-    belongs_to :detail, :polymorphic => true
-    has_many :metadata, :class_name => 'DoubleEntry::LineMetadata' unless -> { DoubleEntry.config.json_metadata }
+    belongs_to :detail, polymorphic: true
+    has_many :metadata, class_name: 'DoubleEntry::LineMetadata' unless -> { DoubleEntry.config.json_metadata }
     scope :with_id_greater_than, ->(id) { where('id > ?', id) }
 
     def amount
@@ -102,7 +102,7 @@ module DoubleEntry
     end
 
     def account
-      DoubleEntry.account(self[:account].to_sym, :scope_identity => scope)
+      DoubleEntry.account(self[:account].to_sym, scope_identity: scope)
     end
 
     def currency
@@ -117,7 +117,7 @@ module DoubleEntry
     end
 
     def partner_account
-      DoubleEntry.account(self[:partner_account].to_sym, :scope_identity => partner_scope)
+      DoubleEntry.account(self[:partner_account].to_sym, scope_identity: partner_scope)
     end
 
     def partner

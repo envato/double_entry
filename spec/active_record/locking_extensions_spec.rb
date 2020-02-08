@@ -25,7 +25,7 @@ RSpec.describe ActiveRecord::LockingExtensions do
       it 'publishes a notification' do
         expect(ActiveSupport::Notifications).
           to receive(:publish).
-          with('deadlock_restart.double_entry', hash_including(:exception => exception))
+          with('deadlock_restart.double_entry', hash_including(exception: exception))
         expect { User.with_restart_on_deadlock { fail exception } }.to raise_error(ActiveRecord::RestartTransaction)
       end
     end
@@ -54,7 +54,7 @@ RSpec.describe ActiveRecord::LockingExtensions do
       create(:user, username: 'keith')
 
       expect { create(:user, username: 'keith') }.to raise_error(ActiveRecord::RecordNotUnique)
-      expect { User.create_ignoring_duplicates! :username => 'keith' }.to_not raise_error
+      expect { User.create_ignoring_duplicates! username: 'keith' }.to_not raise_error
     end
 
     it 'publishes a notification when a duplicate is encountered' do
@@ -62,9 +62,9 @@ RSpec.describe ActiveRecord::LockingExtensions do
 
       expect(ActiveSupport::Notifications).
         to receive(:publish).
-        with('duplicate_ignore.double_entry', hash_including(:exception => kind_of(ActiveRecord::RecordNotUnique)))
+        with('duplicate_ignore.double_entry', hash_including(exception: kind_of(ActiveRecord::RecordNotUnique)))
 
-      expect { User.create_ignoring_duplicates! :username => 'keith' }.to_not raise_error
+      expect { User.create_ignoring_duplicates! username: 'keith' }.to_not raise_error
     end
 
     shared_examples 'abstract adapter' do
@@ -82,7 +82,7 @@ RSpec.describe ActiveRecord::LockingExtensions do
 
         expect(ActiveSupport::Notifications).
           to receive(:publish).
-          with('deadlock_retry.double_entry', hash_including(:exception => exception)).
+          with('deadlock_retry.double_entry', hash_including(exception: exception)).
           twice
 
         expect { User.create_ignoring_duplicates! }.to_not raise_error

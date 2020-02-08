@@ -8,13 +8,13 @@ module DoubleEntry
         context 'Given some checks have been created' do
           before do
             Timecop.freeze 3.minutes.ago do
-              LineCheck.create! :last_line_id => 100, :errors_found => false, :log => ''
+              LineCheck.create! last_line_id: 100, errors_found: false, log: ''
             end
             Timecop.freeze 1.minute.ago do
-              LineCheck.create! :last_line_id => 300, :errors_found => false, :log => ''
+              LineCheck.create! last_line_id: 300, errors_found: false, log: ''
             end
             Timecop.freeze 2.minutes.ago do
-              LineCheck.create! :last_line_id => 200, :errors_found => false, :log => ''
+              LineCheck.create! last_line_id: 200, errors_found: false, log: ''
             end
           end
 
@@ -28,7 +28,7 @@ module DoubleEntry
         subject(:line_check) { LineCheck.perform!(fixer: AccountFixer.new) }
 
         context 'Given a user with 100 dollars' do
-          before { create(:user, :savings_balance => Money.new(100_00)) }
+          before { create(:user, savings_balance: Money.new(100_00)) }
 
           context 'And all is consistent' do
             context 'And all lines have been checked' do
@@ -94,7 +94,7 @@ module DoubleEntry
         end
 
         context 'Given a user with a non default currency balance' do
-          before { create(:user, :bitcoin_balance => Money.new(100_00, 'BTC')) }
+          before { create(:user, bitcoin_balance: Money.new(100_00, 'BTC')) }
           its(:errors_found) { should eq false }
           context 'And there is a consistency error in lines' do
             before { DoubleEntry::Line.order(:id).limit(1).update_all('balance = balance + 1') }

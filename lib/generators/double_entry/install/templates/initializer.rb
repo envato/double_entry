@@ -9,12 +9,12 @@ DoubleEntry.configure do |config|
   #     raise 'not a User' unless user.class.name == 'User'
   #     user.id
   #   end
-  #   accounts.define(:identifier => :savings,  :scope_identifier => user_scope, :positive_only => true)
-  #   accounts.define(:identifier => :checking, :scope_identifier => user_scope)
+  #   accounts.define(identifier: :savings,  scope_identifier: user_scope, positive_only: true)
+  #   accounts.define(identifier: :checking, scope_identifier: user_scope)
   # end
   #
   # config.define_transfers do |transfers|
-  #   transfers.define(:from => :checking, :to => :savings,  :code => :deposit)
-  #   transfers.define(:from => :savings,  :to => :checking, :code => :withdraw)
+  #   transfers.define(from: :checking, to: :savings,  code: :deposit)
+  #   transfers.define(from: :savings,  to: :checking, code: :withdraw)
   # end
 end

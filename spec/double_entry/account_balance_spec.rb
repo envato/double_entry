@@ -9,7 +9,7 @@ RSpec.describe DoubleEntry::AccountBalance do
     subject(:scopes) { DoubleEntry::AccountBalance.scopes_with_minimum_balance_for_account(minimum_balance, :checking) }
 
     context "a 'checking' account with balance $100" do
-      let!(:user) { create(:user, :checking_balance => Money.new(100_00)) }
+      let!(:user) { create(:user, checking_balance: Money.new(100_00)) }
 
       context 'when searching for balance $99' do
         let(:minimum_balance) { Money.new(99_00) }

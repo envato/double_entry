@@ -149,7 +149,7 @@ module DoubleEntry
       # If one or more account balance records don't exist, set
       # accounts_with_balances to the corresponding accounts, and return false.
       def grab_locks
-        account_balances = @accounts.map { |account| AccountBalance.find_by_account(account, :lock => true) }
+        account_balances = @accounts.map { |account| AccountBalance.find_by_account(account, lock: true) }
 
         if account_balances.any?(&:nil?)
           @accounts_without_balances =  @accounts.zip(account_balances).
@@ -168,7 +168,7 @@ module DoubleEntry
           # Get the initial balance from the lines table.
           balance = account.balance
           # Try to create the balance record, but ignore it if someone else has done it in the meantime.
-          AccountBalance.create_ignoring_duplicates!(:account => account, :balance => balance)
+          AccountBalance.create_ignoring_duplicates!(account: account, balance: balance)
         end
       end
     end

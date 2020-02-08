@@ -14,7 +14,7 @@ module PerformanceHelper
         outdir = './profiles'
         Dir.mkdir(outdir) unless Dir.exist?(outdir)
         printer = RubyProf::MultiPrinter.new(result)
-        printer.print(:path => outdir, :profile => profile_name)
+        printer.print(path: outdir, profile: profile_name)
       end
     end
     result

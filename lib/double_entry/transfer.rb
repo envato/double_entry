@@ -121,8 +121,8 @@ module DoubleEntry
     def create_line_metadata(credit, debit, metadata)
       metadata.each_pair do |key, value|
         Array(value).each do |each_value|
-          LineMetadata.create!(:line => credit, :key => key, :value => each_value)
-          LineMetadata.create!(:line => debit, :key => key, :value => each_value)
+          LineMetadata.create!(line: credit, key: key, value: each_value)
+          LineMetadata.create!(line: debit, key: key, value: each_value)
         end
       end
     end

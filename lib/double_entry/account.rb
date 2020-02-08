@@ -15,7 +15,7 @@ module DoubleEntry
       # @api private
       def account(identifier, options = {})
         account = accounts.find(identifier, (options[:scope].present? || options[:scope_identity].present?))
-        Instance.new(:account => account, :scope => options[:scope], :scope_identity => options[:scope_identity])
+        Instance.new(account: account, scope: options[:scope], scope_identity: options[:scope_identity])
       end
 
       # @api private
@@ -67,7 +67,7 @@ module DoubleEntry
 
     class Instance
       attr_reader :account, :scope
-      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :negative_only, :currency, :to => :account
+      delegate :identifier, :scope_identifier, :scoped?, :positive_only, :negative_only, :currency, to: :account
 
       def initialize(args)
         @account = args[:account]
