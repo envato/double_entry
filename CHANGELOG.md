@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Use the Ruby 1.9 hash syntax ([#182]).
+
 [Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta4...HEAD
+[#182]: https://github.com/envato/double_entry/pull/182
 
 ## [2.0.0.beta4] - 2020-01-25
 
