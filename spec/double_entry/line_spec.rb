@@ -58,6 +58,10 @@ RSpec.describe DoubleEntry::Line do
         let(:partner_account) { DoubleEntry.account(:btc_test, scope_identity: '72') }
         its(:currency) { should eq 'BTC' }
       end
+
+      context 'given detail = nil' do
+        specify { expect { line_to_persist.save! }.not_to raise_error(ActiveRecord::RecordInvalid) }
+      end
     end
 
     context 'when balance is sent negative' do

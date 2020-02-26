@@ -11,6 +11,7 @@ raise <<-MSG.strip_heredoc unless File.exist?(database_config_file)
   See spec/support/database.example.yml'
 MSG
 
+ActiveRecord::Base.belongs_to_required_by_default = true if ActiveRecord.version.version >= '5'
 ActiveRecord::Base.establish_connection(YAML.load_file(database_config_file)[db_engine])
 
 RSpec.configure do |config|

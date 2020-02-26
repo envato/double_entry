@@ -55,7 +55,7 @@ module DoubleEntry
   # by account, or account and code, over a particular period.
   #
   class Line < ActiveRecord::Base
-    belongs_to :detail, polymorphic: true
+    belongs_to :detail, polymorphic: true, required: false
     has_many :metadata, class_name: 'DoubleEntry::LineMetadata' unless -> { DoubleEntry.config.json_metadata }
     scope :with_id_greater_than, ->(id) { where('id > ?', id) }
 
