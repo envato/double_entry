@@ -162,6 +162,21 @@ outermost transaction.
 
 See [DoubleEntry::Locking](lib/double_entry/locking.rb) for more info.
 
+### Account Checker/Fixer
+
+Although it's unlikely, DoubleEntry has tools for checking accounts to make sure they tie out, and optionally fixing them if there is a discrepancy. It's recommended to run this in a scheduled job, somewhere on the order of hourly to daily, depending on transaction volume. Keep in mind that this process locks accounts as it inspects their balances, so it will have an prevent new transactions from being written for a short time.
+
+Here are examples that could go in your scheduled job, depending on your needs:
+
+```ruby
+# Check all accounts & write the results to the double_entry_line_checks table
+DoubleEntry::Validation::LineCheck.perform!
+
+# Check & fix accounts (results will also be written to the table)
+DoubleEntry::Validation::LineCheck.perform!(fixer: DoubleEntry::Validation::AccountFixer.new)
+```
+
+See [DoubleEntry::Validation](lib/double_entry/validation) for more info.
 
 ## Implementation
 
