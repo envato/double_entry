@@ -72,7 +72,7 @@ rake db:migrate
 ## Interface
 
 The entire API for recording financial transactions is available through a few
-methods in the **DoubleEntry** module. For full details on
+methods in the [DoubleEntry](lib/double_entry.rb) module. For full details on
 what the API provides, please view the documentation on these methods.
 
 A configuration file should be used to define a set of accounts, and potential
@@ -98,7 +98,7 @@ account = DoubleEntry.account(:spending, scope: user)
 
 (This actually returns an Account::Instance object.)
 
-See **DoubleEntry::Account** for more info.
+See [DoubleEntry::Account](lib/double_entry/account.rb) for more info.
 
 
 ### Balances
@@ -127,7 +127,7 @@ DoubleEntry.transfer(
 
 The possible transfers, and their codes, should be defined in the configuration.
 
-See **DoubleEntry::Transfer** for more info.
+See [DoubleEntry::Transfer](lib/double_entry/transfer.rb) for more info.
 
 ### Metadata
 
@@ -160,8 +160,23 @@ end
 The lock_accounts call generates a database transaction, which must be the
 outermost transaction.
 
-See **DoubleEntry::Locking** for more info.
+See [DoubleEntry::Locking](lib/double_entry/locking.rb) for more info.
 
+### Account Checker/Fixer
+
+Although it's unlikely, DoubleEntry has tools for checking accounts to make sure they tie out, and optionally fixing them if there is a discrepancy. It's recommended to run this in a scheduled job, somewhere on the order of hourly to daily, depending on transaction volume. Keep in mind that this process locks accounts as it inspects their balances, so it will have an prevent new transactions from being written for a short time.
+
+Here are examples that could go in your scheduled job, depending on your needs:
+
+```ruby
+# Check all accounts & write the results to the double_entry_line_checks table
+DoubleEntry::Validation::LineCheck.perform!
+
+# Check & fix accounts (results will also be written to the table)
+DoubleEntry::Validation::LineCheck.perform!(fixer: DoubleEntry::Validation::AccountFixer.new)
+```
+
+See [DoubleEntry::Validation](lib/double_entry/validation) for more info.
 
 ## Implementation
 
@@ -173,7 +188,7 @@ Lines table entries also store the running balance for the account. To retrieve
 the current balance for an account, we find the most recent lines table entry
 for it.
 
-See **DoubleEntry::Line** for more info.
+See [DoubleEntry::Line](lib/double_entry/line.rb) for more info.
 
 AccountBalance records cache the current balance for each Account, and are used
 to perform database level locking.
