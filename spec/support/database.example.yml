@@ -1,5 +1,5 @@
 postgres:
-  host: localhost
+  host: <%= ENV.fetch('POSTGRES_HOST') { 'localhost' } %>
   adapter: postgresql
   encoding: unicode
   database: double_entry_test
@@ -8,6 +8,7 @@ postgres:
   password:
   min_messages: warning
 mysql:
+  host: <%= ENV.fetch('MYSQL_HOST') { '127.0.0.1' } %>
   adapter: mysql2
   encoding: utf8
   database: double_entry_test
