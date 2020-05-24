@@ -1,0 +1,28 @@
+version: '3'
+services:
+  double_entry:
+    build: .
+    environment:
+      POSTGRES_HOST: postgres
+      MYSQL_HOST: mysql
+    volumes:
+      - ./lib:/double_entry/lib
+      - ./spec/double_entry:/double_entry/spec/double_entry
+      - ./spec/double_entry_spec.rb:/double_entry/spec/double_entry_spec.rb
+      - ./spec/generators:/double_entry/spec/generators
+      - ./spec/active_record:/double_entry/spec/active_record
+      - ./spec/performance:/double_entry/spec/performance
+      - ./script:/double_entry/script
+    depends_on:
+      - mysql
+      - postgres
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+      MYSQL_DATABASE: double_entry_test
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: double_entry_test
