@@ -292,42 +292,56 @@ See the Github project [issues](https://github.com/envato/double_entry/issues).
 
 ## Development Environment Setup
 
+We're using Docker to provide a convenient and consistent environment for
+executing tests during development. This allows engineers to quickly set up
+a productive development environment.
+
+Note: Most development files are mounted in the Docker container. This
+enables engineers to edit files in their favourite editor (on the host
+OS) and have the changes immediately available in the Docker container
+to be exercised.
+
+One exception to this is the RSpec configuration. Changes to these files will
+require a rebuild of the Docker image (step 2).
+
+Prerequisites:
+
+* Docker
+* Docker Compose
+* Git
+
 1. Clone this repo.
 
     ```sh
     git clone git@github.com:envato/double_entry.git && cd double_entry
     ```
 
-2. Run the included setup script to install the gem dependencies.
+2. Build the Docker image we'll use to run tests
 
     ```sh
-    ./script/setup.sh
+    docker-compose build --pull double_entry
     ```
 
-3. Install MySQL, PostgreSQL and SQLite. We run tests against all three databases.
-4. Create a database in MySQL.
+3. Startup a container and attach a terminal. This will also start up a
+   MySQL and Postgres database.
 
     ```sh
-    mysql -u root -e 'create database double_entry_test;'
+    docker-compose run --rm double_entry ash
     ```
 
-5. Create a database in PostgreSQL.
+4. Run the tests
 
     ```sh
-    psql -c 'create database double_entry_test;' -U postgres
+    DB=mysql bundle exec rspec
+    DB=postgres bundle exec rspec
+    DB=sqlite bundle exec rspec
     ```
 
-6. Specify how the tests should connect to the database
+5. When finished, exit the container terminal and shut down the databases.
 
     ```sh
-    cp spec/support/{database.example.yml,database.yml}
-    vim spec/support/database.yml
-    ```
-
-7. Run the tests
-
-    ```sh
-    bundle exec rake
+    exit
+    docker-compose down
     ```
 
 ## Contributors

@@ -15,6 +15,8 @@ require 'optparse'
 require 'bundler/setup'
 require 'active_record'
 require 'database_cleaner'
+require 'erb'
+require 'yaml'
 
 support = File.expand_path("../../spec/support/", __FILE__)
 
@@ -25,7 +27,11 @@ if db_engine == 'sqlite'
   exit 0
 end
 
-ActiveRecord::Base.establish_connection YAML.load_file(File.join(support, "database.yml"))[db_engine]
+database_config_file = File.join(__dir__, '..', 'spec', 'support', 'database.yml')
+database_config_raw = File.read(database_config_file)
+database_config_yaml = ERB.new(database_config_raw).result
+database_config = YAML.load(database_config_yaml)
+ActiveRecord::Base.establish_connection(database_config[db_engine])
 require "#{support}/schema"
 
 lib = File.expand_path('../../lib', __FILE__)
