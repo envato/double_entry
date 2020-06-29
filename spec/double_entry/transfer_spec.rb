@@ -38,6 +38,15 @@ module DoubleEntry
           expect { transfer }.to change { Line.count }.by 2
         end
 
+        it 'returns the credit & debit' do
+          credit, debit = transfer
+          expect(credit).to be_a Line
+          expect(credit.amount).to eq -amount
+
+          expect(debit).to be_a Line
+          expect(debit.amount).to eq amount
+        end
+
         context 'with config.json_metadata = true', skip: ActiveRecord.version.version < '5' do
           around do |example|
             DoubleEntry.config.json_metadata = true
