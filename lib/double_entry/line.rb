@@ -57,6 +57,8 @@ module DoubleEntry
   class Line < ActiveRecord::Base
     belongs_to :detail, polymorphic: true, required: false
     has_many :metadata, class_name: 'DoubleEntry::LineMetadata' unless -> { DoubleEntry.config.json_metadata }
+    scope :credits, -> { where('amount > 0') }
+    scope :debits, -> { where('amount < 0') }
     scope :with_id_greater_than, ->(id) { where('id > ?', id) }
 
     def amount
