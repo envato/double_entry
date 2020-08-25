@@ -99,22 +99,27 @@ module DoubleEntry
       credit_balance = Locking.balance_for_locked_account(from_account)
       debit_balance  = Locking.balance_for_locked_account(to_account)
 
-      credit_balance.update_attribute :balance, credit_balance.balance - amount
-      debit_balance.update_attribute :balance, debit_balance.balance + amount
+      credit_balance_update_amount = credit_balance.balance - amount
+      debit_balance_update_amount = debit_balance.balance + amount
 
       credit.amount, debit.amount   = -amount, amount
       credit.account, debit.account = from_account, to_account
       credit.code, debit.code       = code, code
       credit.detail, debit.detail   = detail, detail
-      credit.balance, debit.balance = credit_balance.balance, debit_balance.balance
+      credit.balance, debit.balance = credit_balance_update_amount, debit_balance_update_amount
       credit.metadata, debit.metadata = metadata, metadata if DoubleEntry.config.json_metadata
 
       credit.partner_account, debit.partner_account = to_account, from_account
 
       credit.save!
-      debit.partner_id = credit.id
       debit.save!
+
       credit.update_attribute :partner_id, debit.id
+      debit.update_attribute :partner_id, credit.id
+
+      credit_balance.update_attribute :balance, credit_balance_update_amount
+      debit_balance.update_attribute :balance, debit_balance_update_amount
+
       [credit, debit]
     end
 
