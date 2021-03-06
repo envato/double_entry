@@ -64,7 +64,7 @@ module DoubleEntry
     # @example Transfer $20 from a user's checking to savings account
     #   checking_account = DoubleEntry.account(:checking, scope: user)
     #   savings_account  = DoubleEntry.account(:savings,  scope: user)
-    #   DoubleEntry.transfer(
+    #   credit, debit = DoubleEntry.transfer(
     #     20.dollars,
     #     from: checking_account,
     #     to:   savings_account,
@@ -80,6 +80,7 @@ module DoubleEntry
     #   type of transfer. As specified in the transfer configuration.
     # @option options :detail [ActiveRecord::Base] ActiveRecord model
     #   associated (via a polymorphic association) with the transfer.
+    # @return [[Line, Line]] The credit & debit (in that order) created by the transfer
     # @raise [DoubleEntry::TransferIsNegative] The amount is less than zero.
     # @raise [DoubleEntry::TransferNotAllowed] A transfer between these
     #   accounts with the provided code is not allowed. Check configuration.
