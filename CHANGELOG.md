@@ -10,13 +10,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Return `[credit, debit]` from `DoubleEntry.transfer` ([#190]).
+
+[#190]: https://github.com/envato/double_entry/pull/190
+
+## [2.0.0.beta5] - 2021-02-24
+
+### Changed
+
 - Use the Ruby 1.9 hash syntax ([#182]).
 - Make the Line detail association optional ([#184]).
+- Support Ruby 3 ([#196]).
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta4...HEAD
 [#182]: https://github.com/envato/double_entry/pull/182
 [#184]: https://github.com/envato/double_entry/pull/184
-[#190]: https://github.com/envato/double_entry/pull/190
+[#196]: https://github.com/envato/double_entry/pull/196
 
 ## [2.0.0.beta4] - 2020-01-25
 
@@ -34,7 +41,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Prevent using Ruby 2.2 via restrictions in Gemfile and Gemspec ([#175]).
 
-[2.0.0.beta4]: https://github.com/envato/double_entry/compare/v2.0.0.beta3...v2.0.0.beta4
 [#175]: https://github.com/envato/double_entry/pull/175
 [#176]: https://github.com/envato/double_entry/pull/176
 [#178]: https://github.com/envato/double_entry/pull/178
@@ -471,6 +477,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Library released as Open Source!
 
+[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta5...HEAD
+[2.0.0.beta5]: https://github.com/envato/double_entry/compare/v2.0.0.beta4...v2.0.0.beta5
+[2.0.0.beta4]: https://github.com/envato/double_entry/compare/v2.0.0.beta3...v2.0.0.beta4
 [2.0.0.beta3]: https://github.com/envato/double_entry/compare/v2.0.0.beta2...v2.0.0.beta3
 [2.0.0.beta2]: https://github.com/envato/double_entry/compare/v2.0.0.beta1...v2.0.0.beta2
 [2.0.0.beta1]: https://github.com/envato/double_entry/compare/v1.0.1...v2.0.0.beta1
