@@ -97,6 +97,19 @@ module DoubleEntry
         BalanceCalculator.calculate(self, options)
       end
 
+      # Get line entries of this account
+      #
+      # @option options :from [Time]
+      # @option options :to [Time]
+      # @option options :at [Time]
+      # @option options :code [Symbol]
+      # @option options :codes [Array<Symbol>]
+      # @return [Money]
+      #
+      def lines(options = {})
+        BalanceCalculator.lines(self, options)
+      end
+
       include Comparable
 
       def ==(other)

@@ -15,8 +15,7 @@ module DoubleEntry
     #
     def calculate(account, args = {})
       options = Options.new(account, args)
-      relations = RelationBuilder.new(options)
-      lines = relations.build
+      lines = lines(account, args)
 
       if options.between? || options.code?
         # from and to or code lookups have to be done via sum
@@ -30,6 +29,22 @@ module DoubleEntry
                  pluck(:balance)
         result.empty? ? Money.zero(account.currency) : Money.new(result.first, account.currency)
       end
+    end
+
+    # Get line entries of an account
+    #
+    # @param account [DoubleEntry::Account:Instance]
+    # @option args :from [Time]
+    # @option args :to [Time]
+    # @option args :at [Time]
+    # @option args :code [Symbol]
+    # @option args :codes [Array<Symbol>]
+    # @return [Money]
+    #
+    def lines(account, args = {})
+      options = Options.new(account, args)
+      relations = RelationBuilder.new(options)
+      relations.build
     end
 
   private
@@ -91,7 +106,7 @@ module DoubleEntry
         lines = lines.where(created_at: from..to) if between?
         lines = lines.where(code: codes) if code?
         lines = lines.where(scope: scope) if scope?
-        lines
+        lines.readonly
       end
     end
   end
