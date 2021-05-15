@@ -245,6 +245,20 @@ DoubleEntry.configure do |config|
 end
 ```
 
+## Testing with RSpec
+
+Transfering money needs to be run as a top level transaction. This conflicts with RSpec's default behavior of creating a new transaction for every test, causing an exception of type `DoubleEntry::Locking::LockMustBeOutermostTransaction` to be raised. This behavior may be disabled by adding the following lines into your `rails_helper.rb`.
+
+```ruby
+RSpec.configure do |config|
+  # ...
+  # This first line should already be there. You will need to add the second one
+  config.use_transactional_fixtures = true
+  DoubleEntry::Locking.configuration.running_inside_transactional_fixtures = true
+  # ...
+end
+```
+
 ## Jackhammer
 
 Run a concurrency test on the code.
