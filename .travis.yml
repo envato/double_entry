@@ -46,3 +46,21 @@ matrix:
     - rvm: 3.0
       gemfile: spec/support/gemfiles/Gemfile.rails-6.0.x
       env: DB=postgres
+    - rvm: 2.7
+      gemfile: spec/support/gemfiles/Gemfile.rails-6.1.x
+      env: DB=mysql
+    - rvm: 2.7
+      gemfile: spec/support/gemfiles/Gemfile.rails-6.1.x
+      env: DB=sqlite
+    - rvm: 2.7
+      gemfile: spec/support/gemfiles/Gemfile.rails-6.1.x
+      env: DB=postgres
+    - rvm: 3.0
+      gemfile: spec/support/gemfiles/Gemfile.rails-6.1.x
+      env: DB=mysql
+    - rvm: 3.0
+      gemfile: spec/support/gemfiles/Gemfile.rails-6.1.x
+      env: DB=sqlite
+    - rvm: 3.0
+      gemfile: spec/support/gemfiles/Gemfile.rails-6.1.x
+      env: DB=postgres
