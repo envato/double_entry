@@ -427,5 +427,14 @@ RSpec.describe DoubleEntry do
     it 'disallows you to report on scoped accounts globally' do
       expect { DoubleEntry.balance(:cash) }.to raise_error DoubleEntry::UnknownAccount
     end
+
+    it 'allows you to iterate line items' do
+      DoubleEntry.transfer(Money.new(100_00), from: ryans_cash, to: ryans_savings, code: :xfer)
+      expect(ryans_cash.lines.length).to eq(1)
+      transfer = ryans_cash.lines[0]
+      expect(transfer.code).to eq(:xfer)
+      expect(transfer.amount).to eq(-Money.new(100_00))
+      expect { transfer.update(amount: Money.zero) }.to raise_error ActiveRecord::ReadOnlyRecord
+    end
   end
 end

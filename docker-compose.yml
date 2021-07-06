@@ -18,6 +18,7 @@ services:
       - postgres
   mysql:
     image: mysql
+    platform: linux/amd64
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
       MYSQL_DATABASE: double_entry_test
