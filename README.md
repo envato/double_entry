@@ -173,7 +173,7 @@ The `DoubleEntry::Validation::LineCheck` will check the `double_entry_lines` tab
 
 You can alternatively pass a `fixer` to the `DoubleEntry::Validation::LineCheck.perform` method which will try and correct the balances. This gem provides the `DoubleEntry::Validation::AccountFixer` class which will correct the balance if it's out of sync.
 
-Using these classes is optional and both are provided for additional safety checks. If you want to make use of them then it's recommended to run them in a scheduled job, somewhere on the order of hourly to daily, depending on transaction volume. Keep in mind that this process locks accounts as it inspects their balances, so it will have an prevent new transactions from being written for a short time.
+Using these classes is optional and both are provided for additional safety checks. If you want to make use of them then it's recommended to run them in a scheduled job, somewhere on the order of hourly to daily, depending on transaction volume. Keep in mind that this process locks accounts as it inspects their balances, so it will prevent new transactions from being written for a short time.
 
 Here are examples that could go in your scheduled job, depending on your needs:
 
