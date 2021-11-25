@@ -165,7 +165,15 @@ See [DoubleEntry::Locking](lib/double_entry/locking.rb) for more info.
 
 ### Account Checker/Fixer
 
-Although it's unlikely, DoubleEntry has tools for checking accounts to make sure they tie out, and optionally fixing them if there is a discrepancy. It's recommended to run this in a scheduled job, somewhere on the order of hourly to daily, depending on transaction volume. Keep in mind that this process locks accounts as it inspects their balances, so it will have an prevent new transactions from being written for a short time.
+DoubleEntry tries really hard to make sure that stored account balances reflect the running balances from the `double_entry_lines` table, but there is always the unlikely possibility that something will go wrong and the calculated balance might get out of sync with the actual running balance of the lines.
+
+DoubleEntry therefore provides a couple of tools to give you some confidence that things are working as expected.
+
+The `DoubleEntry::Validation::LineCheck` will check the `double_entry_lines` table to make sure that the `balance` column correctly reflects the calculated running balance, and that the `double_entry_account_balances` table has the correct value in the `balance` column. If either one of these turn out to be incorrect then it will write an entry into the `double_entry_line_checks` table reporting on the differences.
+
+You can alternatively pass a `fixer` to the `DoubleEntry::Validation::LineCheck.perform` method which will try and correct the balances. This gem provides the `DoubleEntry::Validation::AccountFixer` class which will correct the balance if it's out of sync.
+
+Using these classes is optional and both are provided for additional safety checks. If you want to make use of them then it's recommended to run them in a scheduled job, somewhere on the order of hourly to daily, depending on transaction volume. Keep in mind that this process locks accounts as it inspects their balances, so it will prevent new transactions from being written for a short time.
 
 Here are examples that could go in your scheduled job, depending on your needs:
 
