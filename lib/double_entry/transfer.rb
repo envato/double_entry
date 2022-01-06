@@ -76,6 +76,7 @@ module DoubleEntry
     end
 
     def process(amount, options)
+      credit = debit = nil
       from_account = options[:from]
       to_account = options[:to]
       code = options[:code]
@@ -91,6 +92,7 @@ module DoubleEntry
         credit, debit = create_lines(amount, code, detail, from_account, to_account, metadata)
         create_line_metadata(credit, debit, metadata) if metadata && !DoubleEntry.config.json_metadata
       end
+      [credit, debit]
     end
 
     def create_lines(amount, code, detail, from_account, to_account, metadata)
