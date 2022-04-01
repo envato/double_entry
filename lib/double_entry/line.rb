@@ -74,12 +74,12 @@ module DoubleEntry
       self[:balance] = (money && money.fractional)
     end
 
-    def save(*)
+    def save(**)
       check_balance_will_remain_valid
       super
     end
 
-    def save!(*)
+    def save!(**)
       check_balance_will_remain_valid
       super
     end
