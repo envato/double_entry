@@ -1,1 +1,2 @@
-Money.locale_backend = :i18n
+require 'money'
+::Money.locale_backend = :i18n

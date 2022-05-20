@@ -4,9 +4,17 @@ module DoubleEntry
 
   class Configuration
     attr_accessor :json_metadata
+    attr_writer :money_adapter
 
     def initialize
       @json_metadata = false
+    end
+
+    def money_adapter
+      @money_adapter ||= begin
+        require 'money'
+        ::Money
+      end
     end
 
     delegate(
