@@ -9,15 +9,6 @@ jobs:
         gemfile: [Gemfile.rails-6.1.x, Gemfile.rails-7.0.x]
         db: [mysql, postgres, sqlite]
         include:
-          - ruby: 2.5
-            gemfile: Gemfile.rails-5.0.x
-            db: mysql
-          - ruby: 2.5
-            gemfile: Gemfile.rails-5.1.x
-            db: mysql
-          - ruby: 2.6
-            gemfile: Gemfile.rails-5.2.x
-            db: mysql
           - ruby: 2.7
             gemfile: Gemfile.rails-6.0.x
             db: mysql
