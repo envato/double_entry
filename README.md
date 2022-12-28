@@ -27,6 +27,9 @@ Ruby
  * 2.5.x
  * 2.6.x
  * 2.7.x
+ * 3.0.x
+ * 3.1.x
+ * 3.2.x
 
 Rails
  * 4.2.x
@@ -35,6 +38,7 @@ Rails
  * 5.2.x
  * 6.0.x
  * 6.1.x
+ * 7.0.x
 
 Databases
  * MySQL
