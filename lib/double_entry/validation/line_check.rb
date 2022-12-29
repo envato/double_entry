@@ -48,26 +48,7 @@ module DoubleEntry
       end
 
       def running_balance_correct?(line, log)
-        # Another work around for the MySQL 5.1 query optimiser bug that causes the ORDER BY
-        # on the query to fail in some circumstances, resulting in an old balance being
-        # returned. This was biting us intermittently in spec runs.
-        # See http://bugs.mysql.com/bug.php?id=51431
-        force_index = if Line.connection.adapter_name.match(/mysql/i)
-                        'FORCE INDEX (lines_scope_account_id_idx)'
-                      else
-                        ''
-                      end
-
-        # yes, it needs to be find_by_sql, because any other find will be affected
-        # by the find_each call in perform!
-        previous_line = Line.find_by_sql([<<-SQL, line.account.identifier.to_s, line.scope, line.id])
-          SELECT * FROM #{Line.quoted_table_name} #{force_index}
-          WHERE account = ?
-          AND scope = ?
-          AND id < ?
-          ORDER BY id DESC
-          LIMIT 1
-        SQL
+        previous_line = find_previous_line(line.account.identifier.to_s, line.scope, line.id)
 
         previous_balance = previous_line.length == 1 ? previous_line[0].balance : Money.zero(line.account.currency)
 
@@ -76,6 +57,41 @@ module DoubleEntry
         end
 
         line.balance == previous_balance + line.amount
+      end
+
+      def find_previous_line(identifier, scope, id)
+        # yes, it needs to be find_by_sql, because any other find will be affected
+        # by the find_each call in perform!
+
+        if scope.nil?
+          Line.find_by_sql([<<-SQL, identifier, id])
+            SELECT * FROM #{Line.quoted_table_name} #{force_index}
+            WHERE account = ?
+            AND scope IS NULL
+            AND id < ?
+            ORDER BY id DESC
+            LIMIT 1
+          SQL
+        else
+          Line.find_by_sql([<<-SQL, identifier, scope, id])
+          SELECT * FROM #{Line.quoted_table_name} #{force_index}
+          WHERE account = ?
+          AND scope = ?
+          AND id < ?
+          ORDER BY id DESC
+          LIMIT 1
+          SQL
+        end
+      end
+
+      def force_index
+        # Another work around for the MySQL 5.1 query optimiser bug that causes the ORDER BY
+        # on the query to fail in some circumstances, resulting in an old balance being
+        # returned. This was biting us intermittently in spec runs.
+        # See http://bugs.mysql.com/bug.php?id=51431
+        return '' unless Line.connection.adapter_name.match(/mysql/i)
+
+        'FORCE INDEX (lines_scope_account_id_idx)'
       end
 
       def line_error_message(line, previous_line, previous_balance)

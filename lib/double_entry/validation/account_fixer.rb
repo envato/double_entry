@@ -23,7 +23,7 @@ module DoubleEntry
       def lines_for_account(account)
         Line.where(
           account: account.identifier.to_s,
-          scope: account.scope_identity.to_s
+          scope: account.scope_identity&.to_s
         ).order(:id)
       end
 
