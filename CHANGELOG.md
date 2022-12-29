@@ -10,8 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Return `[credit, debit]` from `DoubleEntry.transfer` ([#190]).
+- Run the test suite against Rails 7.0, and Ruby 3.1, 3.2 ([#214]).
+
+### Removed
+
+- Removed support for Rails < 6.0, and Ruby < 2.7 ([#214]).
 
 [#190]: https://github.com/envato/double_entry/pull/190
+[#214]: https://github.com/envato/double_entry/pull/214
 
 ## [2.0.0.beta5] - 2021-02-24
 

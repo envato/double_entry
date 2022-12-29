@@ -5,52 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        ruby: ['2.7', '3.0', '3.1', '3.2']
+        gemfile: [Gemfile.rails-6.1.x, Gemfile.rails-7.0.x]
+        db: [mysql, postgres, sqlite]
         include:
-          - ruby: 2.5
-            gemfile: Gemfile.rails-5.0.x
-            db: mysql
-          - ruby: 2.5
-            gemfile: Gemfile.rails-5.1.x
-            db: mysql
-          - ruby: 2.6
-            gemfile: Gemfile.rails-5.2.x
-            db: mysql
           - ruby: 2.7
             gemfile: Gemfile.rails-6.0.x
             db: mysql
-          - ruby: 2.7
-            gemfile: Gemfile.rails-6.0.x
-            db: sqlite
-          - ruby: 2.7
-            gemfile: Gemfile.rails-6.0.x
-            db: postgres
-          - ruby: 3.0
-            gemfile: Gemfile.rails-6.0.x
-            db: mysql
-          - ruby: 3.0
-            gemfile: Gemfile.rails-6.0.x
-            db: sqlite
-          - ruby: 3.0
-            gemfile: Gemfile.rails-6.0.x
-            db: postgres
-          - ruby: 2.7
-            gemfile: Gemfile.rails-6.1.x
-            db: mysql
-          - ruby: 2.7
-            gemfile: Gemfile.rails-6.1.x
-            db: sqlite
-          - ruby: 2.7
-            gemfile: Gemfile.rails-6.1.x
-            db: postgres
-          - ruby: 3.0
-            gemfile: Gemfile.rails-6.1.x
-            db: mysql
-          - ruby: 3.0
-            gemfile: Gemfile.rails-6.1.x
-            db: sqlite
-          - ruby: 3.0
-            gemfile: Gemfile.rails-6.1.x
-            db: postgres
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/spec/support/gemfiles/${{ matrix.gemfile }}
       DB: ${{ matrix.db }}
