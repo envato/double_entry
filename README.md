@@ -13,7 +13,7 @@ Keep track of all the monies!
 DoubleEntry is an accounting system based on the principles of a
 [Double-entry Bookkeeping](http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system)
 system.  While this gem acts like a double-entry bookkeeping system, as it creates
-two entries in the database for each transfer, it does *not* enforce accounting rules.
+two entries in the database for each transfer, it does *not* enforce accounting rules, other than optionally ensuring a balance is positive, and through an allowlist of approved transfers. 
 
 DoubleEntry uses the [Money gem](https://github.com/RubyMoney/money) to encapsulate operations on currency values.
 
