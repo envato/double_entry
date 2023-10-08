@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['3.0', '3.1', '3.2']
-        gemfile: [Gemfile.rails-6.1.x, Gemfile.rails-7.0.x]
+        gemfile: [Gemfile.rails-6.1.x, Gemfile.rails-7.0.x, Gemfile.rails-7.1.x]
         db: [mysql, postgres, sqlite]
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/spec/support/gemfiles/${{ matrix.gemfile }}
