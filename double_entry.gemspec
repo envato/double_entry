@@ -24,12 +24,12 @@ Gem::Specification.new do |gem|
     f.match(%r{^(?:double_entry.gemspec|README|LICENSE|CHANGELOG|lib/)})
   end
   gem.require_paths         = ['lib']
-  gem.required_ruby_version = '>= 2.7.0'
+  gem.required_ruby_version = '>= 3'
 
-  gem.add_dependency 'activerecord',          '>= 6.0.0'
-  gem.add_dependency 'activesupport',         '>= 6.0.0'
+  gem.add_dependency 'activerecord',          '>= 6.1.0'
+  gem.add_dependency 'activesupport',         '>= 6.1.0'
   gem.add_dependency 'money',                 '>= 6.0.0'
-  gem.add_dependency 'railties',              '>= 6.0.0'
+  gem.add_dependency 'railties',              '>= 6.1.0'
 
   gem.add_development_dependency 'mysql2'
   gem.add_development_dependency 'pg'
