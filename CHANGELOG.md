@@ -7,17 +7,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0...HEAD
+
+## [2.0.0] - 2023-10-25
+
+### Fixed
+
+- Ensure LineCheck and AccountFixer can work correctly with unscoped accounts ([#207]).
+- Fixes for running on Ruby 3 ([#212]).
+
 ### Changed
 
 - Return `[credit, debit]` from `DoubleEntry.transfer` ([#190]).
-- Run the test suite against Rails 7.0, and Ruby 3.1, 3.2 ([#214]).
+- Run the test suite against Rails 6.1, 7.0, 7.1, and Ruby 3.1, 3.2 ([#203], [#214], [#217]).
+- Migrate CI to run on GitHub Actions ([#205])
 
 ### Removed
 
-- Removed support for Rails < 6.0, and Ruby < 2.7 ([#214]).
+- Removed support for Rails < 6.1, and Ruby < 3.0 ([#215], [#217]).
 
+### Added
+
+- Add `credit` and `debit` scopes to the `Line` model ([#192]).
+
+[2.0.0]: https://github.com/envato/double_entry/compare/v2.0.0.beta5...v2.0.0
 [#190]: https://github.com/envato/double_entry/pull/190
+[#192]: https://github.com/envato/double_entry/pull/192
+[#203]: https://github.com/envato/double_entry/pull/203
+[#205]: https://github.com/envato/double_entry/pull/205
+[#207]: https://github.com/envato/double_entry/pull/207
+[#212]: https://github.com/envato/double_entry/pull/212
 [#214]: https://github.com/envato/double_entry/pull/214
+[#215]: https://github.com/envato/double_entry/pull/215
+[#217]: https://github.com/envato/double_entry/pull/217
 
 ## [2.0.0.beta5] - 2021-02-24
 
@@ -483,7 +505,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Library released as Open Source!
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0.beta5...HEAD
 [2.0.0.beta5]: https://github.com/envato/double_entry/compare/v2.0.0.beta4...v2.0.0.beta5
 [2.0.0.beta4]: https://github.com/envato/double_entry/compare/v2.0.0.beta3...v2.0.0.beta4
 [2.0.0.beta3]: https://github.com/envato/double_entry/compare/v2.0.0.beta2...v2.0.0.beta3
