@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/envato/double_entry/compare/v2.0.1...HEAD
+
+## [2.0.1] - 2023-11-01
+
+### Fixed
+
+- Resolve Rails 7.1 coder deprecation warning ([#219]).
+
+[2.0.1]: https://github.com/envato/double_entry/compare/v2.0.0...v2.0.1
+[#219]: https://github.com/envato/double_entry/pull/219
 
 ## [2.0.0] - 2023-10-25
 
