@@ -13,6 +13,6 @@ module DoubleEntry
     end
 
     belongs_to :line
-    serialize :key, SymbolWrapper
+    serialize :key, coder: DoubleEntry::LineMetadata::SymbolWrapper
   end
 end
