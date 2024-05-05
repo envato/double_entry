@@ -1,15 +1,16 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  build:
+  test:
+    name: 'Test (Ruby: ${{ matrix.ruby }}, Rails: ${{ matrix.rails }}, DB: ${{ matrix.db }})'
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['3.0', '3.1', '3.2']
-        gemfile: [Gemfile.rails-6.1.x, Gemfile.rails-7.0.x, Gemfile.rails-7.1.x]
+        ruby: ['3.3', '3.2', '3.1', '3.0']
+        rails: ['7.1', '7.0', '6.1']
         db: [mysql, postgres, sqlite]
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/spec/support/gemfiles/${{ matrix.gemfile }}
+      BUNDLE_GEMFILE: ${{ github.workspace }}/spec/support/gemfiles/Gemfile.rails-${{ matrix.rails }}.x
       DB: ${{ matrix.db }}
     services:
       mysql:
@@ -38,7 +39,7 @@ jobs:
           - 5432:5432
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
