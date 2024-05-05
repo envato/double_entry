@@ -3,7 +3,6 @@ require 'active_record'
 require 'active_record/locking_extensions'
 require 'active_record/locking_extensions/log_subscriber'
 require 'active_support/all'
-require 'money'
 require 'rails/railtie'
 
 require 'double_entry/version'
@@ -16,6 +15,7 @@ require 'double_entry/balance_calculator'
 require 'double_entry/locking'
 require 'double_entry/transfer'
 require 'double_entry/validation'
+require 'double_entry/money'
 
 # Keep track of all the monies!
 #
