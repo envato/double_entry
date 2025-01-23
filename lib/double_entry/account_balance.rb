@@ -18,12 +18,6 @@ module DoubleEntry
       self[:balance] = (money && money.fractional)
     end
 
-    def account=(account)
-      self[:account] = account.identifier.to_s
-      self[:scope] = account.scope_identity
-      account
-    end
-
     def account
       DoubleEntry.account(self[:account].to_sym, scope_identity: self[:scope])
     end
@@ -32,6 +26,12 @@ module DoubleEntry
       scope = where(scope: account.scope_identity, account: account.identifier.to_s)
       scope = scope.lock(true) if options[:lock]
       scope.first
+    end
+
+    def self.find_or_create_by_account(account)
+      find_by_account(account) ||
+        create_with(balance: Money.zero)
+          .create_or_find_by!(scope: account.scope_identity, account: account.identifier.to_s)
     end
 
     # Identify the scopes with the given account identifier holding at least

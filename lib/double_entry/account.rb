@@ -74,6 +74,7 @@ module DoubleEntry
         @scope = args[:scope]
         @scope_identity = args[:scope_identity]
         ensure_scope_is_valid
+        ensure_balance_exists
       end
 
       def scope_identity
@@ -135,6 +136,10 @@ module DoubleEntry
           fail ScopeIdentifierTooLongError,
                "scope identifier '#{identity}' is too long. Please limit it to #{Account.scope_identifier_max_length} characters."
         end
+      end
+
+      def ensure_balance_exists
+        AccountBalance.find_or_create_by_account(self)
       end
     end
 

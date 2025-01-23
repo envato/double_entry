@@ -64,14 +64,23 @@ module DoubleEntry
         @accounts = accounts.flatten.sort
       end
 
-      # Lock the given accounts, creating account balance records for them if
-      # needed.
-      def perform_lock(&block)
-        ensure_outermost_transaction!
+      # Start a transaction, grab locks on the given accounts, then call the block
+      # from within the transaction.
+      def perform_lock
+        ensure_outermost_transaction! if DoubleEntry.config.retry_deadlocks
 
-        unless lock_and_call(&block)
-          create_missing_account_balances
-          fail LockDisaster unless lock_and_call(&block)
+        # puts "restartable_transaction"
+        AccountBalance.restartable_transaction do
+          # puts "with_restart_on_deadlock"
+          AccountBalance.with_restart_on_deadlock { grab_locks }
+          begin
+            # puts "yielding after locks..."
+            yield
+            # puts "finished yielding after locks..."
+          ensure
+            # puts "remove_locks"
+            remove_locks
+          end
         end
       end
 
@@ -127,49 +136,15 @@ module DoubleEntry
       # If any account can't be locked (because there isn't a corresponding account
       # balance record), don't call the block, and return false.
       def lock_and_call
-        locks_succeeded = nil
-        AccountBalance.restartable_transaction do
-          locks_succeeded = AccountBalance.with_restart_on_deadlock { grab_locks }
-          if locks_succeeded
-            begin
-              yield
-            ensure
-              remove_locks
-            end
-          end
-        end
-        locks_succeeded
       end
 
       # Grab a lock on the account balance record for each account.
       #
-      # If all the account balance records exist, set locks to a hash mapping
-      # accounts to account balances, and return true.
-      #
-      # If one or more account balance records don't exist, set
-      # accounts_with_balances to the corresponding accounts, and return false.
+      # Set locks to a hash mapping accounts to account balances.
       def grab_locks
         account_balances = @accounts.map { |account| AccountBalance.find_by_account(account, lock: true) }
 
-        if account_balances.any?(&:nil?)
-          @accounts_without_balances =  @accounts.zip(account_balances).
-                                        select { |_account, account_balance| account_balance.nil? }.
-                                        collect { |account, _account_balance| account }
-          false
-        else
-          self.locks = Hash[*@accounts.zip(account_balances).flatten]
-          true
-        end
-      end
-
-      # Create all the account_balances for the given accounts.
-      def create_missing_account_balances
-        @accounts_without_balances.each do |account|
-          # Get the initial balance from the lines table.
-          balance = account.balance
-          # Try to create the balance record, but ignore it if someone else has done it in the meantime.
-          AccountBalance.create_ignoring_duplicates!(account: account, balance: balance)
-        end
+        self.locks = Hash[*@accounts.zip(account_balances).flatten]
       end
     end
 
