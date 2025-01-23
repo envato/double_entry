@@ -7,7 +7,7 @@ module ActiveRecord
     # Execute the given block within a database transaction, and retry the
     # transaction from the beginning if a RestartTransaction exception is raised.
     def restartable_transaction(&block)
-      transaction(&block)
+      transaction(requires_new: true, &block)
     rescue ActiveRecord::RestartTransaction
       retry
     end
@@ -17,7 +17,7 @@ module ActiveRecord
     def with_restart_on_deadlock
       yield
     rescue ActiveRecord::StatementInvalid => exception
-      if exception.message =~ /deadlock/i || exception.message =~ /database is locked/i
+      if DoubleEntry.config.retry_deadlocks && (exception.message =~ /deadlock/i || exception.message =~ /database is locked/i)
         ActiveSupport::Notifications.publish('deadlock_restart.double_entry', exception: exception)
 
         raise ActiveRecord::RestartTransaction

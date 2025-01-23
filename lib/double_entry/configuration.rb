@@ -4,9 +4,11 @@ module DoubleEntry
 
   class Configuration
     attr_accessor :json_metadata
+    attr_accessor :retry_deadlocks
 
     def initialize
       @json_metadata = false
+      @retry_deadlocks = true
     end
 
     delegate(
