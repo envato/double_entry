@@ -7,6 +7,8 @@ postgres:
   username: postgres
   password:
   min_messages: warning
+  variables:
+    statement_timeout: 0.5s
 mysql:
   host: <%= ENV.fetch('MYSQL_HOST') { '127.0.0.1' } %>
   adapter: mysql2
@@ -15,6 +17,8 @@ mysql:
   pool: 100
   username: root
   password:
+  variables:
+    innodb_lock_wait_timeout: 1
 sqlite:
   adapter: sqlite3
   encoding: utf8
