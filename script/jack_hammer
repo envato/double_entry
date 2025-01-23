@@ -118,6 +118,11 @@ def run_tests
     DoubleEntry::AccountBalance.delete_all
     ActiveRecord::Base.connection_pool.disconnect!
 
+    # Recreate balances after deleting them
+    $accounts = $accounts.map do |account|
+      DoubleEntry.account(account.identifier, scope: 1)
+    end
+
     if $use_threads
       puts "Using threads as workers"
       threads = []
@@ -149,7 +154,9 @@ def run_process(iterations, process_num)
     account_b = ($accounts - [account_a]).sample
     amount = rand(1000) + 1
 
-    DoubleEntry.transfer(Money.new(amount), from: account_a, to: account_b, code: :test)
+    # ActiveRecord::Base.transaction do
+      DoubleEntry.transfer(Money.new(amount), from: account_a, to: account_b, code: :test)
+    # end
 
     puts "Process #{process_num} completed #{i+1} transfers" if (i+1) % 100 == 0
   end
@@ -171,7 +178,7 @@ def reconcile
   if DoubleEntry::Line.count == $transfer_count * 2
     puts "All the Line records were written, FTW!"
   else
-    puts "Not enough Line records written. :("
+    puts "Not enough Line records written. :(. Expected #{$transfer_count * 2}, got #{DoubleEntry::Line.count}"
     error_count += 1
   end
 
