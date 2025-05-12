@@ -13,6 +13,7 @@
 
 require 'optparse'
 require 'bundler/setup'
+require 'logger'
 require 'active_record'
 require 'database_cleaner'
 require 'erb'
