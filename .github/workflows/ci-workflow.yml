@@ -14,7 +14,7 @@ jobs:
       DB: ${{ matrix.db }}
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_DATABASE: double_entry_test
           MYSQL_USER: mysql
