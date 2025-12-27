@@ -40,6 +40,8 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'double_entry'
 require 'double_entry/line'
 
+Money.default_currency = Money::Currency.new('USD')
+
 def parse_options
   $account_count       = 5
   $process_count       = 20

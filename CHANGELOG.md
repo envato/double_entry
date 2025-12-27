@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Run the test suite against Rails 8.1, 8.0, 7.2, and Ruby 4.0, 3.4, 3.3, 3.2 ([#225]).
+
 [Unreleased]: https://github.com/envato/double_entry/compare/v2.0.1...HEAD
+[#225]: https://github.com/envato/double_entry/pull/225
 
 ## [2.0.1] - 2023-11-01
 
