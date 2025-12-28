@@ -57,8 +57,6 @@ module DoubleEntry
     end
 
     class Lock
-      @@locks = {}
-
       def initialize(accounts)
         # Make sure we always lock in the same order, to avoid deadlocks.
         @accounts = accounts.flatten.sort
@@ -97,15 +95,15 @@ module DoubleEntry
     private
 
       def locks
-        @@locks[Thread.current.object_id]
+        Thread.current[:double_entry_locks]
       end
 
       def locks=(locks)
-        @@locks[Thread.current.object_id] = locks
+        Thread.current[:double_entry_locks] = locks
       end
 
       def remove_locks
-        @@locks.delete(Thread.current.object_id)
+        Thread.current[:double_entry_locks] = nil
       end
 
       # Return true if there's a lock on the given account.
