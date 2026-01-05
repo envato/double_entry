@@ -10,14 +10,15 @@ Gem::Specification.new do |gem|
   gem.authors               = ['Envato']
   gem.email                 = ['rubygems@envato.com']
   gem.summary               = 'Tools to build your double entry financial ledger'
-  gem.homepage              = 'https://github.com/envato/double_entry'
+  gem.homepage              = "https://github.com/envato/#{gem.name}"
   gem.license               = 'MIT'
 
   gem.metadata = {
-    'bug_tracker_uri'   => 'https://github.com/envato/double_entry/issues',
-    'changelog_uri'     => "https://github.com/envato/double_entry/blob/v#{gem.version}/CHANGELOG.md",
-    'documentation_uri' => "https://www.rubydoc.info/gems/double_entry/#{gem.version}",
-    'source_code_uri'   => "https://github.com/envato/double_entry/tree/v#{gem.version}",
+    'allowed_push_host' => 'https://rubygems.org',
+    'bug_tracker_uri'   => "#{gem.homepage}/issues",
+    'changelog_uri'     => "#{gem.homepage}/blob/v#{gem.version}/CHANGELOG.md",
+    'documentation_uri' => "https://www.rubydoc.info/gems/#{gem.name}/#{gem.version}",
+    'source_code_uri'   => "#{gem.homepage}/tree/v#{gem.version}",
   }
 
   gem.files                 = `git ls-files -z`.split("\x0").select do |f|
