@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix critical thread-safety issues in locking mechanism by replacing object_id-based lock storage with proper thread-local storage. This resolves object ID reuse vulnerabilities, race conditions, and memory leaks ([#226]).
+
+### Changed
+
 - Run the test suite against Rails 8.1, 8.0, 7.2, and Ruby 4.0, 3.4, 3.3, 3.2 ([#225]).
 
 [Unreleased]: https://github.com/envato/double_entry/compare/v2.0.1...HEAD
 [#225]: https://github.com/envato/double_entry/pull/225
+[#226]: https://github.com/envato/double_entry/pull/226
 
 ## [2.0.1] - 2023-11-01
 
